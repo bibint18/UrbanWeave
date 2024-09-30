@@ -15,12 +15,12 @@ const adminSchema = new mongoose.Schema({
 
 adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
+  this.password =await bcrypt.hash(this.password, 10);
   next();
 });
 
 adminSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password, this.password);
+  return bcrypt.compare(password, this.password);
 };
 
 module.exports=mongoose.model('admin',adminSchema)

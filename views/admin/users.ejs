@@ -1,0 +1,33 @@
+<%-include ("../../views/partials/admin/header") %>
+<main class="main-wrap ms-5">
+  <div class="container">
+      <h1 class="page-title">User Management</h1>
+      <div class="table-container">
+          <table class="user-table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <% users.forEach(user => { %>
+                  <tr>
+                      <td><%= user.username %></td>
+                      <td><%= user.email %></td>
+                      <td><%= user.isBlocked ? 'Blocked' : 'Active' %></td>
+                      <td>
+                          <button class="btn block-unblock-btn" data-user-id="<%= user._id %>">
+                              <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                          </button>
+                      </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+          </table>
+      </div>
+  </div>
+</main>
+<%-include ("../../views/partials/admin/footer") %>
