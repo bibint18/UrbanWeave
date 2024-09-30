@@ -16,7 +16,7 @@ app.use(express.urlencoded({extended:true}))
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 app.use(cookieParser())
-app.use('/',adminRoute);
+app.use('/admin',adminRoute);
 app.use('/',userRoute);
 app.set('view engine','ejs');
 app.use(express.static(path.join(__dirname,"./public")))

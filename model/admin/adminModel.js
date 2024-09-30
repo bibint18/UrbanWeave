@@ -22,3 +22,5 @@ adminSchema.pre("save", async function (next) {
 adminSchema.methods.comparePassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
+
+module.exports=mongoose.model('admin',adminSchema)

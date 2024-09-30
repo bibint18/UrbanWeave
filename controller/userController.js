@@ -126,9 +126,8 @@ exports.userLogin =async (req,res) => {
   }
 }
 exports.logout = (req, res) => {
-  // Clear the JWT cookie
   res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
-  res.redirect('/userLogin'); // Redirect to the login page or any other page
+  res.redirect('/userLogin'); 
 };
 
 // exports.forgotPassword =(req,res) => {
