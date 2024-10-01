@@ -32,4 +32,33 @@
       </div>
   </div>
 </main>
+<script>
+  function blockUser(userId){
+    $.ajax({
+      url:`/admin/user/block/${userId}`,
+      type:"PATCH",
+      success:function (response){
+        alert("user blocked")
+        location.reload()
+      },
+      error:function(error){
+        alert("cant block user")
+      }
+    })
+    }
+
+    function unblockUser(userId){
+      $.ajax({
+        url:`/admin/user/unblock/${userId}`,
+        type:"PATCH",
+        success: function(response){
+          alert("user Unblocked succesfully")
+          location.reload();
+        },
+        error: function(error){
+          alert("cant unblock user")
+        }
+      })
+    }
+</script>
 <%-include ("../../views/partials/admin/footer") %>

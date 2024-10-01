@@ -1,0 +1,46 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="row">
+<h1 class="text-center mt-2 ">Deleted Users</h1>
+<form action="/admin/category" method="get" class="d-inline">
+  <button class="btn btn-primary">Catogories</a></button>
+</form>
+</div>
+<table class="table table-bordered mt-3">
+  <thead>
+    <tr>
+      <th>Category Name</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% categories.forEach(category => { %>
+      <tr>
+        <td><%= category.categoryName %></td>
+        <td><%= category.description %></td>
+        <td><%= category.isDeleted ? 'Deleted' : 'Active' %></td>
+        <td>
+          <button class="btn btn-danger" onclick="revert('<%= category._id %>')">Revert</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<script>
+  function revert(userId){
+    $.ajax({
+      url:`/admin/category/revert/${userId}`,
+      type:"PATCH",
+      success: function(response){
+        alert("category added back"),
+        location.reload()
+      },
+      error: function(error){
+        alert("error adding the category")
+      }
+    })
+  }
+</script>
+<%- include("../../views/partials/admin/footer") %>

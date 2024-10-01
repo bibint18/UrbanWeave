@@ -1,0 +1,107 @@
+<%- include("../../views/partials/admin/header")%>
+<main class="main-wrap ms-3">
+  <div class="container">
+    <div class="d-flex justify-content-between">
+      <h2>Category Management</h2>
+      <form action="/admin/category/deletedCategories">
+      <button class="btn btn-primary">Deleted Users</a></button>
+    </form>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add New Category</button>
+    </div>
+
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% categories.forEach(category => { %>
+          <tr>
+            <td><%= category.categoryName %></td>
+            <td><%= category.description %></td>
+            <td><%= category.isDeleted ? 'Deleted' : 'Active' %></td>
+            <td>
+              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editCategoryModal-<%= category._id %>">Edit</button>
+                <button class="btn btn-danger" onclick="softDelete('<%= category._id %>')">Delete</button>
+            </td>
+          </tr>
+
+          <!-- Edit Category Modal -->
+          <div class="modal fade" id="editCategoryModal-<%= category._id %>" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form action="/admin/category/edit/<%= category._id %>" method="POST">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Edit Category</h5>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label>Category Name</label>
+                      <input type="text" name="categoryName" value="<%= category.categoryName %>" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Description</label>
+                      <textarea name="description" class="form-control" required><%= category.description %></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div class="modal fade" id="addCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="/admin/category/add" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Category</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Category Name</label>
+              <input type="text" name="categoryName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea name="description" class="form-control" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add Category</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<script> 
+
+  function softDelete(userId){
+    console.log("function triggered")
+    $.ajax({
+      type:"PATCH",
+      url:`/admin/category/delete/${userId}`,
+      success: function(response){
+        alert("user Deleted"),
+        location.reload()
+      },
+      error: function(error){
+        alert("error deleting user")
+        location.reload()
+      }
+    })
+  }
+</script>
+<%- include("../../views/partials/admin/footer")%>
