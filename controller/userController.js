@@ -115,8 +115,10 @@ exports.resend = (req, res) => {
 
 exports.userLogin =async (req,res) => {
   const{email,password} = req.body
-  console.log(email,password)
   const user = await User.findOne({email})
+  if(user.isBlocked == true){
+    return res.redirect("/userLogin")
+  }
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });

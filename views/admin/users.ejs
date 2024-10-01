@@ -17,11 +17,13 @@
                   <tr>
                       <td><%= user.username %></td>
                       <td><%= user.email %></td>
-                      <td><%= user.isBlocked ? 'Blocked' : 'Active' %></td>
+                      <td><%= user.isBlocked ? 'Blocked' : 'Active' %></td> 
                       <td>
-                          <button class="btn block-unblock-btn" data-user-id="<%= user._id %>">
-                              <%= user.isBlocked ? 'Unblock' : 'Block' %>
-                          </button>
+                        <% if (user.isBlocked) { %>
+                          <button onclick="unblockUser('<%= user._id %>')" class="btn block-unblock-btn">Unblock</button>
+                        <% } else { %>
+                          <button onclick="blockUser('<%= user._id %>')" class="btn block-unblock-btn">Block</button>
+                        <% } %>                        
                       </td>
                   </tr>
                   <% }) %>

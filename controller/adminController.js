@@ -19,9 +19,29 @@ exports.getDashboard =(req,res) => {
 }
 exports.ListUsers = async (req,res) => {
   try{
-    const users = await User.find()
+    const users = await User.find({})
     res.render('admin/users',{users})
   }catch(err){
     console.log(err)
+  }
+}
+
+exports.blockUser = async(req,res) => {
+  try{
+    const userId = req.params.id
+    const  user=await User.findByIdAndUpdate(userId,{isBlocked:true})
+  return res.send("user blocked succesfully")
+  }catch(err){
+    console.log(err)
+  }
+}
+
+exports.unblockUser = async(req,res) => {
+  try{
+    const userId = req.params.id
+    await User.findByIdAndUpdate(userId,{isBlocked:false})
+    return res.send("user unbloked")
+  }catch(err){
+    return res.send("error unblocking user")
   }
 }
