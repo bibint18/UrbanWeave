@@ -14,6 +14,10 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  isOnSale:{
+    type:Boolean,
+    default:false,
+  },
   brand: {
     type: String,
     required: true, 

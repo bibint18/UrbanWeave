@@ -6,12 +6,20 @@ const { info } = require("console");
 const jwtService = require('../services/jwtService')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Products = require("../model/admin/prodectModel")
+
 
 exports.getUserLogin = (req, res) => {
   res.render("user/user-login");
 };
-exports.getHome = (req, res) => {
-  res.render("home");
+exports.getHome =async (req, res) => {
+  try{
+    const products =await Products.find({isDeleted:false})
+  return res.render("home",{products});
+  }catch(err){
+    console.log(err);
+    return res.status(500).send("internal server error")
+  }
 };
 let otpStore = {};
 exports.SignToLogin = (req, res) => {

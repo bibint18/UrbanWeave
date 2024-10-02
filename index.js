@@ -25,6 +25,7 @@ app.use('/admin',adminRoute);
 app.use('/',userRoute);
 app.set('view engine','ejs');
 app.use(express.static(path.join(__dirname,"./public")))
+app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.get('/',(req,res) => {
   res.send("helo")
 })
