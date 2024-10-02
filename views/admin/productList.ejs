@@ -1,0 +1,170 @@
+<%-include ("../../views/partials/admin/header") %>
+<main class="main-wrap ms-5">
+  <div class="container">
+      <h1 class="page-title">Product Management</h1>
+
+      <!-- Add New Product Button -->
+      <div class="d-flex justify-content-end mb-3">
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+              Add New Product
+          </button>
+      </div>
+
+      <!-- Product Table -->
+      <div class="table-container">
+          <table class="user-table">
+              <thead>
+                  <tr>
+                      <th>Product Name</th>
+                      <th>Brand</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <% products.forEach(product => { %>
+                  <tr>
+                      <td><%= product.name %></td>
+                      <td><%= product.brand %></td>
+                      <td><%= product.category.categoryName %></td>
+                      <td><%= product.price %></td>
+                      <td><%= product.isDeleted ? 'Deleted' : 'Active' %></td>
+                      <td>
+                          <!-- Edit Product Button -->
+                          <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editProductModal-<%= product._id %>">
+                              Edit
+                          </button>
+                          <!-- Soft Delete Product Button -->
+                              <button type="submit" class="btn btn-danger" onclick="softDelete('<%= product._id %>')">Delete</button>
+                      </td>
+                  </tr>
+
+                  <!-- Edit Product Modal -->
+                  <div class="modal fade" id="editProductModal-<%= product._id %>" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <form method="POST" action="/admin/products/edit/<%= product._id %>" >
+                                      <div class="mb-3">
+                                          <label for="productName" class="form-label">Product Name</label>
+                                          <input type="text" class="form-control" name="name" value="<%= product.name %>">
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="brand" class="form-label">Brand</label>
+                                          <input type="text" class="form-control" name="brand" value="<%= product.brand %>">
+                                      </div>
+                                      <div class="mb-3">
+                                          <!-- <label for="category" class="form-label">Category</label>
+                                          <input type="text" class="form-control" name="category" value="<%= product.category %>"> -->
+
+                                          <select class="form-select" name="category" required>
+                                            <option value="" disabled selected>Select a category</option>
+                                            <% categories.forEach(category => { %>
+                                                <option value="<%= category._id %>"><%= category.categoryName %></option>
+                                            <% }) %>
+                                        </select>
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="price" class="form-label">Price</label>
+                                          <input type="number" class="form-control" name="price" value="<%= product.price %>">
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="description" class="form-label">Description</label>
+                                          <textarea class="form-control" name="description"><%= product.description %></textarea>
+                                      </div>
+                                      <!-- <div class="mb-3">
+                                          <label for="images" class="form-label">Product Images (Upload new images)</label>
+                                          <input type="file" class="form-control" name="images" multiple>
+                                      </div> -->
+                                      <button type="submit" class="btn btn-primary">Update Product</button>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <% }) %>
+              </tbody>
+          </table>
+      </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <form id="form" method="POST" action="/admin/products/add" enctype="multipart/form-data">
+                      <div class="mb-3">
+                          <label for="productName" class="form-label">Product Name</label>
+                          <input type="text" class="form-control" name="name">
+                      </div>
+                      <div class="mb-3">
+                          <label for="brand" class="form-label">Brand</label>
+                          <input type="text" class="form-control" name="brand">
+                      </div>
+                      <div class="mb-3">
+                        <select class="form-select" name="category" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category._id %>"><%= category.categoryName %></option>
+                            <% }) %>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                          <label for="price" class="form-label">Price</label>
+                          <input type="number" class="form-control" name="price">
+                      </div>
+                      <div class="mb-3">
+                          <label for="description" class="form-label">Description</label>
+                          <textarea class="form-control" name="description"></textarea>
+                      </div>
+                      <div class="mb-3">
+                          <label for="images" class="form-label">Product Images</label>
+                          <input type="file" class="form-control" name="images" multiple required>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Add Product</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+</main>
+<script>
+    const softDelete = function (userId){
+        console.log("function trigggeed")
+        $.ajax({
+            type:"DELETE",
+            url:`/admin/products/delete/${userId}`,
+            success: function(response){
+                alert("Product deleted")
+                location.reload();
+            },
+            error: function(error){
+                alert("error deleting product")
+                location.reload();
+                console.log(error)
+            }
+        })
+    }
+
+    document.getElementById('form').addEventListener('submit', function (e) {
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput.files.length < 3) {
+        e.preventDefault();
+        alert('Please upload at least 3 images.');
+      }
+    });
+  </script>
+  
+<%-include ("../../views/partials/admin/footer") %>

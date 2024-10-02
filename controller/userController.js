@@ -122,7 +122,7 @@ exports.userLogin =async (req,res) => {
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
-     return res.redirect('/home')
+     return res.redirect('/home') 
   }else{
     res.redirect('/userLogin')
   }

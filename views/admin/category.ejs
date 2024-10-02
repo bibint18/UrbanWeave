@@ -3,9 +3,9 @@
   <div class="container">
     <div class="d-flex justify-content-between">
       <h2>Category Management</h2>
-      <form action="/admin/category/deletedCategories">
+      <!-- <form action="/admin/category/deletedCategories">
       <button class="btn btn-primary">Deleted Users</a></button>
-    </form>
+    </form> -->
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add New Category</button>
     </div>
 
@@ -89,7 +89,6 @@
 <script> 
 
   function softDelete(userId){
-    console.log("function triggered")
     $.ajax({
       type:"PATCH",
       url:`/admin/category/delete/${userId}`,
