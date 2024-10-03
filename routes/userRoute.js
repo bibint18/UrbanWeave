@@ -16,5 +16,5 @@ router.post('/userLogin',userRouter.userLogin);
 router.post('/logout',userRouter.logout)
 // router.post('/forgotPassword',userRouter.forgotPassword)
 // router.get('/ResetPassword',userRouter.getPasswordReset)
-router.get("/products/details",userRouter.getProductDetails)
+router.get("/products/details/:id",userRouter.getProductDetails)
 module.exports = router;

@@ -1,0 +1,102 @@
+<%-include('../../views/partials/user/header')%>
+
+<div id="page_item_area">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 text-left">
+        <h3>Product Details</h3>
+      </div>		
+      <div class="col-sm-6 text-right">
+        <ul class="p_items">
+          <li><a href="#">home</a></li>
+          <li><a href="#">category</a></li>
+          <li><span>Product Title</span></li>
+        </ul>					
+      </div>	
+    </div>
+  </div>
+</div>
+
+<div class="prdct_dtls_page_area">
+  <div class="container">
+    <div class="row">
+      <!-- Product Details Image -->
+      <div class="col-md-6 col-xs-12">
+        <div class="pd_img fix">
+          <!-- Main product image -->
+          <img id="mainProductImage" src="/img/product/3.jpg" alt="Main Product Image" />
+        </div>
+
+        <!-- Thumbnail images (small boxes) -->
+        <div class="thumbnail_images">
+          <img src="/img/product/3.jpg" class="thumbnail" onclick="changeImage('/img/product/3.jpg')" alt="Thumbnail Image 1" />
+          <img src="/img/product/4.jpg" class="thumbnail" onclick="changeImage('/img/product/4.jpg')" alt="Thumbnail Image 2" />
+        </div>
+      </div>
+
+      <!-- Product Details Content -->
+      <div class="col-md-6 col-xs-12">
+        <div class="prdct_dtls_content">
+          <a class="pd_title" href="#">This is Title</a>
+          <div class="pd_price_dtls fix">
+            <!-- Product Price -->
+            <div class="pd_price">
+              <span class="new">$ 20.00</span>
+              <span class="old">(60.00)</span>
+            </div>
+            <!-- Product Rating -->
+            <div class="pd_ratng">
+              <div class="rtngs">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star-half-o"></i>
+              </div>
+            </div>
+          </div>
+          <div class="pd_text">
+            <h4>overview:</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// JavaScript function to change the main product image
+function changeImage(newImageUrl) {
+  document.getElementById('mainProductImage').src = newImageUrl;
+}
+
+// You can add additional logic if needed
+</script>
+
+<style>
+/* Thumbnail box styling */
+.thumbnail_images {
+  display: flex;
+  margin-top: 10px;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  padding: 3px;
+}
+
+.thumbnail:hover {
+  border-color: #333;
+}
+
+/* Main product image styling */
+.pd_img img {
+  max-width: 100%;
+  height: auto;
+}
+</style>
+<%-include('../../views/partials/user/footer')%>
