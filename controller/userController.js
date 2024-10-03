@@ -138,16 +138,16 @@ exports.resend = (req, res) => {
 
 exports.userLogin =async (req,res) => {
   const{email,password} = req.body
+  const user = await User.findOne({email})
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
      return res.redirect('/home') 
   }
   if (!email|| email.trim() === '' || !password || password.trim() === '') {
-    console.log("trim")
     return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
 }
-  const user = await User.findOne({email})
+  
   if(user && user.isBlocked == true){
     console.log(user.isBlocked)
     return res.render("user/login",{error:"User is Blocked"})

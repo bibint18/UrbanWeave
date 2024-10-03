@@ -3,7 +3,8 @@
 <head>
   <!-- Design by foolishdeveloper.com -->
     <title>Glassmorphism login Form Tutorial in html css</title>
- 
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="388371191980-flo41qf8ko8v7q96qvrsdhvm88h8kv1o.apps.googleusercontent.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
@@ -152,7 +153,7 @@ button{
 
         <button>Log In</button>
         <div class="social">
-          <div class="go"><i class="fab fa-google"></i>  Google</div>
+          <div  class=" go g_signin2" data-onsuccess="onSignIn"><i class="fab fa-google"></i>  Google</div>
           <div class="fb"><i class="fab fa-facebook"><a href="/userSignup">SIgnUp</a></i></div>
         </div>
     </form>
@@ -173,6 +174,35 @@ button{
                     alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
                 }
             }
+
+            
+  function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    var id_token = googleUser.getAuthResponse().id_token;
+
+    // Send the ID token to your server with a POST request
+    fetch('/auth/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id_token: id_token })
+    })
+    .then(response => {
+      if (response.ok) {
+        // Redirect to home page after successful sign-in
+        window.location.href = '/home';
+      } else {
+        // Handle errors
+        console.error('Login failed');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+
         </script>
 </body>
 

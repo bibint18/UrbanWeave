@@ -102,28 +102,29 @@ label > input:focus + span {
 
 <body>
 
-  <form action="/signupSubmit" method="post" onsubmit="validate()">
+  <form action="/signupSubmit" method="post" id="signup-form" onsubmit=" return validate(event)">
     <h1>SIGN UP</h1>
     <% if (error) { %>
       <p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  onclick="toggle()" ><%= error %></p>
   <% } %>
+  <p id="validationError" style="color: red; text-align: center;"></p>
     <label for="name">
-      <input type="text" name="username" id="name">
+      <input type="text" name="username" id="name" required>
       <span>NAME</span>
     </label>
     
     <label for="">
-      <input type="tel" name="email" id="">
+      <input type="email" name="email" id="" required>
       <span>E-MAIL </span>
     </label>
     
     <label for="">
-      <input type="text" name="password" id="">
+      <input type="text" name="password" id="pass">
       <span>PASSWORD</span>
     </label>
     
     <label for="">
-      <input type="password" name="rpassword" id="">
+      <input type="password" name="rpassword" id="cpass">
       <span>CONFIRM PASSWORD</span>
     </label>
     
@@ -135,8 +136,17 @@ label > input:focus + span {
       </span>
       </b></p>
     </div>
+
+    <div class="termofuse"></div>
+      <p><b>
+      <span>
+        Already User 
+        <a href="/google">Sign-in with Google</a>
+      </span>
+      </b></p>
+    </div>
     
-   <input type="submit" value="Submit">
+   <input type="submit" value="Submit" >
     
   </form>
 </body>
@@ -147,14 +157,38 @@ label > input:focus + span {
                 messageElement.style.display = 'none';
             }
         }, 5000);
-		function validate(){
-			console.log("ytgfyugy")
-			const password = document.getElementById('pass').value
-			const confirmPassword = document.getElementById('cpass').value
-			const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
-			if(!password.match(passwordRegex)){
-				alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
-			}
-		}
+
+
+		// function validate(){
+		// 	console.log("ytgfyugy")
+		// 	const password = document.getElementById('pass').value
+		// 	const confirmPassword = document.getElementById('cpass').value
+		// 	const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+		// 	if(!password.match(passwordRegex)){
+		// 		alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
+		// 	}
+		// }
+
+
+    function validate(event) {
+    event.preventDefault();
+    var password = document.getElementById("pass").value;
+    var confirmPassword = document.getElementById("cpass").value;
+    var errorMessage = "";
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+    if (password.length < 8) {
+      errorMessage = "Password must be at least 8 characters long.";
+    } else if (password !== confirmPassword) {
+      errorMessage = "Passwords do not match.";
+    }else if(!passwordRegex.test(password)){
+      errorMessage = "Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.";
+    }
+    var errorElement = document.getElementById('validationError');
+    if (errorMessage !== "") {
+      errorElement.textContent = errorMessage; 
+      return false;
+    }
+    document.querySelector('form').submit();
+  }
 </script>
 </html>
