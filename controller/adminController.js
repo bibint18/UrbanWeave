@@ -2,16 +2,19 @@ const Admin = require("../model/admin/adminModel");
 const User = require("../model/user/userModel");
 const bcrypt = require("bcrypt");
 exports.getAdminLogin = (req, res) => {
-  res.render("admin/admin-login");
+  res.render("admin/admin-login",{error:null});
 };
 exports.loginSubmit = async (req, res) => {
   const { email, password } = req.body;
+  if(!email || email.trim() =='' || !password || password.trim() == ''){
+    return res.render('admin/admin-login',{error:"Input cannot be empty or spaces only!"})
+  }
   console.log(email, password);
   const admin = await Admin.findOne({ email });
   if (admin && (await admin.comparePassword(password))) {
     res.redirect("/admin/dashboard");
   } else {
-    res.redirect("/admin/login");
+    res.render("admin/admin-login",{error:"invalid Username or Password"});
   }
 };
 exports.getDashboard = (req, res) => {
@@ -45,4 +48,8 @@ exports.unblockUser = async (req, res) => {
     return res.send("error unblocking user");
   }
 };
+
+exports.logout = (req,res) => {
+  res.redirect("/admin/login")
+}
 

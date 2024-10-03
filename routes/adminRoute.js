@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/login',adminRoute.getAdminLogin)
 router.get('/dashboard',adminRoute.getDashboard)
 router.post('/loginSubmit',adminRoute.loginSubmit)
+router.get('/logout',adminRoute.logout)
 //user management
 router.get("/users",adminRoute.ListUsers)
 router.patch("/user/block/:id",adminRoute.blockUser)

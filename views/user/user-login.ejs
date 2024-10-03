@@ -17,7 +17,7 @@
 			<div class="col align-items-center flex-col sign-up">
 				<div class="form-wrapper align-items-center">
 					<div class="form sign-up">
-						<form action="/signupSubmit" method="post">
+						<form action="/signupSubmit" method="post"  onsubmit="validate(e)">
 						<div class="input-group">
 							<i class='bx bxs-user'></i>
 							<input type="text" placeholder="Username" name="username" required>
@@ -28,11 +28,11 @@
 						</div>
 						<div class="input-group">
 							<i class='bx bxs-lock-alt'></i>
-							<input type="password" placeholder="Password" name="password" required>
+							<input type="password" id="pass" placeholder="Password" name="password" required>
 						</div>
 						<div class="input-group">
 							<i class='bx bxs-lock-alt'></i>
-							<input type="password" placeholder="Confirm password" name="rpassword" required>
+							<input type="password" id="cpass" placeholder="Confirm password" name="rpassword" required>
 						</div>
 						<button type="submit">
 							Sign up
@@ -53,9 +53,12 @@
 			<!-- SIGN IN -->
 			<div class="col align-items-center flex-col sign-in">
 				<div class="form-wrapper align-items-center">
-					<form action="/userLogin" method="post" class="Userlogin">
+					<form action="/userLogin" method="post" class="Userlogin" >
 					<div class="form sign-in">
-						<div class="input-group">
+						<div  class="input-group">
+							<% if (error) { %>
+								<p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  onclick="toggle()" ><%= error %></p>
+							<% } %>
 							<i class='bx bxs-user'></i>
 							<input type="text" placeholder="email-id" name="email" required>
 						</div>
@@ -75,7 +78,7 @@
 							<span>
 								Don't have an account?
 							</span>
-							<b onclick="toggle()" class="pointer">
+							<b onclick="toggle()"  class="pointer">
 								Sign up here
 							</b>
 						</p>
@@ -114,6 +117,24 @@
 		</div>
 		<!-- END CONTENT SECTION -->
 	</div>
+	<script>
+		setTimeout(function() {
+            const messageElement = document.getElementById('error');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }, 5000);
+		function validate(e){
+			console.log(e,"ytgfyugy")
+			const password = document.getElementById('pass').value
+			const confirmPassword = document.getElementById('cpass').value
+			const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+			if(!password.match(passwordRegex)){
+				// e.preventDefault();
+				alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
+			}
+		}
+	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 	crossorigin="anonymous"></script>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  * {
+    box-sizing: border-box;
+
+}
+
+body {
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1 {
+    color: #000;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+form {
+    width: 400px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 9999;
+    box-shadow: 0px 0px 10px #fff;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid black;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+form input:focus {
+    outline: none;
+    border-color: #394867;
+    transition: .3s;
+}
+
+form label {
+    position: relative;
+    height: 100%;
+    display: block;
+}
+
+form input[type="submit"] {
+    border: none;
+    background-color: #394867;
+    color: #fff;
+}
+
+form label span {
+    font-size: 10px;
+    position: absolute;
+    top: -7px;
+    left: 20px;
+    transition: .3s;
+    background-color: #fff;
+    padding: 2px;
+}
+
+label > input:focus + span {
+    color: #394867;
+    font-size: 12px;
+    transition: .3s;
+    top: -10px;
+}
+
+.termofuse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.termofuse input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+
+.termofuse a {
+    color: #394867;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+  <form action="/signupSubmit" method="post" onsubmit="validate()">
+    <h1>SIGN UP</h1>
+    <% if (error) { %>
+      <p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  onclick="toggle()" ><%= error %></p>
+  <% } %>
+    <label for="name">
+      <input type="text" name="username" id="name">
+      <span>NAME</span>
+    </label>
+    
+    <label for="">
+      <input type="tel" name="email" id="">
+      <span>E-MAIL </span>
+    </label>
+    
+    <label for="">
+      <input type="text" name="password" id="">
+      <span>PASSWORD</span>
+    </label>
+    
+    <label for="">
+      <input type="password" name="rpassword" id="">
+      <span>CONFIRM PASSWORD</span>
+    </label>
+    
+    <div class="termofuse">
+      <p><b>
+      <span>
+        Already User 
+        <a href="/userLogin">Login</a>
+      </span>
+      </b></p>
+    </div>
+    
+   <input type="submit" value="Submit">
+    
+  </form>
+</body>
+<script>
+  setTimeout(function() {
+            const messageElement = document.getElementById('error');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }, 5000);
+		function validate(){
+			console.log("ytgfyugy")
+			const password = document.getElementById('pass').value
+			const confirmPassword = document.getElementById('cpass').value
+			const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+			if(!password.match(passwordRegex)){
+				alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
+			}
+		}
+</script>
+</html>

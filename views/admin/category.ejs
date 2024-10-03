@@ -34,7 +34,7 @@
           <div class="modal fade" id="editCategoryModal-<%= category._id %>" tabindex="-1">
             <div class="modal-dialog">
               <div class="modal-content">
-                <form action="/admin/category/edit/<%= category._id %>" method="POST">
+                <form action="/admin/category/edit/<%= category._id %>" id="editCategoryForm"  method="POST">
                   <div class="modal-header">
                     <h5 class="modal-title">Edit Category</h5>
                   </div>
@@ -47,6 +47,7 @@
                       <label>Description</label>
                       <textarea name="description" class="form-control" required><%= category.description %></textarea>
                     </div>
+                  
                   </div>
                   <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save changes</button>
@@ -71,7 +72,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label>Category Name</label>
-              <input type="text" name="categoryName" class="form-control" required>
+              <input type="text" name="categoryName" id="categoryName" class="form-control" required>
             </div>
             <div class="form-group">
               <label>Description</label>
@@ -87,6 +88,8 @@
   </div>
 </main>
 <script> 
+
+   
 
   function softDelete(userId){
     $.ajax({

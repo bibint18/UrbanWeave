@@ -2,15 +2,17 @@ const User = require("../model/user/userModel");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const { text } = require("express");
-const { info } = require("console");
+const { info, error } = require("console");
 const jwtService = require('../services/jwtService')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Products = require("../model/admin/prodectModel")
 
-
+exports.getUserSignup = (req,res) => {
+  res.render("user/up",{error:null})
+}
 exports.getUserLogin = (req, res) => {
-  res.render("user/user-login");
+  res.render("user/login",{error:null});
 };
 exports.getHome =async (req, res) => {
   try{
@@ -18,13 +20,25 @@ exports.getHome =async (req, res) => {
   return res.render("home",{products});
   }catch(err){
     console.log(err);
-    return res.status(500).send("internal server error")
+    return res.render('user/login',{error:"invalid username or credentials"})
   }
 };
 let otpStore = {};
-exports.SignToLogin = (req, res) => {
+exports.SignToLogin = async (req, res) => {
   const { username, email, password, rpassword } = req.body;
   console.log(username, email, password, rpassword);
+  if(!username || username.trim() ==='' || !password || password.trim() === '' || !rpassword || rpassword.trim() === ''){
+    return res.render('user/up',{error:"Input cannot be empty or spaces only!"})
+  }
+  if(password !== rpassword){
+    return  res.render('user/up',{error:"Password and confirm password must be same!"})
+  }
+  const pre = await User.find({email:email})
+  console.log(pre)
+  if(pre.length >0){
+    return res.render('user/up',{error:"Email already exists!"})
+  }
+  
   try {
     const user = new User({ username, email, password, isverified: false });
     user.save();
@@ -58,6 +72,7 @@ exports.SignToLogin = (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    return res.render("user/up",{error:"Email already exist"})
   }
 };
 
@@ -71,13 +86,13 @@ exports.otpSubmit = (req, res) => {
   const storedOtp = otpStore[email];
   console.log(storedOtp);
   if (!storedOtp) {
-    return res.send("invalid no otp");
+    return res.send("invalid no otp");                       //here
   }
   const { newOtp, otpExpiry } = storedOtp;
   console.log(newOtp);
   if (Date.now() > otpExpiry) {
     console.log(Date.now(), otpExpiry);
-    return res.send("expired request new one");
+    return res.send("expired request new one");               //here
   }
   if (newOtp === enteredOtp) {
      User.findOneAndUpdate({email},{isverified:true})
@@ -123,17 +138,25 @@ exports.resend = (req, res) => {
 
 exports.userLogin =async (req,res) => {
   const{email,password} = req.body
-  const user = await User.findOne({email})
-  if(user.isBlocked == true){
-    return res.redirect("/userLogin")
-  }
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
      return res.redirect('/home') 
-  }else{
-    res.redirect('/userLogin')
   }
+  if (!email|| email.trim() === '' || !password || password.trim() === '') {
+    console.log("trim")
+    return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
+}
+  const user = await User.findOne({email})
+  if(user && user.isBlocked == true){
+    console.log(user.isBlocked)
+    return res.render("user/login",{error:"User is Blocked"})
+  }else{
+    return res.render("user/login",{error:"enter valid credentials"})
+  }
+  // else{
+  //   res.render('user/login',{error:"invalid Username or password"})
+  // }
 }
 exports.logout = (req, res) => {
   res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
@@ -146,3 +169,7 @@ exports.logout = (req, res) => {
 // exports.getPasswordReset =(req,res) => {
 //   res.render('user/passwordReset')
 // }
+
+exports.getProductDetails =(req,res) => {
+  res.render('user/product-details')
+}

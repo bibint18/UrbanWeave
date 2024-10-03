@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGO_URI,{
 .then(() => console.log("Connected to mongodb"))
 .catch((err) => console.log('Failed to connect',err))
 const port =2001;
-
+app.use(express.static(path.join(__dirname,"public")))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(methodOverride('method'));
@@ -21,10 +21,10 @@ const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 app.use(cookieParser())
 
+app.set('view engine','ejs');
 app.use('/admin',adminRoute);
 app.use('/',userRoute);
-app.set('view engine','ejs');
-app.use(express.static(path.join(__dirname,"./public")))
+
 app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.get('/',(req,res) => {
   res.send("helo")
