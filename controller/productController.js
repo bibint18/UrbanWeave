@@ -4,7 +4,7 @@ const {resizeAndSaveImage} = require("../middleware/productmanage")
 exports.getProducts=async (req,res) => {
   const products = await Products.find({isDeleted:false}).populate("category","categoryName")
   // const products = await Product.find()
-  const categories = await Category.find()
+  const categories = await Category.find({isDeleted:false})
   res.render("admin/productList",{products,categories})
 }
 
@@ -26,6 +26,9 @@ exports.addProduct = async (req,res) => {
       return res.status(400).json({ error: 'You must upload at least 3 images.' });
     }
   
+    // if(!name || name.trim() =='' ||  !brand || brand.trim() =='' || !description || description.trim() =='' || !price || price.trim() ==''){
+    //   return res.render("admin/productList")
+    // }
   const newProduct = new Products({
     name,
     brand,
@@ -41,7 +44,8 @@ exports.addProduct = async (req,res) => {
   return res.redirect("/admin/products")
   }catch(err){
     console.log(err)
-    res.status(500).json({ error: 'Internal Server Error' });
+    // res.status(500).json({ error: 'Internal Server Error' });
+    return res.render('admin/errorpage')
   }
 }
 

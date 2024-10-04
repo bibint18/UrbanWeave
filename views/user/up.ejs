@@ -159,19 +159,7 @@ label > input:focus + span {
         }, 5000);
 
 
-		// function validate(){
-		// 	console.log("ytgfyugy")
-		// 	const password = document.getElementById('pass').value
-		// 	const confirmPassword = document.getElementById('cpass').value
-		// 	const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
-		// 	if(!password.match(passwordRegex)){
-		// 		alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
-		// 	}
-		// }
-
-
-    function validate(event) {
-    event.preventDefault();
+        function validate(event) {
     var password = document.getElementById("pass").value;
     var confirmPassword = document.getElementById("cpass").value;
     var errorMessage = "";
@@ -180,15 +168,46 @@ label > input:focus + span {
       errorMessage = "Password must be at least 8 characters long.";
     } else if (password !== confirmPassword) {
       errorMessage = "Passwords do not match.";
-    }else if(!passwordRegex.test(password)){
+    } else if (!passwordRegex.test(password)) {
       errorMessage = "Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.";
     }
     var errorElement = document.getElementById('validationError');
     if (errorMessage !== "") {
-      errorElement.textContent = errorMessage; 
+      errorElement.textContent = errorMessage;
+      event.preventDefault(); 
       return false;
+    } else {
+      errorElement.textContent = "";
     }
-    document.querySelector('form').submit();
-  }
+
+    return true;  
+}
+
+
+
+
+        
+
+  //   function validate(event) {
+  //   event.preventDefault();
+  //   var password = document.getElementById("pass").value;
+  //   var confirmPassword = document.getElementById("cpass").value;
+  //   var errorMessage = "";
+  //   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+  //   if (password.length < 8) {
+  //     errorMessage = "Password must be at least 8 characters long.";
+  //   } else if (password !== confirmPassword) {
+  //     errorMessage = "Passwords do not match.";
+  //   }else if(!passwordRegex.test(password)){
+  //     errorMessage = "Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character.";
+  //   }
+  //   var errorElement = document.getElementById('validationError');
+  //   if (errorMessage !== "") {
+  //     errorElement.textContent = errorMessage; 
+  //     return false;
+  //   }
+  
+  //   document.querySelector('form').submit();
+  // }
 </script>
 </html>

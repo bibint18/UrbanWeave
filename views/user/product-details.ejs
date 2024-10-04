@@ -19,34 +19,25 @@
 <div class="prdct_dtls_page_area">
   <div class="container">
     <div class="row">
-      <!-- Product Details Image -->
       <div class="col-md-6 col-xs-12">
         <div class="pd_img fix">
-          <!-- Main product image -->
           <img id="mainProductImage" src="/<%=products.images[0]%>" alt="Main Product Image" />
           <script>
-            // Log the image src to verify it's correct
             const mainProductImage = document.getElementById('mainProductImage');
             console.log("Main Product Image URL:", mainProductImage.src);
         </script>
         </div>
 
-        <!-- Thumbnail images (small boxes) -->
+        <!-- Thumb -->
 
         <div class="product-thumbnails">
           <% products.images.forEach(function(image, index) { %>
               <img src="/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>" data-image="/<%= image %>" onclick="changeMainImage('/<%= image %>')" />
           <% }) %>
       </div>
-
-        <!-- <div class="thumbnail_images">
-          <img src="/img/product/3.jpg" class="thumbnail" onclick="changeImage('/img/product/3.jpg')" alt="Thumbnail Image 1" />
-          <img src="/img/product/4.jpg" class="thumbnail" onclick="changeImage('/img/product/4.jpg')" alt="Thumbnail Image 2" />
-          <img src="/img/product/5.jpg" class="thumbnail" onclick="changeImage('/img/product/5.jpg')" alt="Thumbnail Image 3" />
-        </div> -->
       </div>
 
-      <!-- Product Details Content -->
+      
       <div class="col-md-6 col-xs-12">
         <div class="prdct_dtls_content">
           <a class="pd_title" href="#"><%=products.name%></a>        

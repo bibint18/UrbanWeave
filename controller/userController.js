@@ -157,9 +157,9 @@ exports.userLogin =async (req,res) => {
     res.cookie('jwt', token, { httpOnly: true, secure: false });
      return res.redirect('/home') 
   }
-  // else{
-  //   res.render('user/login',{error:"invalid Username or password"})
-  // }
+  else{
+    res.render('user/login',{error:"invalid Username or password"})
+  }
 }
 exports.logout = (req, res) => {
   res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
