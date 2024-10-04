@@ -1,209 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Design by foolishdeveloper.com -->
-    <title>Glassmorphism login Form Tutorial in html css</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="388371191980-flo41qf8ko8v7q96qvrsdhvm88h8kv1o.apps.googleusercontent.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-    <!--Stylesheet-->
-    <style media="screen">
-      *,
-*:before,
-*:after{
-    padding: 0;
-    margin: 0;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  * {
     box-sizing: border-box;
+
 }
-body{
-    background-color: #080710;
+
+body {
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
-.background{
-    width: 430px;
-    height: 520px;
-    position: absolute;
-    transform: translate(-50%,-50%);
-    left: 50%;
-    top: 50%;
-}
-.background .shape{
-    height: 200px;
-    width: 200px;
-    position: absolute;
-    border-radius: 50%;
-}
-.shape:first-child{
-    background: linear-gradient(
-        #1845ad,
-        #23a2f6
-    );
-    left: -80px;
-    top: -80px;
-}
-.shape:last-child{
-    background: linear-gradient(
-        to right,
-        #ff512f,
-        #f09819
-    );
-    right: -30px;
-    bottom: -80px;
-}
-form{
-    height: 520px;
-    width: 400px;
-    background-color: rgba(255,255,255,0.13);
-    position: absolute;
-    transform: translate(-50%,-50%);
-    top: 50%;
-    left: 50%;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.1);
-    box-shadow: 0 0 40px rgba(8,7,16,0.6);
-    padding: 50px 35px;
-}
-form *{
-    font-family: 'Poppins',sans-serif;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-    outline: none;
-    border: none;
-}
-form h3{
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 42px;
+
+h1 {
+    color: #000;
     text-align: center;
+    margin: 0;
+    margin-bottom: 10px;
 }
 
-label{
-    display: block;
-    margin-top: 30px;
+form {
+    border: 1px solid black;
+    width: 400px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 9999;
+    box-shadow: 0px 0px 10px #fff;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid black;
+    border-radius: 8px;
+    margin-bottom: 15px;
     font-size: 16px;
-    font-weight: 500;
 }
-input{
+
+form input:focus {
+    outline: none;
+    border-color: #394867;
+    transition: .3s;
+}
+
+form label {
+    position: relative;
+    height: 100%;
     display: block;
-    height: 50px;
-    width: 100%;
-    background-color: rgba(255,255,255,0.07);
-    border-radius: 3px;
-    padding: 0 10px;
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: 300;
-}
-::placeholder{
-    color: #e5e5e5;
-}
-button{
-    margin-top: 50px;
-    width: 100%;
-    background-color: #ffffff;
-    color: #080710;
-    padding: 15px 0;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.social{
-  margin-top: 30px;
-  display: flex;
-}
-.social div{
-  background: red;
-  width: 150px;
-  border-radius: 3px;
-  padding: 5px 10px 10px 5px;
-  background-color: rgba(255,255,255,0.27);
-  color: #eaf0fb;
-  text-align: center;
-}
-.social div:hover{
-  background-color: rgba(255,255,255,0.47);
-}
-.social .fb{
-  margin-left: 25px;
-}
-.social i{
-  margin-right: 4px;
 }
 
-    </style>
+form input[type="submit"] {
+    border: none;
+    background-color: #394867;
+    color: #fff;
+}
+
+form label span {
+    font-size: 10px;
+    position: absolute;
+    top: -7px;
+    left: 20px;
+    transition: .3s;
+    background-color: #fff;
+    padding: 2px;
+}
+
+label > input:focus + span {
+    color: #394867;
+    font-size: 12px;
+    transition: .3s;
+    top: -10px;
+}
+
+.termofuse {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.termofuse input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+
+.termofuse a {
+    color: #394867;
+    text-decoration: none;
+}
+</style>
 </head>
+
 <body>
-    <div class="background">
-        <div class="shape"></div>
-        <div class="shape"></div>
+
+  <form action="/userLogin" method="post"  >
+    <h1>LOGIN</h1>
+    <% if (error) { %>
+      <p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  ><%= error %></p>
+  <% } %>
+    <label for="">
+      <input type="email" name="email" id="username" required>
+      <span>E-MAIL </span>
+    </label>
+    
+    <label for="">
+      <input type="text" name="password" id="password">
+      <span>PASSWORD</span>
+    </label>
+    <div class="termofuse">
+      <p><b>
+      <span>
+        Not A user Yet? 
+        <a href="/userSignup">Signup</a>
+      </span>
+      </b></p>
     </div>
-    <form action="/userLogin" method="post" >
-        <h3>Login Here</h3>
-        <% if (error) { %>
-            <p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  onclick="toggle()" ><%= error %></p>
-        <% } %>
-        <label for="username">Username</label>
-        <input type="text" placeholder="Username" id="username" name="email">
-
-        <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password" name="password">
-
-        <button>Log In</button>
-        <div class="social">
-          <div  class=" go g_signin2" data-onsuccess="onSignIn"><i class="fab fa-google"></i>  Google</div>
-          <div class="fb"><i class="fab fa-facebook"><a href="/userSignup">SIgnUp</a></i></div>
-        </div>
-    </form>
-    <script>
-        setTimeout(function() {
-                const messageElement = document.getElementById('error');
-                if (messageElement) {
-                    messageElement.style.display = 'none';
-                }
-            }, 5000);
-            function validate(e){
-                console.log(e,"ytgfyugy")
-                const password = document.getElementById('pass').value
-                const confirmPassword = document.getElementById('cpass').value
-                const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
-                if(!password.match(passwordRegex)){
-                    // e.preventDefault();
-                    alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.")
-                }
-            }
-
-            
-  function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    var id_token = googleUser.getAuthResponse().id_token;
-
-    // Send the ID token to your server with a POST request
-    fetch('/auth/google', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id_token: id_token })
-    })
-    .then(response => {
-      if (response.ok) {
-        // Redirect to home page after successful sign-in
-        window.location.href = '/home';
-      } else {
-        // Handle errors
-        console.error('Login failed');
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-  }
-
-
-        </script>
+    <div class="termofuse"></div>
+      <p><b>
+      <span>
+        Already User 
+        <a href="/google">Sign-in with Google</a>
+      </span>
+      </b></p>
+    </div>
+    <div class="termofuse">
+        <a href="/userSignup">Forgot Password ?</a>
+    </div>
+   <input type="submit" value="Submit" >
+  </form>
 </body>
+<script>
+  setTimeout(function() {
+            const messageElement = document.getElementById('error');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }, 5000);
 
+ 
+
+</script>
 </html>

@@ -141,21 +141,21 @@ exports.resend = (req, res) => {
 
 exports.userLogin =async (req,res) => {
   const{email,password} = req.body
+  console.log(email,password)
   const user = await User.findOne({email})
+  console.log(user)
+  if (!email|| email.trim() === '' || !password || password.trim() === '') {
+    return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
+}
+
+  if(user && user.isBlocked === true){
+    console.log(user.isBlocked)
+    return res.render("user/login",{error:"User is Blocked"})
+  }
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
      return res.redirect('/home') 
-  }
-  if (!email|| email.trim() === '' || !password || password.trim() === '') {
-    return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
-}
-  
-  if(user && user.isBlocked == true){
-    console.log(user.isBlocked)
-    return res.render("user/login",{error:"User is Blocked"})
-  }else{
-    return res.render("user/login",{error:"enter valid credentials"})
   }
   // else{
   //   res.render('user/login',{error:"invalid Username or password"})
