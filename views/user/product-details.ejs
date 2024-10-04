@@ -1,4 +1,5 @@
 <%-include('../../views/partials/user/header')%>
+<link rel="stylesheet" href="/stylesheet/magiczoom.css">
 <div id="page_item_area">
   <div class="container">
     <div class="row">
@@ -21,7 +22,9 @@
     <div class="row">
       <div class="col-md-6 col-xs-12">
         <div class="pd_img fix">
+          <a href="/<%= products.images[0] %>" class="MagicZoom" id="mainProductZoom">
           <img id="mainProductImage" src="/<%=products.images[0]%>" alt="Main Product Image" />
+          </a>
           <script>
             const mainProductImage = document.getElementById('mainProductImage');
             console.log("Main Product Image URL:", mainProductImage.src);
@@ -32,7 +35,9 @@
 
         <div class="product-thumbnails">
           <% products.images.forEach(function(image, index) { %>
-              <img src="/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>" data-image="/<%= image %>" onclick="changeMainImage('/<%= image %>')" />
+            <a href="#" class="thumbnail-link">
+              <img src="/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>" data-image="/<%= image %>" data-zoom="/<%= image %>" onclick="changeMainImage('/<%= image %>')" />
+          </a>
           <% }) %>
       </div>
       </div>
@@ -244,7 +249,7 @@
   
     
     <style>
-    /* Thumbnail box styling */
+   
     .thumbnail_images {
       display: flex;
       margin-top: 10px;
@@ -263,24 +268,20 @@
       border-color: #333;
     }
     
-    /* Main product image styling */
     .pd_img img {
       max-width: 100%;
       height: auto;
     }
     </style>
     <script>
-      // JavaScript function to change the main product image
-      // function changeImage(newImageUrl) {
-      //   document.getElementById('mainProductImage').src = newImageUrl;
-      // }
-      
-  // Function to change the main image when a thumbnail is clicked
+
   function changeMainImage(imageUrl) {
-      document.getElementById('mainProductImage').src = imageUrl;
-  }
+    document.getElementById('mainProductImage').src = imageUrl;
+    // MagicZoom.refresh(); 
+    // MagicZoom.update('mainProductImage'); 
+}
 
       </script>
 
-
+<script src="/script/magiczoom.js"></script>
 <%-include('../../views/partials/user/footer')%>
