@@ -40,11 +40,11 @@ exports.SignToLogin = async (req, res) => {
   }
   
   try {
-    const user = new User({ username, email, password, isverified: false });
-    user.save();
+    // const user = new User({ username, email, password, isverified: false });
+    // user.save();
     const newOtp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = Date.now() + 5 * 60 * 1000;
-    otpStore[email] = { newOtp: newOtp, otpExpiry };
+    otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
     console.log(otpStore);
     const Transporter = nodemailer.createTransport({
       service: "gmail",
@@ -67,7 +67,7 @@ exports.SignToLogin = async (req, res) => {
       }
       console.log(`otp sent `, info.response);
       // res.redirect(`/otp?email=${email}`);
-      res.render("user/otp", { email });
+      res.render("user/otp", { email:email });
       console.log(`otp is ${newOtp} collection: ${otpStore}`);
     });
   } catch (err) {
@@ -77,7 +77,7 @@ exports.SignToLogin = async (req, res) => {
 };
 
 exports.getOtp = (req, res) => {
-  res.render("user/otp", { email: null });
+  res.render("user/otp", { email: null,error:null });
 };
 
 exports.otpSubmit = (req, res) => {
@@ -95,11 +95,14 @@ exports.otpSubmit = (req, res) => {
     return res.send("expired request new one");               //here
   }
   if (newOtp === enteredOtp) {
-     User.findOneAndUpdate({email},{isverified:true})
-    console.log(newOtp, enteredOtp);
+    const {username,email,password} = storedOtp
+    const user = new User({ username, email, password});
+    user.save();
+    //  User.findOneAndUpdate({email},{isverified:true})
+    // console.log(newOtp, enteredOtp);
     return res.redirect("/userLogin");
   } else {
-    return res.send("nooooo");
+    return res.send("Enter valid Otp");
   }
 };
 
