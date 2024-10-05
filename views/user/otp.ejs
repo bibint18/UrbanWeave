@@ -35,19 +35,9 @@
     <input type="hidden" name="email" value="<%= email %>">
     <button id="resendOtp" disabled class="resend ms-2">Resend OTP</button>
   </form>
-  
-  <!--<a href="#" class="text-decoration-none ms-3">Resend(1/3)</a>-->
- 
 </div> </div> </div>
 </div>
-<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script> -->
-
 <script>
-  // document.getElementById('otpForm').addEventListener('submit', function(event) {
-  //   event.preventDefault();  // Prevent the default form submission
-  //   ValidateOtp();
-  // })
-  
   function ValidateOtp() {
     const otp = document.getElementById('enteredOtp').value;
     const email = document.querySelector('input[name="email"]').value;
@@ -56,8 +46,8 @@
       type:"POST",
       url:"/otpSubmit",
       data: {
-        enteredOtp: otp,  // Send OTP
-        email: email      // Send email
+        enteredOtp: otp,  
+        email: email, 
       },
       success:function(response){
         if(response.success){

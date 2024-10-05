@@ -14,6 +14,7 @@ router.get('/logout',adminRoute.logout)
 router.get("/users",adminRoute.ListUsers)
 router.patch("/user/block/:id",adminRoute.blockUser)
 router.patch("/user/unblock/:id",adminRoute.unblockUser)
+router.get("/user/search",adminRoute.searchUser)
 // category managament
 router.get("/category",categoryRoute.listCategory)
 router.post('/category/add',categoryRoute.AddCategory)

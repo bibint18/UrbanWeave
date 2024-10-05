@@ -49,6 +49,16 @@ exports.unblockUser = async (req, res) => {
   }
 };
 
+exports.searchUser =async (req,res) => {
+  const searchQuery = req.query.search
+  const users = await User.find({
+    $or:[{username:{$regex:searchQuery,$options:'i'}},
+      {email:{$regex:searchQuery,$options:'i'}}]
+  })
+  console.log(users)
+  return res.render('admin/users',{users})
+}
+
 exports.logout = (req,res) => {
   res.redirect("/admin/login")
 }
