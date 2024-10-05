@@ -44,8 +44,15 @@ exports.SignToLogin = async (req, res) => {
     // user.save();
     const newOtp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = Date.now() + 5 * 60 * 1000;
-    otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
-    console.log(otpStore);
+    req.session.otpStore = {
+      newOtp,
+      otpExpiry,
+      username,
+      email,
+      password
+    };
+    // otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
+    // console.log(otpStore);
     const Transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -80,29 +87,40 @@ exports.getOtp = (req, res) => {
   res.render("user/otp", { email: null,error:null });
 };
 
-exports.otpSubmit = (req, res) => {
+exports.otpSubmit = async (req, res) => {
   const { email, enteredOtp } = req.body;
-  console.log(email, enteredOtp);
-  const storedOtp = otpStore[email];
-  console.log(storedOtp);
+  console.log("got from ajx: ",email, enteredOtp);
+  // const storedOtp = otpStore[email];
+  const storedOtp = req.session.otpStore && req.session.otpStore.newOtp;
+  const otpExpiry = req.session.otpStore && req.session.otpStore.otpExpiry;
+  console.log("storedOtp: ",storedOtp);
+  console.log("otpexpiry: ",otpExpiry);
   if (!storedOtp) {
-    return res.send("invalid no otp");                       //here
+    // return res.send("invalid no otp");
+    return res.json({success:false,messege:"NO Otp"})                       //here
   }
-  const { newOtp, otpExpiry } = storedOtp;
-  console.log(newOtp);
+  // const { newOtp, otpExpiry } = storedOtp;
+  console.log(storedOtp);
   if (Date.now() > otpExpiry) {
     console.log(Date.now(), otpExpiry);
-    return res.send("expired request new one");               //here
+    // return res.send("expired request new one"); 
+    return res.json({success:false,messege:"Expired Request New One"})              //here
   }
-  if (newOtp === enteredOtp) {
-    const {username,email,password} = storedOtp
+  if (storedOtp === enteredOtp) {
+    // const existingUser = await User.findOne({ email });
+    //   if (existingUser) {
+    //     return res.json({ success: false, message: "Email is already registered!" });
+    //   }
+    const {username,email,password} = req.session.otpStore || {}
     const user = new User({ username, email, password});
     user.save();
     //  User.findOneAndUpdate({email},{isverified:true})
     // console.log(newOtp, enteredOtp);
-    return res.redirect("/userLogin");
+    // return res.redirect("/userLogin");
+    return res.json({success:true,redirectUrl:"/userLogin"})
   } else {
-    return res.send("Enter valid Otp");
+    // return res.send("Enter valid Otp");
+    return res.json({success:false,messege:"Please try again!"})
   }
 };
 

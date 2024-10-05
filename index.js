@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const crypto = require('crypto')
 const cookieParser = require('cookie-parser')
+const session = require('express-session');
 mongoose.connect(process.env.MONGO_URI,{
 })
 .then(() => console.log("Connected to mongodb"))
@@ -17,6 +18,13 @@ app.use(express.static(path.join(__dirname,"public")))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(methodOverride('method'));
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure to true if using HTTPS
+}));
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 app.use(cookieParser())
