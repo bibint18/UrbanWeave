@@ -6,18 +6,23 @@ exports.listCategory = async (req, res) => {
   return res.render("admin/category", { categories });
 };
 
-exports.AddCategory = (req, res) => {
+exports.AddCategory = async (req, res) => {
   try {
     console.log(req.body)
     const { categoryName, description } = req.body;
     console.log("Add category", categoryName, description);
+    const ExistingCategory = await Category.findOne({categoryName:{$regex:categoryName,$options:'i'}});
+    console.log(ExistingCategory)
+    if(ExistingCategory){
+      return res.status(400).json({success:false,message:"Category Already Exist"})
+    }
     const category = new Category({ categoryName, description });
     category.save();
     // res.redirect('/admin/category')
     return res.status(200).json({ success: true });
   } catch (err) {
     console.log(err);
-    return res.status(400).json({ success: false, messege: "something went wrong!" });
+    return res.status(400).json({ success: false, message: "something went wrong!" });
   }
 };
 

@@ -101,57 +101,90 @@
   </main>
   <script>
 
-
-    // const categoryName = document.getElementById('categoryName').value
-    // console.log(categoryName)
-    // const description = document.getElementById('description').value
-    // console.log(description)
-
-    function  AddCategory(event) {
+     function AddCategory(event) {
       event.preventDefault()
-      const categoryName = document.getElementById('categoryname').value 
-      const  description = document.getElementById('description').value
-      console.log("cat",categoryName,"des",description)
-      console.log("inside")
-      $.ajax({
-        type:"POST",
-        url:"/admin/category/add",
-        data:{
-          categoryName:categoryName,
-          description:description,
-        },
-        success: function(response){
-          console.log(response)
-          if(response.success){
+      const categoryName = document.getElementById('categoryname').value.trim()
+      const description = document.getElementById('description').value.trim()
+      console.log("cat", categoryName, "des", description)
+      console.log("inside");
+      if(!categoryName || !description ){
+        Swal.fire({
+          icon:'error',
+          title:"Empty spaces",
+          text:"Empty values are not allowed",
+          timer:2000,
+        })
+        return false
+      }
+       axios.post("/admin/category/add", { categoryName, description })
+        .then((response) => {
+          if(response.data.success){
             Swal.fire({
-              icon:"success",
-              title:"Category Added Successfully",
-              text:"added",
-              timer:1500,
-            }).then(() => {
-              window.location.href = '/admin/category'
-            })
+          icon: "success",
+          title: "Category Added Successfully",
+          text: "added",
+          timer: 1500,
+        }).then(() => {
+          window.location.href = '/admin/category'
+        })
           }else{
             Swal.fire({
-              icon:"error",
-              title:"Error",
-              text:response.messege,
+              icon: "error",
+              title:"Error occured",
+              text: response.data.message
             })
           }
-        },
-        error:function (){
-          Swal.fire({
-            icon:"error",
-            title:"oops",
-            text:"Something went wrong!"
-          })
-        }
+        })
+        
+       .catch((error) =>{
+        if(error.response&& error.response.data ){
+        console.log(error?.response?.success || "erroror")
+        Swal.fire({
+          icon: "error",
+          title: "oops",
+          text: error.response.data.message
+        })
+      }
       })
+      // $.ajax({
+      //   type:"POST",
+      //   url:"/admin/category/add",
+      //   data:{
+      //     categoryName:categoryName,
+      //     description:description,
+      //   },
+      //   success: function(response){
+      //     console.log(response)
+      //     if(response.success){
+      //       Swal.fire({
+      //         icon:"success",
+      //         title:"Category Added Successfully",
+      //         text:"added",
+      //         timer:1500,
+      //       }).then(() => {
+      //         window.location.href = '/admin/category'
+      //       })
+      //     }else{
+      //       Swal.fire({
+      //         icon:"error",
+      //         title:"Error",
+      //         text:response.messege,
+      //       })
+      //     }
+      //   },
+      //   error:function (){
+      //     Swal.fire({
+      //       icon:"error",
+      //       title:"oops",
+      //       text:"Something went wrong!"
+      //     })
+      //   }
+      // })
       return false
     }
-    
 
-    document.getElementById('addForm').addEventListener('submit',AddCategory)
+
+    document.getElementById('addForm').addEventListener('submit', AddCategory)
 
 
 
