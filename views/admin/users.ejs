@@ -43,20 +43,27 @@
 </main>
 <script>
   function blockUser(userId){
-    $.ajax({
+    const confirmBlock =confirm("Are you sure, You want to block the user")
+    if(confirmBlock){
+      $.ajax({
       url:`/admin/user/block/${userId}`,
       type:"PATCH",
       success:function (response){
         alert("user blocked")
         location.reload()
       },
-      error:function(error){
+      error: function(error){
         alert("cant block user")
       }
     })
+    }else{
+    alert("user not deleted")
+    }
     }
 
     function unblockUser(userId){
+      const confirmUnblock = confirm("Are you sure, You want to unblock the user")
+      if(confirmUnblock){
       $.ajax({
         url:`/admin/user/unblock/${userId}`,
         type:"PATCH",
@@ -68,6 +75,9 @@
           alert("cant unblock user")
         }
       })
+    }else{
+      alert("user not unblocked")
     }
+  }
 </script>
 <%-include ("../../views/partials/admin/footer") %>

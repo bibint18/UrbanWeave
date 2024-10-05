@@ -18,7 +18,7 @@ router.get("/user/search",adminRoute.searchUser)
 // category managament
 router.get("/category",categoryRoute.listCategory)
 router.post('/category/add',categoryRoute.AddCategory)
-router.patch('/category/delete/:id',categoryRoute.deleteCategory)
+router.delete('/category/delete/:id',categoryRoute.deleteCategory)
 router.get("/category/deletedCategories",categoryRoute.deletedCategories)
 router.patch("/category/revert/:id",categoryRoute.revert)
 // router.patch("/category/edit/:id",categoryRoute.editcategory)
