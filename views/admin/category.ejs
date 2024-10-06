@@ -43,19 +43,19 @@
             <div class="modal fade" id="editCategoryModal-<%= category._id %>" tabindex="-1">
               <div class="modal-dialog">
                 <div class="modal-content">
-                  <form action="/admin/category/edit/<%= category._id %>" id="editCategoryForm" method="POST">
+                  <form  id="editCategoryForm" onsubmit="return EditCategory(event,'<%= category._id %>')">
                     <div class="modal-header">
                       <h5 class="modal-title">Edit Category</h5>
                     </div>
                     <div class="modal-body">
                       <div class="form-group">
                         <label>Category Name</label>
-                        <input type="text" name="categoryName" value="<%= category.categoryName %>" class="form-control"
-                          required>
+                        <input type="text" id="editCategory" name="categoryName" value="<%= category.categoryName %>"
+                          class="form-control" required>
                       </div>
                       <div class="form-group">
                         <label>Description</label>
-                        <textarea name="description" class="form-control"
+                        <textarea id="editDescription" name="description" class="form-control"
                           required><%= category.description %></textarea>
                       </div>
 
@@ -101,51 +101,106 @@
   </main>
   <script>
 
-     function AddCategory(event) {
+
+    function EditCategory(event, userId) {
+      event.preventDefault();
+      console.log("inside ajax")
+      const CategoryName = document.getElementById('editCategory').value.trim()
+      const Description = document.getElementById('editDescription').value.trim()
+      if (!CategoryName || !Description) {
+        Swal.fire({
+          icon: "error",
+          title: 'Empty Spaces',
+          text: 'Please fill all fields',
+        })
+        return false
+      }
+      
+      $.ajax({
+        type: "POST",
+        url: `/admin/category/edit/${userId}`,
+        data: {
+          categoryName: CategoryName,
+          description: Description,
+        },
+        success: function (response) {
+          if (response.success) {
+            Swal.fire({
+              icon: "success",
+              title: 'Category Updated',
+              text: 'Category Updated Successfully',
+            }).then(() => {
+              window.location.href = '/admin/category'
+            })
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: 'Error',
+              text: 'Error Updating Category',
+            })
+          }
+        },
+        error: function () {
+          Swal.fire({
+            icon: "error",
+            title: 'OOps',
+            text: 'Something went wrong',
+          })
+        }
+      })
+      return false
+    }
+
+    // document.getElementById('editCategoryForm').addEventListener('submit',EditCategory);
+
+
+
+
+    function AddCategory(event) {
       event.preventDefault()
       const categoryName = document.getElementById('categoryname').value.trim()
       const description = document.getElementById('description').value.trim()
       console.log("cat", categoryName, "des", description)
       console.log("inside");
-      if(!categoryName || !description ){
+      if (!categoryName || !description) {
         Swal.fire({
-          icon:'error',
-          title:"Empty spaces",
-          text:"Empty values are not allowed",
-          timer:2000,
+          icon: 'error',
+          title: "Empty spaces",
+          text: "Empty values are not allowed",
+          timer: 2000,
         })
         return false
       }
-       axios.post("/admin/category/add", { categoryName, description })
+      axios.post("/admin/category/add", { categoryName, description })
         .then((response) => {
-          if(response.data.success){
+          if (response.data.success) {
             Swal.fire({
-          icon: "success",
-          title: "Category Added Successfully",
-          text: "added",
-          timer: 1500,
-        }).then(() => {
-          window.location.href = '/admin/category'
-        })
-          }else{
+              icon: "success",
+              title: "Category Added Successfully",
+              text: "added",
+              timer: 1500,
+            }).then(() => {
+              window.location.href = '/admin/category'
+            })
+          } else {
             Swal.fire({
               icon: "error",
-              title:"Error occured",
+              title: "Error occured",
               text: response.data.message
             })
           }
         })
-        
-       .catch((error) =>{
-        if(error.response&& error.response.data ){
-        console.log(error?.response?.success || "erroror")
-        Swal.fire({
-          icon: "error",
-          title: "oops",
-          text: error.response.data.message
+
+        .catch((error) => {
+          if (error.response && error.response.data) {
+            console.log(error?.response?.success || "erroror")
+            Swal.fire({
+              icon: "error",
+              title: "oops",
+              text: error.response.data.message
+            })
+          }
         })
-      }
-      })
       // $.ajax({
       //   type:"POST",
       //   url:"/admin/category/add",

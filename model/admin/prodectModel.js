@@ -1,47 +1,68 @@
-const mongoose = require("mongoose")
-const { validate } = require("./adminModel")
-const categoryModel = require("./categoryModel")
-const ProductSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const mongoose = require("mongoose");
+const { validate } = require("./adminModel");
+const categoryModel = require("./categoryModel");
+
+const ProductSchema = new mongoose.Schema(
+  {
+    ProductName: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    brand: {
+      type: String,
+      required: false,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: categoryModel,
+      required: true,
+    },
+    regularPrice: {
+      type: Number,
+      required: true,
+    },
+    salePrice: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      default: true,
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+    productOffer: {
+      type: Number,
+      default: 0,
+    },
+    isOnSale: {
+      type: Boolean,
+      default: false,
+    },
+    
+    productImage: {
+      type: [String],
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["Available", "out of stock", "Discountinued"],
+      required: true,
+      default: "Available",
+    },
+    isDeleted: {
+      type: Boolean,
+      required: false,
+    },
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  isOnSale:{
-    type:Boolean,
-    default:false,
-  },
-  brand: {
-    type: String,
-    required: true, 
-  },
-  images:{
-    type:[String],
-    required:true,
-    validate:[arrayLimit,'{PATH} must have at least 3 images']
-  },
-  stock: {
-    type: Number,
-    required: false,
-  },
-  category:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:categoryModel,
-    required:true
-  },
-  isDeleted:{
-    type:Boolean,
-    required:false
-  }
-},{timestamps:true})
-function arrayLimit(val){
-  return val.length>=3
-}
-module.exports = mongoose.model("products",ProductSchema)
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("products", ProductSchema);
+

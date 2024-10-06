@@ -50,15 +50,20 @@ exports.revert = async (req, res) => {
 exports.editcategory = async (req, res) => {
   const { categoryName, description } = req.body;
   console.log(categoryName, description);
-  if (
-    !categoryName ||
-    categoryName.trim() == "" ||
-    !description ||
-    description.trim() == ""
-  ) {
-    return res.status(400).json({ error: "Category name is required" });
-  }
+  // if (
+  //   !categoryName ||
+  //   categoryName.trim() == "" ||
+  //   !description ||
+  //   description.trim() == ""
+  // ) {
+  //   return res.status(400).json({ success:false, message:"Category name is required" });
+  // }
   const id = req.params.id;
+  console.log(id)
+  const PreCategory = await Category.findOne({categoryName:{$regex:`^${categoryName}$`,$options:'i'}})
+  if(PreCategory){
+    return res.status(400).json({success:false,message:"Category Already Exist"})
+  }
   await Category.findByIdAndUpdate(id, { categoryName, description });
   res.redirect("/admin/category");
   // return  res.status(200).json({ success: true, message: "Category updated successfully" });

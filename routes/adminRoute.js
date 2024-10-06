@@ -4,7 +4,11 @@ const categoryRoute = require("../controller/category")
 const productRoute = require("../controller/productController")
 const productManage = require("../middleware/productmanage")
 const deletedRoute = require("../controller/deleted")
+const ProduRoute = require('../controller/proController')
 const router = express.Router();
+const  multer = require('multer');
+const storage = require('../helpers/multer')
+const  upload = multer({ storage: storage })
 
 router.get('/login',adminRoute.getAdminLogin)
 router.get('/dashboard',adminRoute.getDashboard)
@@ -30,4 +34,7 @@ router.delete('/products/delete/:id',productRoute.deleteProduct)
 router.post("/products/edit/:id",productRoute.editProduct)
 //deleted section
 router.get("/deletedHome",deletedRoute.getHome)
+//product section
+router.get('/getAddProduct',ProduRoute.getAddProduct)
+router.post('/product/add',upload.array('images',4),ProduRoute.AddProduct)
 module.exports = router;
