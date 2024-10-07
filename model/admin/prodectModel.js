@@ -50,6 +50,21 @@ const ProductSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
+    sizes: [
+      {
+        size: {
+          type: String,
+          enum: ['S', 'M', 'L', 'XL'],
+          required: true,
+        },
+        stock: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+      },
+    ],
+
     status: {
       type: String,
       enum: ["Available", "out of stock", "Discountinued"],

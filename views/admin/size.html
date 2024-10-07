@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    
+    .product-form {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .product-form .d-flex {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+    }
+
+    .product-form div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product-form label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .product-form input.tiny-box {
+      width: 50px;
+      padding: 5px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .product-form input.tiny-box:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="product-form  mb-3">
+    <div class="d-flex flex-row gap-4 align-item-center">
+      <div>
+        <label class="mr-5" for="size_s">S</label>
+        <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box">
+      </div>
+      <div>
+        <label class="mr-5" for="size_m">M</label>
+        <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box">
+      </div>
+      <div>
+        <label class="mr-5" for="size_l">L</label>
+        <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box">
+      </div>
+      <div>
+        <label class="mr-5" for="size_xl">XL</label>
+        <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box">
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

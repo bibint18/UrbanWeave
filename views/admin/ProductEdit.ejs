@@ -87,6 +87,31 @@
                                         <input name="color" type="text" class="form-control border" value="<%=products.color%>">
                                     </div>
                                     <div id="color-error" class="error-message"></div>
+
+                                    <!--aded-->
+                                    <div class="product-form  mb-3">
+                                        <div class="d-flex flex-row gap-4 align-item-center">
+                                            <label class="form-label">sizes:</label>
+                                          <div>
+                                            <label class="mr-5" for="size_s">S</label>
+                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.S %>" >
+                                          </div>
+                                          <div>
+                                            <label class="mr-5" for="size_m">M</label>
+                                            <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box" >
+                                          </div>
+                                          <div>
+                                            <label class="mr-5" for="size_l">L</label>
+                                            <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box" >
+                                          </div>
+                                          <div>
+                                            <label class="mr-5" for="size_xl">XL</label>
+                                            <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box" >
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                    <!---->
                                 </div>
 
                             </div>

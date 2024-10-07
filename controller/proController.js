@@ -31,6 +31,11 @@ exports.AddProduct = async (req,res) => {
             console.log('Directory does not exist, creating...');
             fs.mkdirSync(uploadDir, { recursive: true });
         }
+
+        const sizes = Object.entries(product.sizes).map(([size, stock]) => ({
+          size:size.toUpperCase(),
+          stock: parseInt(stock, 10), // Convert stock to a number
+        }));
     const images =[]
     if(req.files && req.files.length>0){
       for(let i=0;i<req.files.length;i++){
@@ -54,7 +59,8 @@ exports.AddProduct = async (req,res) => {
       salePrice:product.salePrice,
       quantity:product.quantity,
       color:product.color,
-      productImage:images
+      productImage:images,
+      sizes:sizes,
     })
     await newProducts.save()
     return res.redirect('/admin/getAddProduct')
