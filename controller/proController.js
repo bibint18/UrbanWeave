@@ -64,3 +64,69 @@ exports.AddProduct = async (req,res) => {
     return res.json("something went wrong!")
   }
 }
+
+exports.ListProducts =async (req,res) => {
+  try {
+    const products = await Product.find().populate('category');
+    const categories = await Category.find({isDeleted:false})
+    res.render('admin/productPage',{products,categories})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.AddProductOffer =async (req,res) => {
+  try{
+  const {productId,percentage} =req.body
+  const FindProduct = await Product.findOne({_id:productId})
+  FindProduct.salePrice = FindProduct.salePrice - Math.floor(FindProduct.regularPrice * (percentage/100))
+  FindProduct.productOffer = parseInt(percentage)
+  await FindProduct.save();
+  return res.status(200).json({success:true})
+  }catch(err){
+    console.log(err)
+    return res.status(500).json({success:false})
+  }
+}
+
+
+exports.RemoveProductOffer =async (req,res) => {
+  try{
+  const {productId} = req.body
+  console.log(productId)
+  const  FindProduct = await Product.findOne({_id:productId})
+    console.log("REMOVE",FindProduct)
+  if(!FindProduct){
+    console.log("nooooooooooooooo")
+  }
+  const percentage = FindProduct.productOffer
+  FindProduct.salePrice= FindProduct.salePrice + Math.floor(FindProduct.regularPrice *(percentage/100))
+  FindProduct.productOffer = 0
+  await FindProduct.save()
+  return res.status(200).json({success:true})
+  }catch(err){
+    return res.status(500).json({success:false})
+  }
+}
+
+exports.unBlockProduct = async (req,res) => {
+  try {
+    const id = req.query.id
+    await Product.updateOne({_id:id},{$set:{isDeleted:false}})
+    return res.redirect('/admin/product')
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.blockProduct = async (req,res) => {
+  try{
+  const id = req.query.id
+  console.log(id)
+  await Product.updateOne({_id:id},{$set:{isDeleted:true}})
+  return res.redirect("/admin/product")
+  }catch(err){{
+    console.log(err)
+    return res.status(500).json({success:false})
+  }}
+}

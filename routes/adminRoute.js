@@ -37,4 +37,9 @@ router.get("/deletedHome",deletedRoute.getHome)
 //product section
 router.get('/getAddProduct',ProduRoute.getAddProduct)
 router.post('/product/add',upload.array('images',4),ProduRoute.AddProduct)
+router.get('/product',ProduRoute.ListProducts)
+router.post('/product/offer/add',ProduRoute.AddProductOffer)
+router.post('/product/offer/remove',ProduRoute.RemoveProductOffer)
+router.get('/product/unblock',ProduRoute.unBlockProduct)
+router.get('/product/block',ProduRoute.blockProduct)
 module.exports = router;
