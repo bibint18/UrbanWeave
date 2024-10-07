@@ -42,4 +42,7 @@ router.post('/product/offer/add',ProduRoute.AddProductOffer)
 router.post('/product/offer/remove',ProduRoute.RemoveProductOffer)
 router.get('/product/unblock',ProduRoute.unBlockProduct)
 router.get('/product/block',ProduRoute.blockProduct)
+router.get('/product/getEdit',ProduRoute.getEditProduct)
+router.post('/product/edit/:id',upload.array('images',4),ProduRoute.editProducts)
+router.post('/product/deleteImage',ProduRoute.deleteImage)
 module.exports = router;

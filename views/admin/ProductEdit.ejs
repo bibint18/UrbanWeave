@@ -1,3 +1,5 @@
+
+
 <%-include('../../views/partials/admin/header')%>
 
     <head>
@@ -31,12 +33,12 @@
             <div class="col-lg-6">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form method="post" action="/admin/product/add" enctype="multipart/form-data" onsubmit="return validateForm()
+                        <form method="post" action="/admin/product/edit/<%=products._id%>" enctype="multipart/form-data" onsubmit="return validateForm()
 ">
                             <div class="mb-4">
-                                <label for="product_name" class="form-label">Product Name</label>
+                                <label for="product_name" class="form-label">Product</label>
                                 <input type="text" placeholder="Type here" name="productName"
-                                    class="form-control border" id="product_name">
+                                    class="form-control border" id="product_name" value="<%=products.ProductName%>">
                                 <div id="productName-error" class="error-message"></div>
                             </div>
                             <!-- <div class="col-lg-4 mb-4">
@@ -48,32 +50,31 @@
                                 <div id="brand-error" class="error-message"></div>
                             </div> -->
                             <div class="mb-4">
-                                <label class="form-label">Full description</label>
-                                <textarea placeholder="Type here" id="descriptionid" name="description"
-                                    class="form-control border" rows="4"></textarea>
-                                <div id="description-error" class="error-message"></div>
-                            </div>
+                              <label class="form-label">Full description</label>
+                              <input name="descriptionData" value="<%=products.description%>"  class="form-control border"
+                                  rows="4" id="descriptionid">
+                                  <div id="description-error" class="error-message"></div>
+                          </div>
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Regular price</label>
-                                        <input placeholder="$" name="regularPrice" type="text"
-                                            class="form-control border" id="'regularPrice'">
+                                        <input placeholder="$" name="regularPrice" id='regularPrice' type="text"
+                                            class="form-control border" value="<%=products.regularPrice%>">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Sale price</label>
-                                        <input placeholder="$" name="salePrice" type="text" class="form-control border">
-
+                                        <input placeholder="$" name="salePrice" type="text" class="form-control border" value="<%=products.salePrice%>">
                                     </div>
                                     <div id="salePrice-error" class="error-message"></div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Quantity</label>
-                                        <input placeholder="" name="quantity" type="text" class="form-control border">
+                                        <input placeholder="" name="quantity" type="text" class="form-control border" value="<%=products.quantity%>" id="quantity">
                                         <div id="quantity-error" class="error-message"></div>
                                     </div>
                                 </div>
@@ -83,7 +84,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Color</label>
-                                        <input name="color" type="text" class="form-control border">
+                                        <input name="color" type="text" class="form-control border" value="<%=products.color%>">
                                     </div>
                                     <div id="color-error" class="error-message"></div>
                                 </div>
@@ -95,11 +96,11 @@
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Category</label>
                                             <select class="form-select border" style="width: 150px;" name="category">
-                                                <% categories.forEach(category=> { %>
-                                                    <option value="<%= category._id %>">
-                                                        <%= category.categoryName %>
+                                                  <% for(let i=0;i<categories.length;i++) {%>
+                                                    <option value="<%= categories[i].categoryName%>">
+                                                       <%=categories[i].categoryName%>
                                                     </option>
-                                                    <% }) %>
+                                                    <% } %>
                                             </select>
                                             <div id="category-error" class="error-message"></div>
                                         </div>
@@ -110,10 +111,30 @@
                                 <div class="card-header">
                                     <h4>Choose images</h4>
                                 </div>
+                               
                                 <div class="border row">
                                     <div id="addedImagesContainer" class="thumbnails-container"></div>
                                 </div>
                                 <div class="row">
+
+                                  <% for(let i=0;i<products.productImage.length;i++) {%>
+                                  <div class="col-md-12">
+                                    <div class="mb-4">
+                                        <div class="col-12">
+                                            <td>
+                                                <input type="hidden" value="products.productImage[i]" id="imageDatas">
+                                                <img class="rounded" style="width: 50px; height: 60px;"
+                                                    src="/uploads/re-image/<%=products.productImage[i]%>"
+                                                    alt="">
+                                                <i onclick="deleteSingleImage('<%=products.productImage[i]%>','<%=products._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x"></i>
+                                            </td>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <% } %>
+
+
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView1">
                                         <input class="form-control" type="file" name="images" id="input1"
@@ -195,6 +216,22 @@
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
     <script>
 
+
+function deleteSingleImage(imageId,productId){
+  $.ajax({
+    url:"/admin/product/deleteImage",
+    method:'post',
+    data:{
+      imageName:imageId,
+      productId:productId,
+    },
+    success: function(response){
+      if(response.success){
+        window.location.reload();
+      }
+    }
+  })
+}
 
 
 function validateAndSubmit() {
@@ -341,7 +378,7 @@ function handleFileSelect(event) {
             const images2 = document.getElementById('input2')
             const images3 = document.getElementById('input3')
             const images4 = document.getElementById('input4')
-            const quantity = document.getElementsByName('quantity')
+            const quantity = document.getElementById('quantity')
             let isValid = true
             if (name.trim() === "") {
                 displayErrorMessage('productName-error', 'Please enter a product name.');
@@ -376,6 +413,11 @@ function handleFileSelect(event) {
                 isValid = false;
             }
 
+            if (price.trim() === "") {
+                displayErrorMessage('regularPrice-error', 'Please enter a color.');
+                isValid = false;
+            }
+
 
 
 
@@ -393,6 +435,8 @@ function handleFileSelect(event) {
                 displayErrorMessage('color-error', 'Please enter a color.');
                 isValid = false;
             }
+
+            
 
 
             if (images.files.length === 0) {
@@ -432,4 +476,4 @@ function handleFileSelect(event) {
 
 
     </script>
-   <%-include('../../views/partials/admin/footer')%>
+ <%-include('../../views/partials/admin/footer')%>

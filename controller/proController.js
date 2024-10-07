@@ -130,3 +130,68 @@ exports.blockProduct = async (req,res) => {
     return res.status(500).json({success:false})
   }}
 }
+
+exports.getEditProduct = async (req,res) => {
+  const  id = req.query.id
+  const products = await Product.findOne({_id:id})
+  const categories = await Category.find({isDeleted:false})
+  return res.render('admin/ProductEdit',{products,categories})
+}
+
+exports.editProducts = async (req,res) => {
+  try{
+  const id = req.params.id
+  console.log(id)
+  const products = await Product.findOne({_id:id})
+  const data = req.body
+  const existing = await Product.findOne({ProductName:data.productName,_id:{$ne:id}})
+  if(existing){
+    return res.status(400).json({success:false,message:"Product Name already exist"})
+  }
+  const images =[]
+  if(req.files && req.files.length>0){
+    for(let i=0;i<req.files.length;i++){
+      images.push(req.files[i].filename)
+    }
+  }
+  const updatedData ={
+    ProductName:data.productName,
+    description:data.description,
+    category:products.category,
+    regularPrice:data.regularPrice,
+    salePrice:data.salePrice,
+    quantity:data.quantity,
+    color:data.color,
+    
+  }
+  if(req.files.length > 0){
+    updatedData.$push = {productImage:{$each:images}}
+  }
+  await Product.findByIdAndUpdate(id,updatedData,{new:true})
+  res.redirect('/admin/product')
+}catch(err){
+  console.log(err)
+  return res.status(500).json({success:false,message:err})
+}
+}
+
+
+exports.deleteImage =async (req,res) => {
+  try{
+  const{imageName,productId} = req.body
+  console.log(imageName,productId)
+  const product = await Product.findByIdAndUpdate(productId,{$pull:{productImage:imageName}})
+  const imagePath = path.join("public","uploads","re-image",imageName)
+  if(fs.existsSync(imagePath)){
+    fs.unlinkSync(imagePath)
+    console.log(`image ${imageName} deleted `)
+  }else{
+    console.log(`image ${imageName} not found `)
+  }
+  return res.status(200).json({success:true})
+}catch(err){
+  console.log(err)
+  res.status(500).json({success:false})
+
+}
+}
