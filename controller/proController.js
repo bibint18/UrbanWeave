@@ -75,7 +75,8 @@ exports.ListProducts =async (req,res) => {
   try {
     const products = await Product.find().populate('category');
     const categories = await Category.find({isDeleted:false})
-    res.render('admin/productPage',{products,categories})
+    // const searchQuery=''
+    res.render('admin/productPage',{products,categories,searchQuery:null})
   } catch (error) {
     console.log(error)
   }
@@ -160,6 +161,13 @@ exports.editProducts = async (req,res) => {
       images.push(req.files[i].filename)
     }
   }
+  const sizes = [
+    { size: 'S', stock: data.sizes.s || 0 },
+    { size: 'M', stock: data.sizes.m || 0 },
+    { size: 'L', stock: data.sizes.l || 0 },
+    { size: 'XL', stock: data.sizes.xl || 0 }
+  ];
+
   const updatedData ={
     ProductName:data.productName,
     description:data.description,
@@ -168,7 +176,7 @@ exports.editProducts = async (req,res) => {
     salePrice:data.salePrice,
     quantity:data.quantity,
     color:data.color,
-    
+    sizes:sizes,
   }
   if(req.files.length > 0){
     updatedData.$push = {productImage:{$each:images}}
@@ -199,5 +207,27 @@ exports.deleteImage =async (req,res) => {
   console.log(err)
   res.status(500).json({success:false})
 
+}
+}
+
+
+exports.SearchProduct =async (req,res) => {
+  try{
+  const search = req.query.search
+  console.log(search)
+  const categories = await Category.find({ isDeleted: false });
+  console.log("cat",categories)
+
+  const matchingCategories = await Category.find({
+    categoryName: { $regex: search, $options: 'i' }
+  }).select('_id');
+  console.log("match",matchingCategories)
+  // const products =await Product.find({ProductName:{$regex:search,$options:'i'}})
+  const products = await Product.find({$or:[{ProductName:{$regex:search,$options:'i'}},{category: { $in: matchingCategories.map(cat => cat._id)}}]}).populate('category');
+  console.log("pro",products);
+  
+  return res.render('admin/productPage',{products,categories,searchQuery:search})
+}catch(error){
+  return res.send(error)
 }
 }

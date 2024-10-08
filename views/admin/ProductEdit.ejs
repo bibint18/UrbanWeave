@@ -94,19 +94,19 @@
                                             <label class="form-label">sizes:</label>
                                           <div>
                                             <label class="mr-5" for="size_s">S</label>
-                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.S %>" >
+                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box"  value="<%= products.sizes.find(sizeObj => sizeObj.size === 'S') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>"> 
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_m">M</label>
-                                            <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box" >
+                                            <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'M') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>" >
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_l">L</label>
-                                            <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box" >
+                                            <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'L') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>" >
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_xl">XL</label>
-                                            <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box" >
+                                            <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'XL') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>" >
                                           </div>
                                         </div>
                                       </div>
@@ -399,10 +399,10 @@ function handleFileSelect(event) {
             const saleprice = document.getElementsByName('salePrice')[0].value;
             const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
-            const images = document.getElementById('input1')
-            const images2 = document.getElementById('input2')
-            const images3 = document.getElementById('input3')
-            const images4 = document.getElementById('input4')
+            // const images = document.getElementById('input1')
+            // const images2 = document.getElementById('input2')
+            // const images3 = document.getElementById('input3')
+            // const images4 = document.getElementById('input4')
             const quantity = document.getElementById('quantity')
             let isValid = true
             if (name.trim() === "") {
@@ -464,22 +464,22 @@ function handleFileSelect(event) {
             
 
 
-            if (images.files.length === 0) {
-                displayErrorMessage("images-error", 'Please select an image.');
-                isValid = false;
-            }
-            if (images2.files.length === 0) {
-                displayErrorMessage("images-error2", 'Please select an image.');
-                isValid = false;
-            }
-            if (images3.files.length === 0) {
-                displayErrorMessage("images-error3", 'Please select an image.');
-                isValid = false;
-            }
-            if (images4.files.length === 0) {
-                displayErrorMessage("images-error4", 'Please select an image.');
-                isValid = false;
-            }
+            // if (images.files.length === 0) {
+            //     displayErrorMessage("images-error", 'Please select an image.');
+            //     isValid = false;
+            // }
+            // if (images2.files.length === 0) {
+            //     displayErrorMessage("images-error2", 'Please select an image.');
+            //     isValid = false;
+            // }
+            // if (images3.files.length === 0) {
+            //     displayErrorMessage("images-error3", 'Please select an image.');
+            //     isValid = false;
+            // }
+            // if (images4.files.length === 0) {
+            //     displayErrorMessage("images-error4", 'Please select an image.');
+            //     isValid = false;
+            // }
             return isValid;
         }
 

@@ -45,4 +45,5 @@ router.get('/product/block',ProduRoute.blockProduct)
 router.get('/product/getEdit',ProduRoute.getEditProduct)
 router.post('/product/edit/:id',upload.array('images',4),ProduRoute.editProducts)
 router.post('/product/deleteImage',ProduRoute.deleteImage)
+router.get('/product/search',ProduRoute.SearchProduct)
 module.exports = router;

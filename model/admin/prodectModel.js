@@ -43,7 +43,7 @@ const ProductSchema = new mongoose.Schema(
     },
     isOnSale: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     
     productImage: {
