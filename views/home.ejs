@@ -151,9 +151,9 @@
 										<div class="product-grid">
 												<div class="product-image">
 														<a href="/products/details/<%=product._id%>">
-																<img class="pic-1" src="<%= product.images[0] %>" alt="product image 1">
-																<% if (product.images[1]) { %>
-																		<img class="pic-2" src="<%= product.images[1] %>" alt="product image 2">
+																<img class="pic-1" src="/uploads/re-image/<%= product.productImage[0] %>" alt="product image 1">
+																<% if (product.productImage[1]) { %>
+																		<img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
 																<% } %>
 														</a>
 														<ul class="social">
@@ -173,11 +173,10 @@
 														<li class="fa fa-star"></li>
 												</ul>
 												<div class="product-content">
-														<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.name %></a></h3>
-														<%= console.log(product.name) %>
-														<div class="price">$<%= product.price %>
-																<% if (product.oldPrice) { %>
-																		<span>$<%= product.oldPrice %></span>
+														<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.ProductName %></a></h3>
+														<div class="price">$<%= product.salePrice %>
+																<% if (product.regularPrice) { %>
+																		<span>$<%= product.regularPrice %></span>
 																<% } %>
 														</div>
 														<a class="add-to-cart" href="#">+ Add To Cart</a>
@@ -213,11 +212,11 @@
 					<div class="col-md-6 text-left">
 						<div class="special_info">			
 							<span>Hurry Up! Offer Ends In</span>
-							<h3>Winter Flash Sale <br>End Soon</h3>
-							<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy Lorem Ipsum</p>																		
+							<h3>DIWALI Flash Sale <br>End Soon</h3>
+							<p>Hey Enjoy the upcoming Diwali with us!. Wide varirty of dresses and mindblowing offers. Don't think just Shop now!!!</p>																		
 							<div id="countdown" class="text-center"></div>	
 							<div class="clearfix"></div>
-							<a href="#" class="btn main_btn">Shop Now</a>					
+							<a href="/shop" class="btn main_btn">Shop Now</a>					
 						</div>
 					</div>
 				</div>
@@ -251,9 +250,9 @@
 								<a href="/products/details/<%=product._id%>">
 									<!-- <img class="pic-1" src="img/product/1.jpg" alt="product image">
 									<img class="pic-2" src="img/product/2.jpg" alt="product image"> -->
-									<img class="pic-1" src="<%= product.images[0] %>" alt="product image 1">
-																<% if (product.images[1]) { %>
-																		<img class="pic-2" src="<%= product.images[1] %>" alt="product image 2">
+									<img class="pic-1" src="/uploads/re-image/<%= product.productImage[0] %>" alt="product image 1">
+																<% if (product.productImage[1]) { %>
+																		<img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
 																<% } %>
 								</a>
 								<ul class="social">
@@ -274,10 +273,10 @@
 								<li class="fa fa-star"></li>
 							</ul>
 							<div class="product-content">
-								<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.name %></a></h3>
-								<div class="price">$<%= product.price %>
-									<% if (product.oldPrice) { %>
-											<span>$<%= product.oldPrice %></span>
+								<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.ProductName %></a></h3>
+								<div class="price">$<%= product.salePrice %>
+									<% if (product.regularPrice) { %>
+											<span>$<%= product.regularPrice %></span>
 									<% } %>
 							</div>
 								<a class="add-to-cart" href="#">+ Add To Cart</a>
@@ -294,7 +293,7 @@
 		<!-- End Featured Products Area -->
 
 		<!-- Testimonials Area -->
-		<section id="testimonials" class="testimonials_area" style="background: url(img/testimonial-bg.jpg); background-size: cover; background-attachment: fixed;">
+		<!-- <section id="testimonials" class="testimonials_area" style="background: url(img/testimonial-bg.jpg); background-size: cover; background-attachment: fixed;">
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8 center-block">
@@ -361,10 +360,12 @@
 					</div>
 				</div>
 			</div>
-		</section> <!-- End STestimonials Area -->		
+		</section>  -->
+		
+		<!-- End STestimonials Area -->		
 		
         <!--  Blog -->
-        <section id="blog_area" class="section_padding">
+        <!-- <section id="blog_area" class="section_padding">
             <div class="container">	
 				<div class="row">
 					<div class="col-md-12 text-center">
@@ -397,7 +398,8 @@
 								<p>Proin in blandit lacus. Nam pellentesque tortor eget dui feugiat venenatis ....</p>
 							</div>
 						</div>
-					</div> <!--  End Col -->				
+					</div> 
+					  End Col 			
 					
 					<div class="col-lg-4 col-md-6 col-sm-6">
 						<div class="single_blog">
@@ -419,7 +421,8 @@
 								<p>Proin in blandit lacus. Nam pellentesque tortor eget dui feugiat venenatis ....</p>
 							</div>
 						</div>
-					</div> <!--  End Col -->				
+					</div> 
+					  End Col 		
 					
 					<div class="col-lg-4 col-md-6 col-sm-6">
 						<div class="single_blog">
@@ -441,11 +444,12 @@
 								<p>Proin in blandit lacus. Nam pellentesque tortor eget dui feugiat venenatis ....</p>
 							</div>
 						</div>
-					</div> <!--  End Col -->
+					</div> 
+					 End Col 
 
 				</div>
             </div>
-        </section>
+        </section> -->
         <!--  Blog end -->
 		
 

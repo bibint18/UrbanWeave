@@ -4,6 +4,7 @@ const router = express.Router();
 const userRouter = require('../controller/userController')
 const authMiddleware= require('../middleware/authMiddleware')
 const homePageRoute = require("../controller/homepage")
+const HomeRoute = require('../controller/homeController')
 const jwt = require("jsonwebtoken")
 router.get('/userLogin',userRouter.getUserLogin)
 router.get('/home',userRouter.getHome)
@@ -17,5 +18,9 @@ router.post('/logout',userRouter.logout)
 // router.post('/forgotPassword',userRouter.forgotPassword)
 // router.get('/ResetPassword',userRouter.getPasswordReset)
 router.get("/products/details/:id",userRouter.getProductDetails)
+
+//inside home
+
+router.get('/shop',HomeRoute.ShopPage)
 
 module.exports = router;

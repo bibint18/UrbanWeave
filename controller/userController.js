@@ -23,6 +23,7 @@ exports.getHome =async (req, res) => {
     return res.render('user/login',{error:"invalid username or credentials"})
   }
 };
+
 let otpStore = {};
 exports.SignToLogin = async (req, res) => {
   const { username, email, password, rpassword } = req.body;
