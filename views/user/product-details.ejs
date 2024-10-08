@@ -1,4 +1,7 @@
 <%-include('../../views/partials/user/header')%>
+
+
+
 <link rel="stylesheet" href="/stylesheet/magiczoom.css">
 <div id="page_item_area">
   <div class="container">
@@ -29,9 +32,9 @@
 
         <div class="product-thumbnails">
           <% products.productImage.forEach(function(image, index) { %>
-            <a href="#" class="thumbnail-link">
+            <!-- <a href="#" class="thumbnail-link"> -->
               <img src="/uploads/re-image/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>"   onclick="changeMainImage('/uploads/re-image/<%= image %>')" />
-          </a>
+          <!-- </a> -->
           <% }) %>
       </div>
       </div>
@@ -150,7 +153,7 @@
                     <span>$<%= product.oldPrice %></span>
                 <% } %>
             </div>
-              <a class="add-to-cart" href="#">+ Add To Cart</a>
+              <a class="add-to-cart" href="">+ Add To Cart</a>
             </div>
           </div>
         </div>
@@ -187,14 +190,45 @@
       max-width: 100%;
       height: auto;
     }
+    /* .pd_img {
+    position: relative; /* Ensure positioning context for the zoomed image 
+} */
     </style>
     <script>
 
-  function changeMainImage(imageUrl) {
-    document.getElementById('mainProductImage').src = imageUrl;
-    // MagicZoom.refresh(); 
-    // MagicZoom.update('mainProductImage'); 
-}
+//   function changeMainImage(imageUrl) {
+//     document.getElementById('mainProductImage').src = imageUrl;
+// }
+
+function changeMainImage(imageUrl) {
+  console.log("Image clicked:", imageUrl);
+        const mainProductImage = document.getElementById('mainProductImage');
+        mainProductImage.src = imageUrl;
+
+        // Reinitialize the magnify zoom after changing the image
+        mainProductImage.onload = function() {
+        $('.pd_img img').extmDestroy(); // Destroy any previous instance of the plugin
+        $('.pd_img img').extm({
+          zoomLevel:2,
+          position:'right',
+          offset:{x:0,y:0},
+          rightPad:20,
+          height:'auto'
+        }); // Reinitialize the zoom effect
+    }
+  }
+
+    // Initialize the magnify zoom effect on the main product image
+    $(document).ready(function() {
+        $('.pd_img img').extm({
+            zoomLevel: 2, // Customize the zoom level if needed
+            position:'right',
+            //  // Change to 'hover' if you prefer to zoom on hover
+            offset: { x: 0, y: 0 },
+            rightPad: 20,
+            height:'auto',
+        });
+    });
 
       </script>
 
