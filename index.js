@@ -33,7 +33,7 @@ app.set('view engine','ejs');
 app.use('/admin',adminRoute);
 app.use('/',userRoute);
 
-app.use('/uploads',express.static(path.join(__dirname,"uploads")))
+// app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.get('/',(req,res) => {
   res.send("helo")
 })

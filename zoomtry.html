@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extended Magnify Example</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .example {
+            width: 300px; /* Set your desired width */
+            height: auto;
+            cursor: pointer;
+        }
+
+        .magnified-container {
+            position: relative;
+            overflow: hidden;
+            display: inline ;
+        }
+
+        .magnified-image {
+            position: absolute;
+            border: 1px solid #ccc;
+            z-index: 1000;
+        }
+    </style>
+    <!-- Load jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Load the minified plugin from CDN -->
+    <script src="/hover-extended-magnify/extm.min.js"></script>
+</head>
+<body>
+    <div class="magnified-container">
+        <img class="example" src="/GM1.jpg" alt="Product Image" />
+    </div>
+    <!-- <img class="example1" src="/GM1.jpg" alt="Product Image" /> -->
+    <script>
+        $(document).ready(function() {
+            // Check if plugin is loaded
+            
+            if (typeof $.fn.extm !== 'undefined') {
+                // Initialize the hover magnify plugin with options
+                $('.example').extm({
+                    // zoomElement: $('.magnified-container'), // Place magnified image in specified container
+                    imageSrc: '/GM1.jpg', // Large version of the image
+                    squareOverlay: true, // Display a movable magnifying glass
+                    zoomLevel: 2, // Customize zoom level
+                    zoomSize: 1000 // Set width of magnified image
+                });
+            } else {
+                console.log("Plugin not loaded correctly.");
+            }
+        });
+    </script>
+</body>
+</html>

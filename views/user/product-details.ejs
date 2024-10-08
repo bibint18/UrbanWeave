@@ -22,21 +22,15 @@
     <div class="row">
       <div class="col-md-6 col-xs-12">
         <div class="pd_img fix">
-          <a href="/<%= products.images[0] %>" class="MagicZoom" id="mainProductZoom">
-          <img id="mainProductImage" src="/<%=products.images[0]%>" alt="Main Product Image" />
-          </a>
-          <script>
-            const mainProductImage = document.getElementById('mainProductImage');
-            console.log("Main Product Image URL:", mainProductImage.src);
-        </script>
+          <img id="mainProductImage" src="/uploads/re-image/<%= products.productImage[0] %>" alt="Main Product Image" />
         </div>
 
         <!-- Thumb -->
 
         <div class="product-thumbnails">
-          <% products.images.forEach(function(image, index) { %>
+          <% products.productImage.forEach(function(image, index) { %>
             <a href="#" class="thumbnail-link">
-              <img src="/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>" data-image="/<%= image %>" data-zoom="/<%= image %>" onclick="changeMainImage('/<%= image %>')" />
+              <img src="/uploads/re-image/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>"   onclick="changeMainImage('/uploads/re-image/<%= image %>')" />
           </a>
           <% }) %>
       </div>
@@ -45,12 +39,12 @@
       
       <div class="col-md-6 col-xs-12">
         <div class="prdct_dtls_content">
-          <a class="pd_title" href="#"><%=products.name%></a>        
+          <a class="pd_title" href="#"><%=products.ProductName%></a>        
           <div class="pd_price_dtls fix">
             <!-- Product Price -->
             <div class="pd_price">
-              <span class="new">$<%=products.price%></span>                  
-              <span class="old">(60.00)</span>
+              <span class="new">$<%=products.salePrice%></span>                  
+              <span class="old">$<%= products.regularPrice %></span>
             </div>
             <!-- Product Rating -->
             <div class="pd_ratng">
@@ -73,7 +67,7 @@
             <a href="#">m</a>
             <a href="#">l</a>
             <a href="#">xl</a>
-            <a href="#">xxl</a>
+            
           </div>
           <div class="pd_clr_qntty_dtls fix">
             <div class="pd_clr">
@@ -110,87 +104,8 @@
       </div>
     </div>
     
-    <div class="row">
-      <div class="col-xs-12">					
-        <div class="pd_tab_area fix">									
-          <ul class="pd_tab_btn nav nav-tabs" role="tablist">
-            <li>
-            <a class="active" href="#description" role="tab" data-toggle="tab">Description</a>
-            </li>
-            <li>
-            <a href="#information" role="tab" data-toggle="tab">Information</a>
-            </li>
-            <li>
-            <a href="#reviews" role="tab" data-toggle="tab">Reviews</a>
-            </li>
-          </ul>
-
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane fade show active" id="description">
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
-              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit 
-              anim id est laborum.</p>
-              <ul>
-                <li>Lorem ipsum dolor sit amet, consectetur product</li>
-                <li>Duis aute irure dolor in reprehenderit in voluptate velit esse</li>
-                <li>Excepteur sinted occaecat cupidatat non proident products</li>
-                <li>Voluptate velit esse cillum.</li>
-              </ul>					  
-            </div>
-
-            <div role="tabpanel" class="tab-pane fade" id="information">
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>										  
-            </div>
-
-              <div role="tabpanel" class="tab-pane fade" id="reviews">
-                <div class="pda_rtng_area fix">
-                  <h4>4.5 <span>(Overall)</span></h4>
-                  <span>Based on 9 Comments</span>
-                </div>
-                <div class="rtng_cmnt_area fix">
-                  <div class="single_rtng_cmnt">
-                    <div class="rtngs">
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star-o"></i>
-                    <span>(4)</span>
-                    </div>
-                    <div class="rtng_author">
-                      <h3>John Doe</h3>
-                      <span>11:20</span>
-                      <span>6 January 2017</span>
-                    </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost rud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Utenim ad minim veniam, quis nost.</p>
-                  </div>
-
-                </div>
-                <div class="col-md-6 rcf_pdnglft">
-                  <div class="rtng_cmnt_form_area fix">
-                    <h3>Add your Comments</h3>
-                    <div class="rtng_form">
-                      <form action="#">
-                        <div class="input-area"><input type="text" placeholder="Type your name" /></div>
-                        <div class="input-area"><input type="text" placeholder="Type your email address" /></div>
-                        <div class="input-area"><textarea name="message" placeholder="Write a review"></textarea></div>
-                        <input class="btn border-btn" type="submit" value="Add Review" />
-                      </form>
-                    </div>
-                  </div>
-                </div>				  
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+   <hr>
+    
     </div>
   </div>
 
@@ -207,10 +122,10 @@
             <div class="product-image">
               <a href="/products/details/<%=product._id%>">
 
-                <img class="pic-1" src="/<%= product.images[0] %>" alt="product image 1">
-                <% if (product.images[1]) { %>
-                  <img class="pic-2" src="/<%= product.images[1] %>" alt="product image 2">
-              <% } %>
+                <img class="pic-1" src="/uploads/re-image/<%= product.productImage[0] %>" alt="product image 1">
+                
+                  <img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
+              
               </a>
               <ul class="social">
                 <li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
@@ -283,5 +198,5 @@
 
       </script>
 
-<script src="/script/magiczoom.js"></script>
+<!-- <script src="/script/magiczoom.js"></script> -->
 <%-include('../../views/partials/user/footer')%>
