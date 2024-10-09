@@ -4,6 +4,7 @@ const path = require('path')
 const fs = require('fs')
 const sharp = require('sharp')
 const mongoose = require('mongoose')
+
 exports.getAddProduct =async (req,res) => {
   const products = await Product.find()
   const  categories = await Category.find()
@@ -64,6 +65,7 @@ exports.AddProduct = async (req,res) => {
     })
     await newProducts.save()
     return res.redirect('/admin/getAddProduct')
+    // return res.render('admin/productDemo')
     }
   }catch(err){
     console.log(err)
@@ -75,7 +77,6 @@ exports.ListProducts =async (req,res) => {
   try {
     const products = await Product.find().populate('category');
     const categories = await Category.find({isDeleted:false})
-    // const searchQuery=''
     res.render('admin/productPage',{products,categories,searchQuery:null})
   } catch (error) {
     console.log(error)
@@ -183,6 +184,7 @@ exports.editProducts = async (req,res) => {
   }
   await Product.findByIdAndUpdate(id,updatedData,{new:true})
   res.redirect('/admin/product')
+  // res.render('admin/productPage')
 }catch(err){
   console.log(err)
   return res.status(500).json({success:false,message:err})

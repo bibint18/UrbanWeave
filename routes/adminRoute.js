@@ -12,6 +12,8 @@ const  upload = multer({ storage: storage })
 
 const { protectAdmin } = require('../middleware/authMiddleware');
 const {AdminLoggedIn} = require('../middleware/authMiddleware')
+
+
 router.get('/login',AdminLoggedIn,adminRoute.getAdminLogin)
 router.get('/dashboard',protectAdmin, adminRoute.getDashboard)
 router.post('/loginSubmit',adminRoute.loginSubmit)
@@ -28,12 +30,12 @@ router.delete('/category/delete/:id',protectAdmin,categoryRoute.deleteCategory)
 router.get("/category/deletedCategories",protectAdmin,categoryRoute.deletedCategories)
 router.patch("/category/revert/:id",protectAdmin,categoryRoute.revert)
 // router.patch("/category/edit/:id",categoryRoute.editcategory)
-router.post("/category/edit/:id",protectAdmin,categoryRoute.editcategory)
+router.post("/category/edit/:id",protectAdmin, categoryRoute.editcategory)
 //product management
-router.get("/products",protectAdmin,productRoute.getProducts)
-router.post("/products/add",protectAdmin,productManage.upload,productRoute.addProduct)
-router.delete('/products/delete/:id',protectAdmin,productRoute.deleteProduct)
-router.post("/products/edit/:id",protectAdmin,productRoute.editProduct)
+// router.get("/products",protectAdmin,productRoute.getProducts) 
+// router.post("/products/add",protectAdmin,productManage.upload,productRoute.addProduct)
+// router.delete('/products/delete/:id',protectAdmin,productRoute.deleteProduct)
+// router.post("/products/edit/:id",protectAdmin,productRoute.editProduct)
 //deleted section
 router.get("/deletedHome",protectAdmin,deletedRoute.getHome)
 //product section

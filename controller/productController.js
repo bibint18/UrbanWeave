@@ -41,7 +41,7 @@ exports.addProduct = async (req,res) => {
   
   await newProduct.save()
   // res.status(201).json({ message: 'Product added successfully', product: newProduct });
-  return res.redirect("/admin/products")
+  return res.render("/admin/productPage")
   }catch(err){
     console.log(err)
     // res.status(500).json({ error: 'Internal Server Error' });

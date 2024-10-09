@@ -206,7 +206,11 @@ exports.logout = (req, res) => {
 exports.getProductDetails =async (req,res) => {
   const id = req.params.id
   console.log(id)
+
   const products = await  Products.findById(id)
+  if(products.isDeleted == true){
+    return res.redirect('/home')
+  }
   console.log(products)
   const prod = await Products.find({isDeleted:false});
   res.render('user/product-details',{products,prod})
