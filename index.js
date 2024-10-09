@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app =express();
 const mongoose = require('mongoose')
+const passport = require('./config/passport')
 const methodOverride = require('method-override');
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
@@ -25,6 +26,16 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false } // Set secure to true if using HTTPS
 }));
+
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
+app.use(passport.initialize())
+app.use(passport.session(false));
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 app.use(cookieParser())

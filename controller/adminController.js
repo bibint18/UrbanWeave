@@ -1,18 +1,26 @@
 const Admin = require("../model/admin/adminModel");
 const User = require("../model/user/userModel");
+const jwtService = require('../services/jwtService')
 const bcrypt = require("bcrypt");
 exports.getAdminLogin = (req, res) => {
   res.render("admin/admin-login",{error:null});
 };
 exports.loginSubmit = async (req, res) => {
   const { email, password } = req.body;
+  console.log("ema",email ,"pass",password);
+
+  
   if(!email || email.trim() =='' || !password || password.trim() == ''){
     return res.render('admin/admin-login',{error:"Input cannot be empty or spaces only!"})
   }
   console.log(email, password);
   const admin = await Admin.findOne({ email });
+  console.log(admin)
   if (admin && (await admin.comparePassword(password))) {
-    res.redirect("/admin/dashboard");
+    const token = jwtService.signAdminToken(admin)
+    res.cookie('jwt',token,{httpOnly:true,secure:false})
+    return res.redirect("/admin/dashboard");
+    // next()
   } else {
     res.render("admin/admin-login",{error:"invalid Username or Password"});
   }
@@ -60,6 +68,7 @@ exports.searchUser =async (req,res) => {
 }
 
 exports.logout = (req,res) => {
-  res.redirect("/admin/login")
+  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
+  return res.redirect("/admin/login")
 }
 

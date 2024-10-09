@@ -20,7 +20,7 @@ exports.getHome =async (req, res) => {
   return res.render("home",{products});
   }catch(err){
     console.log(err);
-    return res.render('user/login',{error:"invalid username or credentials"})
+    return res.status(500).json({success:false})
   }
 };
 
@@ -181,6 +181,17 @@ exports.userLogin =async (req,res) => {
   }
 }
 exports.logout = (req, res) => {
+  req.logout((err) => {
+    if(err){
+      return next(err);
+    }
+  });
+
+  // req.session.destroy((sessionErr) => {
+  //   if(sessionErr){
+  //     return next(sessionErr)
+  //   }
+  // })
   res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
   res.redirect('/userLogin'); 
 };

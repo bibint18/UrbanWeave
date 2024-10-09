@@ -7,3 +7,11 @@ exports.signToken=((user) => {
     {expiresIn:'1hr'}
   )
 })
+
+exports.signAdminToken = ((admin) => {
+  return jwt.sign(
+    {id:admin._id,email:admin.email},
+  process.env.JWT_SECRET_ADMIN,
+  {expiresIn:'1hr'},
+  )
+})

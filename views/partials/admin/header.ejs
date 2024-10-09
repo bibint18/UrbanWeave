@@ -17,12 +17,12 @@
     <link rel="stylesheet" href="/stylesheet/userList.css">
     <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
+    <script src="/hover-extended-magnify/extm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <style>
+    <style> 
 
 body {
       font-family: Arial, sans-serif;
@@ -206,18 +206,24 @@ body {
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
                         class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="dropdown nav-item">
+                    <!-- <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
                             aria-expanded="false"> <img class="img-xs rounded-circle"
                                 src="/admin-assets/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <div class="dropdown-divider"></div>
-
+                            <form action="/logout" method="post">
+                                <button></button>
+                            </form>
                             <a class="dropdown-item text-danger" href="/admin/login"><i
                                     class="material-icons md-exit_to_app"></i>Logout</a>
 
                         </div>
-                    </li>
+                    </li> -->
+
+                    <form action="/admin/logout" method="post">
+                        <button type="submit">Logout</button>
+                    </form>
                 </ul>
             </div>
         </header>
