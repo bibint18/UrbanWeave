@@ -4,10 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <style>
   * {
     box-sizing: border-box;
 
+}
+.swal2-container {
+    z-index: 9999 !important;
 }
 
 body {
@@ -103,7 +109,7 @@ label > input:focus + span {
 
 <body>
 
-  <form action="/userLogin" method="post"  >
+  <form action="/userLogin" method="post" onsubmit="return userLogin(event)" >
     <h1>LOGIN</h1>
     <% if (error) { %>
       <p id="error" style="color: red;text-align: center;padding: 13px;font-size: 20px;"  ><%= error %></p>
@@ -114,7 +120,7 @@ label > input:focus + span {
     </label>
     
     <label for="">
-      <input type="text" name="password" id="password">
+      <input type="password" name="password" id="password">
       <span>PASSWORD</span>
     </label>
     <div class="termofuse">
@@ -127,10 +133,7 @@ label > input:focus + span {
     </div>
     <div class="termofuse"></div>
       <p><b>
-      <span>
-        Already User 
-        <a href="/google">Sign-in with Google</a>
-      </span>
+      
       </b></p>
     </div>
     <div class="termofuse">
@@ -147,6 +150,50 @@ label > input:focus + span {
             }
         }, 5000);
 
+
+
+function userLogin(event){
+  console.log("inside ajx")
+  const email = document.getElementById('username').value
+  const password = document.getElementById('password').value
+  event.preventDefault();
+  $.ajax({
+    method:"POST",
+    url:"/userLogin",
+    data:{
+      email:email,
+      password:password
+    },
+    success:function(response){
+      console.log(response)
+      if(response.success){
+        Swal.fire({
+          icon:'success',
+          title:'Login Success',
+          text:"user Login  Success",
+          timer:1500,
+               
+        }).then(() => {
+          window.location.href = "/home"
+        })
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:'Login Failed',
+          text:response.message,
+        })
+      }
+    },
+    error:function(jqXHR, textStatus, errorThrown){
+      Swal.fire({
+        icon:'error',
+        title:'Error',
+        text:textStatus + ':' + errorThrown
+      })
+    }
+  })
+  return false
+}
  
 
 </script>

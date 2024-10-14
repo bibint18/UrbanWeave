@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
   },
   googleId:{
     type:String,
-    unique:true,
+    unique:false,
   },
   password:{
     type:String,
@@ -47,4 +47,8 @@ userSchema.methods.comparePassword = function(userPswd){
 //   const passwordResetExpiry= Date.now() + 10 * 60 * 1000
 //   return resetToken;
 // }
+
+
+
+
 module.exports = mongoose.model('users',userSchema)

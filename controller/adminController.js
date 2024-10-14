@@ -18,7 +18,9 @@ exports.loginSubmit = async (req, res) => {
   console.log(admin)
   if (admin && (await admin.comparePassword(password))) {
     const token = jwtService.signAdminToken(admin)
-    res.cookie('jwt',token,{httpOnly:true,secure:false})
+    res.cookie('jwt',token,{httpOnly:true,secure:false});
+    req.session.loggedIn = true
+    
     return res.redirect("/admin/dashboard");
     // next()
   } else {
@@ -68,7 +70,7 @@ exports.searchUser =async (req,res) => {
 }
 
 exports.logout = (req,res) => {
-  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
+  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) }); 
   return res.redirect("/admin/login")
 }
 

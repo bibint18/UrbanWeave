@@ -65,6 +65,6 @@ exports.editcategory = async (req, res) => {
     return res.status(400).json({success:false,message:"Category Already Exist"})
   }
   await Category.findByIdAndUpdate(id, { categoryName, description });
-  res.redirect("/admin/category");
-  // return  res.status(200).json({ success: true, message: "Category updated successfully" });
+  // res.redirect("/admin/category");
+  return  res.status(200).json({ success: true, message: "Category updated successfully" });
 };

@@ -152,6 +152,10 @@ exports.editProducts = async (req,res) => {
   console.log(id)
   const products = await Product.findOne({_id:id})
   const data = req.body
+  console.log("data",data)
+  console.log("cat",data.category)
+  const category = await Category.findById(data.category) 
+  console.log("main cat",category)
   const existing = await Product.findOne({ProductName:data.productName,_id:{$ne:id}})
   if(existing){
     return res.status(400).json({success:false,message:"Product Name already exist"})
@@ -172,7 +176,7 @@ exports.editProducts = async (req,res) => {
   const updatedData ={
     ProductName:data.productName,
     description:data.description,
-    category:products.category,
+    category:category,
     regularPrice:data.regularPrice,
     salePrice:data.salePrice,
     quantity:data.quantity,

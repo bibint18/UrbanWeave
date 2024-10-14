@@ -44,7 +44,7 @@ exports.AdminLoggedIn = (req,res,next)=> {
   const token = req.cookies.jwt ||  req.headers.authorization?.split(' ')[1];
   console.log(token)
   if(!token){
-    return next()
+    return next()  
   }
   try {
     const decoded = jwt.verify(token,process.env.JWT_SECRET_ADMIN)

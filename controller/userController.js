@@ -160,41 +160,76 @@ exports.resend = (req, res) => {
 
 exports.userLogin =async (req,res) => {
   const{email,password} = req.body
-  console.log(email,password)
+  console.log("email",email,"passw",password)
   const user = await User.findOne({email})
-  console.log(user)
+  console.log("user",user)
+  if(!user){
+    return res.json({success:false,message:"user not existed"})
+  }
   if (!email|| email.trim() === '' || !password || password.trim() === '') {
-    return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
+    // return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
+    return res.json({success:false,message:"Input cannot be empty or spaces only!"})
 }
 
   if(user && user.isBlocked === true){
     console.log(user.isBlocked)
-    return res.render("user/login",{error:"User is Blocked"})
+    return res.status(400).json({success:false,message:"Input cannot be empty or spaces only!"})
+    // return res.render("user/login",{error:"User is Blocked"})
   }
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
-     return res.redirect('/home') 
+    // const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'12d'})
+    // res.cookie('token',token,{
+    //   httpOnly:true,
+    //   maxAge: 30* 24* 60 * 60* 1000,
+    //   secure:false,
+    //   sameSite:'Lax'
+    // })
+    //  return res.redirect('/home') 
+    return res.json({success:true,message:"Login Successfull"})
   }
   else{
-    res.render('user/login',{error:"invalid Username or password"})
+    // res.render('user/login',{error:"invalid Username or password"})
+    return res.status(200).json({success:false,message:"Invalid username or password"})
   }
 }
-exports.logout = (req, res) => {
+exports.logout = (req, res, next) => {
+  console.log("cookie",req.cookies)
   req.logout((err) => {
-    if(err){
+    if (err) {
       return next(err);
     }
-  });
 
-  // req.session.destroy((sessionErr) => {
-  //   if(sessionErr){
-  //     return next(sessionErr)
-  //   }
-  // })
-  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
-  res.redirect('/userLogin'); 
+    // Log session details
+    console.log('Session before destroying:', req.session);
+    console.log('Cookies before clearing:', req.cookies);
+
+    // Destroy session on the server
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      }
+
+      console.log("Session after destroying:", req.session);
+      // Clear the cookie in the browser
+      // res.clearCookie('connect.sid', { 
+      //   path: '/',  // Ensure the path matches where the cookie was set
+      //   httpOnly: true, 
+      //   secure: false  // Set to true if using HTTPS
+      // });
+      // res.cookie('connect.sid', '', { expires: new Date(0), path: '/userLogin' });
+      
+      // Log after clearing the cookie
+      console.log('Cookies after clearing:', req.cookies);
+
+      // Redirect to the desired page
+      res.redirect('/userSignup');
+    });
+  });
 };
+
+
 
 // exports.forgotPassword =(req,res) => {
 //   res.redirect('/')

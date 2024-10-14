@@ -7,6 +7,9 @@ const homePageRoute = require("../controller/homepage")
 const HomeRoute = require('../controller/homeController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
+
+
+const {protect} = require('../middleware/authMiddleware')
 router.get('/userLogin',userRouter.getUserLogin)
 router.get('/home',userRouter.getHome)
 router.get('/userSignup',userRouter.getUserSignup)
@@ -30,5 +33,24 @@ router.get("/products/details/:id",userRouter.getProductDetails)
 //inside home
 
 router.get('/shop',HomeRoute.ShopPage)
+
+
+// Example of revoking access token from Google
+// app.get('/revoke', (req, res) => {
+//   const accessToken = req.user.accessToken; // Assuming you saved access token
+//   const revokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`;
+
+//   axios.post(revokeUrl)
+//     .then(() => {
+//       req.logout();
+//       res.redirect('/');
+//     })
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).send('Error revoking token');
+//     });
+// });
+
+
 
 module.exports = router;
