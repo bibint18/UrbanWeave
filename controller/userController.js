@@ -173,7 +173,7 @@ exports.userLogin =async (req,res) => {
 
   if(user && user.isBlocked === true){
     console.log(user.isBlocked)
-    return res.status(400).json({success:false,message:"Input cannot be empty or spaces only!"})
+    return res.status(400).json({success:false,message:"user is blocked"})
     // return res.render("user/login",{error:"User is Blocked"})
   }
   if(user && await user.comparePassword(password)){
@@ -187,6 +187,7 @@ exports.userLogin =async (req,res) => {
     //   sameSite:'Lax'
     // })
     //  return res.redirect('/home') 
+    
     return res.json({success:true,message:"Login Successfull"})
   }
   else{
@@ -194,39 +195,28 @@ exports.userLogin =async (req,res) => {
     return res.status(200).json({success:false,message:"Invalid username or password"})
   }
 }
-exports.logout = (req, res, next) => {
+
+exports.logout = (req, res) => {
   console.log("cookie",req.cookies)
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-
-    // Log session details
-    console.log('Session before destroying:', req.session);
-    console.log('Cookies before clearing:', req.cookies);
-
-    // Destroy session on the server
-    req.session.destroy((err) => {
-      if (err) {
-        return next(err);
-      }
-
-      console.log("Session after destroying:", req.session);
-      // Clear the cookie in the browser
-      // res.clearCookie('connect.sid', { 
-      //   path: '/',  // Ensure the path matches where the cookie was set
-      //   httpOnly: true, 
-      //   secure: false  // Set to true if using HTTPS
-      // });
-      // res.cookie('connect.sid', '', { expires: new Date(0), path: '/userLogin' });
-      
-      // Log after clearing the cookie
-      console.log('Cookies after clearing:', req.cookies);
-
-      // Redirect to the desired page
-      res.redirect('/userSignup');
-    });
-  });
+  res.cookie('jwt', '', { maxAge: 1 });
+  console.log("Session after destroying:", req.session);
+  return res.redirect('/userLogin')
+  
+  // req.logout((err) => {
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   console.log('Session before destroying:', req.session);
+  //   console.log('Cookies before clearing:', req.cookies);
+  //   req.session.destroy((err) => {
+  //     if (err) {
+  //       return next(err);
+  //     }
+  //     console.log("Session after destroying:", req.session);
+  //     console.log('Cookies after clearing:', req.cookies);
+  //     res.redirect('/userSignup');
+  //   });
+  // });
 };
 
 

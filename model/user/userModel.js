@@ -19,6 +19,15 @@ const userSchema = mongoose.Schema({
     type:String,
     required:false
   },
+  gender: {
+    type: String,
+    enum: ['male', 'female'],
+    required: false
+  },
+  mobile: {
+    type: String,
+    required: false
+  },
   isBlocked:{
     type:Boolean,
     default:false

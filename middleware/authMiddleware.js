@@ -5,11 +5,16 @@ const jwtService = require('../services/jwtService')
 exports.protect = async (req,res,next) => {
   const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1];
   if(!token){
-    return res.send("no token user not loggedin")
+    console.log("NO TOKEN USER NEED TO LOGIN")
+    return res.redirect('/userLogin')
+    
+    // return res.send("no token user not loggedin")
   }
   try{
     const decoded = jwt.verify(token,process.env.JWT_SECRET)
+    console.log('decodded id :',decoded)
     const user = await User.findById(decoded.id)
+    console.log("user:",user)
     if(!user){
       return res.send("no user in databse");
     }

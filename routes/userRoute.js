@@ -51,6 +51,8 @@ router.get('/shop',HomeRoute.ShopPage)
 //     });
 // });
 
+//userProfile
 
-
+router.get('/userProfile',authMiddleware.protect,HomeRoute.userProfile)
+router.post('/userProfile',HomeRoute.EditUserProfile)
 module.exports = router;
