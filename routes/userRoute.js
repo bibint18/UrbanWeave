@@ -54,5 +54,11 @@ router.get('/shop',HomeRoute.ShopPage)
 //userProfile
 
 router.get('/userProfile',authMiddleware.protect,HomeRoute.userProfile)
-router.post('/userProfile',HomeRoute.EditUserProfile)
+router.post('/userProfile',authMiddleware.protect,HomeRoute.EditUserProfile)
+router.get('/address',authMiddleware.protect,HomeRoute.userAddress)
+router.get('/manageAddress',authMiddleware.protect,HomeRoute.manageAddress)
+router.post('/address/add',authMiddleware.protect,HomeRoute.addAddress)
+router.get('/address/edit',authMiddleware.protect,HomeRoute.getEditAddress)
+router.post('/address/edit',authMiddleware.protect,HomeRoute.editAddress)
+router.post('/address/delete',authMiddleware.protect,HomeRoute.deleteAddress)
 module.exports = router;

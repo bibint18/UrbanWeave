@@ -1,3 +1,4 @@
+const { findByIdAndDelete } = require('../model/admin/adminModel')
 const Product = require('../model/admin/prodectModel')
 const User = require('../model/user/userModel')
 exports.ShopPage = async (req,res) => {
@@ -13,15 +14,12 @@ exports.ShopPage = async (req,res) => {
 
 exports.userProfile = async (req,res) => {
   const user = await User.findById(req.user.id)
-  console.log("req.user :",user)
   return res.render('user/myAccount',{user})
 }
 
 exports.EditUserProfile = async (req,res) => {
-  console.log(req.body)
   const {fullName,email,gender,mobilePh}= req.body
   Lowgender = gender.toLowerCase();
-  console.log(fullName,email,Lowgender,mobilePh)
   const user = await User.findOne({email})
   if(!user){
     return res.status(404).json({success:false,message:"user not exist"})
@@ -33,4 +31,110 @@ exports.EditUserProfile = async (req,res) => {
   await user.save()
 }
   res.send("done")
+}
+
+exports.userAddress = async (req,res) => {
+  try{
+    const addresses = await User.findById(req.user.id)
+    console.log("rendering ",addresses)
+  res.render('user/addressPage',{addresses})
+  }catch(error){
+    console.log(error)
+  }
+}
+
+exports.manageAddress =async (req,res) => {
+  console.log(req.user.id)
+  const addresses = await User.findById(req.user.id)
+  const addr = addresses.address;
+  // console.log("rendering ",addr)
+  res.render('user/addressLand',{addr})
+}
+
+exports.addAddress = async (req,res) => {
+  try{
+    console.log(req.user)
+  const {fullName,phone,addressLine1,addressLine2,city,state,postalCode,country,addType} = req.body
+  // console.log(fullName,phone,addressLine1,addressLine2,city,state,postalCode,country,addType)
+  // res.send("done")
+  
+  const user = await User.findById(req.user.id)
+  const newAddress = {
+    fullName,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    postalCode,
+    country,
+    addType,
+  }
+  user.address.push(newAddress);
+  await user.save();
+  return res.redirect('/userProfile')
+}catch(err){
+  console.log(err)
+}
+}
+
+exports.getEditAddress =async (req,res) => {
+  try {
+    const id = req.query.id
+    const userAddress = await User.findOne({"address._id":id},{"address.$":1})
+    const user =userAddress.address[0]
+    console.log("aaddress:",user)
+    res.render('user/editAddress',{address:user})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.editAddress = async (req,res) => {
+  try {
+      console.log("req:",req.query)
+       const id = req.query.id
+       console.log(id,"got from edit")
+    const {fullName,phone,addressLine1,addressLine2,city,state,postalCode,country,addType} = req.body
+       console.log(fullName,phone,addressLine1,addressLine2,city,state,postalCode,country,addType)
+      // const useraddress = await User.findOne({"address._id":id},{"address.$":1})
+      // console.log(useraddress)
+      // console.log("add: ",useraddress)
+      const updatedAddress = await  User.findOneAndUpdate({"address._id":id},
+        {
+          $set: {
+            "address.$.fullName": fullName,
+            "address.$.phone": phone,
+            "address.$.addressLine1": addressLine1,
+            "address.$.addressLine2": addressLine2,
+            "address.$.city": city,
+            "address.$.state": state,
+            "address.$.postalCode": postalCode,
+            "address.$.country": country,
+            "address.$.addType": addType,
+          },
+        },
+        { new: true },
+      )
+      console.log("updated",updatedAddress)
+      res.send("done")
+  } catch (error) {
+    console.log(error)
+    res.send(error)
+  }
+}
+
+exports.deleteAddress =async (req,res) => {
+  try {
+    console.log(req.query);
+    
+    const id = req.query.id
+    console.log(id)
+    const updated =  await User.findOneAndUpdate({"address._id":id},{$pull:{address:{_id:id}}},{new:true})
+    console.log("after deelete",updated)
+    return res.redirect('/manageAddress')
+    
+  } catch (error) {
+    console.log(error)
+  }
 }

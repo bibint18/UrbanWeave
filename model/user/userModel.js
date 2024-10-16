@@ -1,6 +1,19 @@
 const mongoose = require('mongoose')
 const { type } = require('os')
 const bcrypt = require('bcrypt')
+
+const addressSchema = mongoose.Schema({
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    addressLine1: { type: String, required: true },
+    addressLine2: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+    addType:{type: String,enum: ['office', 'home'],required:false}
+})
+
 const userSchema = mongoose.Schema({
   username:{
     type:String,
@@ -32,6 +45,8 @@ const userSchema = mongoose.Schema({
     type:Boolean,
     default:false
   },
+  address:[addressSchema]
+  ,
   isVerified: {
      type: Boolean, 
      default: false 

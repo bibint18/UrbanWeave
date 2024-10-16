@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Addresses</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .add-address-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+        }
+        .add-address-btn:hover {
+            background-color: #e0e0e0;
+        }
+        .address-container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .address-label {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+        }
+        .address-details {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .address-phone {
+            margin-left: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+        .address-postcode {
+            font-weight: bold;
+        }
+        .options {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+        .options-icon {
+            font-size: 20px;
+            color: #666;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Manage Addresses</h1>
+
+    <a href="/address" class="add-address-btn">+ ADD A NEW ADDRESS</a>
+<% addr.forEach((address) => { %>
+    <div class="address-container">
+        <span class="address-label"><%= address.addType ||  'Home' %></span>
+        <div class="address-details">
+            <%= address.fullName %> <span class="address-phone"><%= address.phone%></span><br>
+            <%= address.addressLine1 %>, <%= address.addressLine2 %>, <%= address.city %>,<br>
+             <%= address.country%> - <span class="address-postcode"><%= address.postalCode %></span>
+        </div>
+        <div class="options">
+            <!-- <span class="options-icon">⋮</span> -->
+            <a href="/address/edit?id=<%=address._id%>"><button type="submit">edit</button></a>
+            <form action="/address/delete?id=<%=address._id%>" method="post" onsubmit="return confirmDelete()">
+                <button type="submit" >delete</button>
+            </form>
+             
+        </div>
+    </div>
+<% }) %>
+<script>
+    function confirmDelete(){
+        const ask = confirm("Are you sure, You want to delete the address")
+        return ask
+    }
+</script>
+
+</body>
+</html>
+

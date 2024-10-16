@@ -9,7 +9,7 @@ console.log("ueser:",User)
 console.log("client id",process.env.GOOGLE_CLIENT_ID)
 console.log("secre",process.env.GOOGLE_CLIENT_SECRET)
 
-passport.use(new GoogleStrategy({
+passport.use(new GoogleStrategy( {
   clientID:process.env.GOOGLE_CLIENT_ID,
   clientSecret:process.env.GOOGLE_CLIENT_SECRET,
   callbackURL:'/auth/google/callback',

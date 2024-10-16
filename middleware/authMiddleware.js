@@ -12,9 +12,7 @@ exports.protect = async (req,res,next) => {
   }
   try{
     const decoded = jwt.verify(token,process.env.JWT_SECRET)
-    console.log('decodded id :',decoded)
     const user = await User.findById(decoded.id)
-    console.log("user:",user)
     if(!user){
       return res.send("no user in databse");
     }

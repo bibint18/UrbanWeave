@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="profile-welcome">
+                <!-- <img src="https://via.placeholder.com/50" alt="Profile Image" class="profile-pic"> -->
+                <p>Hello, <strong><%= user.username %></strong></p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">My Orders</a></li>
+                    <li><a href="#" class="active">Account Settings</a></li>
+                    <li><a href="/manageAddress">Manage Addresses</a></li>
+                    <li><a href="#">Payments</a></li>
+                    <li><a href="#">My Stuff</a></li>
+                </ul>
+            </nav>
+        </div>
