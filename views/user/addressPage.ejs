@@ -90,41 +90,49 @@
 <body>
     <div class="address-form-container">
         <h2>Add Address</h2>
-        <form method="POST" action="/address/add">
+        <form id="addressForm" method="POST" action="/address/add">
             <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required>
+                <input type="text" id="fullName" name="fullName" >
+                <small class="error-message" id="fullNameError"></small>
             </div>
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="text" id="phone" name="phone" required>
+                <input type="text" id="phone" name="phone" >
+                <small class="error-message" id="phoneError"></small>
             </div>
             <div class="form-group">
                 <label for="addressLine1">Address Line 1</label>
-                <input type="text" id="addressLine1" name="addressLine1" required>
+                <input type="text" id="addressLine1" name="addressLine1" >
+                <small class="error-message" id="address1Error"></small>
             </div>
             <div class="form-group">
                 <label for="addressLine2">Address Line 2</label>
                 <input type="text" id="addressLine2" name="addressLine2">
+
             </div>
             <div class="form-group-inline">
                 <div class="form-group">
                     <label for="city">City</label>
-                    <input type="text" id="city" name="city" required>
+                    <input type="text" id="city" name="city" >
+                    <small class="error-message" id="cityError"></small>
                 </div>
                 <div class="form-group">
                     <label for="state">State</label>
-                    <input type="text" id="state" name="state" required>
+                    <input type="text" id="state" name="state" >
+                    <small class="error-message" id="stateError"></small>
                 </div>
             </div>
             <div class="form-group-inline">
                 <div class="form-group">
                     <label for="postalCode">Postal Code</label>
-                    <input type="text" id="postalCode" name="postalCode" required>
+                    <input type="text" id="postalCode" name="postalCode" >
+                    <small class="error-message" id="postalCodeError"></small>
                 </div>
                 <div class="form-group">
                     <label for="country">Country</label>
-                    <input type="text" id="country" name="country" required>
+                    <input type="text" id="country" name="country" >
+                    <small class="error-message" id="countryError"></small>
                 </div>
             </div>
             <div class="form-group">
@@ -134,22 +142,51 @@
             </div>
             <button type="submit" class="submit-btn">Save Address</button>
         </form>
-
-        <!-- <div class="address-list">
-            <h3>Your Addresses</h3>
-            <div class="address-item">
-                <p><strong></strong></p>
-                <p>123 Main Street, Apt 4B</p>
-                <p>City, State, 12345</p>
-                <p>Country</p>
-                <p>Phone: +123456789</p>
-                <div class="address-actions">
-                    <button class="btn edit-btn">Edit</button>
-                    <button class="btn delete-btn">Delete</button>
-                </div>
-            </div>
-            More address items will go here
-        </div> -->
     </div>
+
+    <script>
+
+const addressForm = document.getElementById('addressForm');
+const errorMessages = {
+  fullNameError: document.getElementById('fullNameError'),
+  phoneError: document.getElementById('phoneError'),
+  address1Error: document.getElementById('address1Error'),
+  address2Error: document.getElementById('address2Error'),
+  cityError: document.getElementById('cityError'),
+  stateError: document.getElementById('stateError'),
+  postalCodeError: document.getElementById('postalCodeError'),
+  countryError: document.getElementById('countryError')
+};
+
+function validateInput(field, errorElement, errorMessage) {
+  const value = field.value.trim();  // Trim spaces
+  if (value === '') {
+    errorElement.textContent = errorMessage;
+    field.style.borderColor = 'red';
+    return false;
+  } else {
+    errorElement.textContent = '';
+    field.style.borderColor = 'green';
+    return true;
+  }
+}
+
+addressForm.addEventListener('submit', function(event) {
+  let isValid = true;
+
+  isValid &= validateInput(document.getElementById('fullName'), errorMessages.fullNameError, 'Full Name is required.');
+  isValid &= validateInput(document.getElementById('phone'), errorMessages.phoneError, 'Phone Number is required.');
+  isValid &= validateInput(document.getElementById('addressLine1'), errorMessages.address1Error, 'Address Line 1 is required.');
+  isValid &= validateInput(document.getElementById('city'), errorMessages.cityError, 'City is required.');
+  isValid &= validateInput(document.getElementById('state'), errorMessages.stateError, 'State is required.');
+  isValid &= validateInput(document.getElementById('postalCode'), errorMessages.postalCodeError, 'Postal Code is required.');
+  isValid &= validateInput(document.getElementById('country'), errorMessages.countryError, 'Country is required.');
+
+  // Prevent form submission if any field is invalid
+  if (!isValid) {
+    event.preventDefault();
+  }
+});
+    </script>
 </body>
 </html>

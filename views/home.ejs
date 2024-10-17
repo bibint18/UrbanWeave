@@ -180,7 +180,7 @@
 																		<span>$<%= product.regularPrice %></span>
 																<% } %>
 														</div>
-														<a class="add-to-cart" href="#">+ Add To Cart</a>
+														<a class="add-to-cart" href="#" onclick="addToCart('<%= product._id %>')">+ Add To Cart</a>
 												</div>
 										</div>
 								</div>
@@ -532,5 +532,26 @@
 			</div>
 		</section>
         <!--  End Process -->
+
+				<script>
+					 function addToCart(productId) {
+    fetch('/cart/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId: productId, quantity: 1 })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Product added to cart');
+        // Optionally, update cart icon or count
+      } else {
+        alert('Failed to add product to cart');
+      }
+    });
+  }
+				</script>
 		
 <%-include("../views/partials/user/footer")%>

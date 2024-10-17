@@ -5,6 +5,7 @@ const userRouter = require('../controller/userController')
 const authMiddleware= require('../middleware/authMiddleware')
 const homePageRoute = require("../controller/homepage")
 const HomeRoute = require('../controller/homeController')
+const CartRoute = require('../controller/cartController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
 
@@ -61,4 +62,9 @@ router.post('/address/add',authMiddleware.protect,HomeRoute.addAddress)
 router.get('/address/edit',authMiddleware.protect,HomeRoute.getEditAddress)
 router.post('/address/edit',authMiddleware.protect,HomeRoute.editAddress)
 router.post('/address/delete',authMiddleware.protect,HomeRoute.deleteAddress)
+
+//cart
+
+router.get('/cart',authMiddleware.protect,CartRoute.getCart)
+router.post('/cart/add',authMiddleware.protect,CartRoute.AddCart)
 module.exports = router;
