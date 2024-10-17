@@ -1,104 +1,109 @@
-<%-include('../../views/partials/user/header')%>
+<%-include('../../views/partials/user/header') %>
 
-<style>
-  .size-label {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 15px;
-    font-size: 16px;
-  }
+  <style>
+    .size-label {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 15px;
+      font-size: 16px;
+    }
 
-  .size-label input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #000;
-    margin-right: 8px;
-    border-radius: 4px; /* Makes the shape square */
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
+    .size-label input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #000;
+      margin-right: 8px;
+      border-radius: 4px;
+      /* Makes the shape square */
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
 
-  .size-label input[type="radio"]:checked {
-    background-color: #000; /* Adds a fill when checked */
-  }
+    .size-label input[type="radio"]:checked {
+      background-color: #000;
+      /* Adds a fill when checked */
+    }
 
-  .size-label input[type="radio"]:hover {
-    border-color: #555; /* Adds a hover effect */
-  }
-</style>
+    .size-label input[type="radio"]:hover {
+      border-color: #555;
+      /* Adds a hover effect */
+    }
+  </style>
 
-<link rel="stylesheet" href="/stylesheet/magiczoom.css">
-<div id="page_item_area">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6 text-left">
-        <h3>Product Details</h3>
-      </div>		
-      <div class="col-sm-6 text-right">
-        <ul class="p_items">
-          <li><a href="/home">home</a></li>
-          <li><a href="/shop">Shop</a></li>
-          <li><span>Product Details</span></li>
-        </ul>					
-      </div>	
+  <link rel="stylesheet" href="/stylesheet/magiczoom.css">
+  <div id="page_item_area">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 text-left">
+          <h3>Product Details</h3>
+        </div>
+        <div class="col-sm-6 text-right">
+          <ul class="p_items">
+            <li><a href="/home">home</a></li>
+            <li><a href="/shop">Shop</a></li>
+            <li><span>Product Details</span></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="prdct_dtls_page_area">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-xs-12">
-        <div class="pd_img fix">
-          <img id="mainProductImage" src="/uploads/re-image/<%= products.productImage[0] %>" alt="Main Product Image" />
+  <div class="prdct_dtls_page_area">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <div class="pd_img fix">
+            <img id="mainProductImage" src="/uploads/re-image/<%= products.productImage[0] %>"
+              alt="Main Product Image" />
+          </div>
+
+          <!-- Thumb -->
+
+          <div class="product-thumbnails">
+            <% products.productImage.forEach(function(image, index) { %>
+              <!-- <a href="#" class="thumbnail-link"> -->
+              <img src="/uploads/re-image/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>"
+                onclick="changeMainImage('/uploads/re-image/<%= image %>')" />
+              <!-- </a> -->
+              <% }) %>
+          </div>
         </div>
 
-        <!-- Thumb -->
 
-        <div class="product-thumbnails">
-          <% products.productImage.forEach(function(image, index) { %>
-            <!-- <a href="#" class="thumbnail-link"> -->
-              <img src="/uploads/re-image/<%= image %>" class="thumbnail" alt="Product Image <%= index + 1 %>"   onclick="changeMainImage('/uploads/re-image/<%= image %>')" />
-          <!-- </a> -->
-          <% }) %>
-      </div>
-      </div>
-
-      
-      <div class="col-md-6 col-xs-12">
-        <div class="prdct_dtls_content">
-          <a class="pd_title" href="#"><%=products.ProductName%></a>        
-          <div class="pd_price_dtls fix">
-            <!-- Product Price -->
-            <div class="pd_price">
-              <span class="new">$<%=products.salePrice%></span>                  
-              <span class="old">$<%= products.regularPrice %></span>
-            </div>
-            <!-- Product Rating -->
-            <div class="pd_ratng">
-              <div class="rtngs">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star-half-o"></i>
+        <div class="col-md-6 col-xs-12">
+          <div class="prdct_dtls_content">
+            <a class="pd_title" href="#">
+              <%=products.ProductName%>
+            </a>
+            <div class="pd_price_dtls fix">
+              <!-- Product Price -->
+              <div class="pd_price">
+                <span class="new">$<%=products.salePrice%></span>
+                <span class="old">$<%= products.regularPrice %></span>
+              </div>
+              <!-- Product Rating -->
+              <div class="pd_ratng">
+                <div class="rtngs">
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star"></i>
+                  <i class="fa fa-star-half-o"></i>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="pd_text">
-            <h4>overview:</h4>
-            <p><%= products.description%></p>      
-          </div>
+            <div class="pd_text">
+              <h4>overview:</h4>
+              <p>
+                <%= products.description%>
+              </p>
+            </div>
 
-          <div class="pd_img_size fix">
+            <!-- <div class="pd_img_size fix">
             <h4>size:</h4>
-            <!-- <a href="#">s</a>
-            <a href="#">m</a>
-            <a href="#">l</a>
-            <a href="#">xl</a> -->
             <label class="size-label">
               <input type="radio" name="size" value="S"> S
             </label>
@@ -112,124 +117,157 @@
               <input type="radio" name="size" value="XL"> XL
             </label>
             <div id="sizeError" style="color: red; display: none;">Please select a size</div>
-          </div>
+          </div> -->
 
+            <!-- <div class="pd_img_size fix">
+              <h4>size:</h4>
+              <% products.sizes.forEach(function(sizeItem) { %>
+                <label class="size-label">
+                  <input type="radio" name="size" value="<%= sizeItem.size %>">
+                  <%= sizeItem.size %> - Available: <%= sizeItem.stock %>
+                </label>
+                <% }) %>
+                  <div id="sizeError" style="color: red; display: none;">Please select a size</div>
+            </div>
 
-          <div class="pd_text">
-            <h4>Available quantity</h4>
-            <p>
-              <% if(products.quantity ==0) { %>
-                OUT OF STOCK
-              <% } else { %> 
-              <%= products.quantity %>
-                <% } %>
-            </p>      
-          </div>
-
-          <div class="pd_clr_qntty_dtls fix">
-            <!-- <div class="pd_clr">
-              <h4>color:</h4>
-              <a href="#" class="active" style="background: #ffac9a;">color 1</a>
-              <a href="#" style="background: #ddd;">color 2</a>
-              <a href="#" style="background: #000000;">color 3</a>
+            <div class="pd_text">
+              <h4>Available quantity</h4>
+              <p>
+                <% if(products.quantity==0) { %>
+                  OUT OF STOCK
+                  <% } else { %>
+                    <%= products.quantity %>
+                      <% } %>
+              </p>
             </div> -->
-            <div class="pd_qntty_area">
-              <h4>quantity:
-               
-              </h4>
-              <div class="pd_qty fix">
-                <!-- <input value="1" name="qttybutton" class="cart-plus-minus-box" type="number"> -->
-                <input value="1" name="qttybutton" class="cart-plus-minus-box" type="number" min="1" max="5">
+
+
+
+            <% let allSizesOutOfStock = products.sizes.every(size => size.stock === 0); %>
+  
+  <% if (allSizesOutOfStock) { %>
+    <!-- Display "OUT OF STOCK" if all sizes have 0 stock -->
+    <div class="pd_text" style="color: red; font-weight: bold;">
+      <h4 style="color: red; font-size: 2rem;">OUT OF STOCK</h4>
+    </div>
+  <% } else { %>
+    <!-- Display size options if there's stock available in any size -->
+    <div class="pd_img_size fix">
+      <h4>Size:</h4>
+      <% products.sizes.forEach((size) => { %>
+        <% if (size.stock > 0) { %>
+          <label class="size-label">
+            <input type="radio" name="size" value="<%= size.size %>"> 
+            <%= size.size %> - <%= size.stock %> available
+          </label>
+        <% } %>
+      <% }) %>
+      <div id="sizeError" style="color: red; display: none;">Please select a size</div>
+    </div>
+  <% } %>
+
+
+            <div class="pd_clr_qntty_dtls fix">
+              <div class="pd_qntty_area">
+                <h4>quantity:
+
+                </h4>
+                <div class="pd_qty fix">
+                  <!-- <input value="1" name="qttybutton" class="cart-plus-minus-box" type="number"> -->
+                  <input value="1" name="qttybutton" class="cart-plus-minus-box" type="number" min="1" max="5">
+                </div>
               </div>
             </div>
-          </div>
-          <!-- Product Action -->
-          <div class="pd_btn fix">
-            <a id="addToBagBtn" class="btn btn-default acc_btn" onclick="addToCart()" disabled>add to bag</a>
-            <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-heart"></i></a>
-            <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-refresh"></i></a>
-          </div>
-          <div class="pd_share_area fix">
-            <h4>share this on:</h4>
-            <div class="pd_social_icon">
-              <a class="facebook" href="#"><i class="fa fa-facebook"></i></a>
-              <a class="twitter" href="#"><i class="fa fa-twitter"></i></a>
-              <a class="vimeo" href="#"><i class="fa fa-vimeo"></i></a>
-              <a class="google_plus" href="#"><i class="fa fa-google-plus"></i></a>
-              <a class="tumblr" href="#"><i class="fa fa-tumblr"></i></a>
-              <a class="pinterest" href="#"><i class="fa fa-pinterest"></i></a>
+            <!-- Product Action -->
+            <div class="pd_btn fix">
+              <a id="addToBagBtn" class="btn btn-default acc_btn" onclick="addToCart()" disabled>add to bag</a>
+              <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-heart"></i></a>
+              <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-refresh"></i></a>
+            </div>
+            <div class="pd_share_area fix">
+              <h4>share this on:</h4>
+              <div class="pd_social_icon">
+                <a class="facebook" href="#"><i class="fa fa-facebook"></i></a>
+                <a class="twitter" href="#"><i class="fa fa-twitter"></i></a>
+                <a class="vimeo" href="#"><i class="fa fa-vimeo"></i></a>
+                <a class="google_plus" href="#"><i class="fa fa-google-plus"></i></a>
+                <a class="tumblr" href="#"><i class="fa fa-tumblr"></i></a>
+                <a class="pinterest" href="#"><i class="fa fa-pinterest"></i></a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-   <hr>
-    
+
+      <hr>
+
     </div>
   </div>
 
 
   <!-- Related Product Area -->
-	<div class="related_prdct_area text-center">
-		<div class="container">		
-				<!-- Section Title -->
-				<div class="rp_title text-center"><h3>Related products</h3></div>
-				<div class="row">
-        <% prod.forEach(product => { %>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="product-grid">
-            <div class="product-image">
-              <a href="/products/details/<%=product._id%>">
+  <div class="related_prdct_area text-center">
+    <div class="container">
+      <!-- Section Title -->
+      <div class="rp_title text-center">
+        <h3>Related products</h3>
+      </div>
+      <div class="row">
+        <% prod.forEach(product=> { %>
+          <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="product-grid">
+              <div class="product-image">
+                <a href="/products/details/<%=product._id%>">
 
-                <img class="pic-1" src="/uploads/re-image/<%= product.productImage[0] %>" alt="product image 1">
-                
+                  <img class="pic-1" src="/uploads/re-image/<%= product.productImage[0] %>" alt="product image 1">
+
                   <img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
-              
-              </a>
-              <ul class="social">
-                <li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
-                <li><a href="#" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
-                <li><a href="#" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
+
+                </a>
+                <ul class="social">
+                  <li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
+                  <li><a href="#" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
+                  <li><a href="#" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
+                </ul>
+                <% if (product.isOnSale) { %>
+                  <span class="product-new-label">Sale</span>
+                  <% } %>
+              </div>
+              <ul class="rating">
+                <li class="fa fa-star"></li>
+                <li class="fa fa-star"></li>
+                <li class="fa fa-star"></li>
+                <li class="fa fa-star"></li>
+                <li class="fa fa-star"></li>
               </ul>
-              <% if (product.isOnSale) { %>
-                <span class="product-new-label">Sale</span>
-            <% } %>
-            </div>
-            <ul class="rating">
-              <li class="fa fa-star"></li>
-              <li class="fa fa-star"></li>
-              <li class="fa fa-star"></li>
-              <li class="fa fa-star"></li>
-              <li class="fa fa-star"></li>
-            </ul>
-            <div class="product-content">
-              <h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.ProductName %></a></h3>
-              <div class="price">$<%= product.salePrice %>
-                <% if (product.regularPrice) { %>
-                    <span>$<%= product.regularPrice %></span>
-                <% } %>
-            </div>
-              <a class="add-to-cart" href="#">+ Add To Cart</a>
+              <div class="product-content">
+                <h3 class="title"><a href="/products/details/<%= product._id %>">
+                    <%= product.ProductName %>
+                  </a></h3>
+                <div class="price">$<%= product.salePrice %>
+                    <% if (product.regularPrice) { %>
+                      <span>$<%= product.regularPrice %></span>
+                      <% } %>
+                </div>
+                <a class="add-to-cart" href="#">+ Add To Cart</a>
+              </div>
             </div>
           </div>
-        </div>
-        <% }) %>
-          
-          
-			</div>
-		</div>
-	</div>
+          <% }) %>
 
-  
-    
-    <style>
-   
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <style>
     .thumbnail_images {
       display: flex;
       margin-top: 10px;
     }
-    
+
     .thumbnail {
       width: 60px;
       height: 60px;
@@ -238,61 +276,63 @@
       border: 2px solid #ddd;
       padding: 3px;
     }
-    
+
     .thumbnail:hover {
       border-color: #333;
     }
-    
+
     .pd_img img {
       max-width: 100%;
       height: auto;
     }
+  </style>
+  <script>
 
-    </style>
-    <script>
-     
-      function addToCart(){
-        document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
-        sizeInput.addEventListener('change',function(){
+    function addToCart() {
+      document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
+        sizeInput.addEventListener('change', function () {
           document.getElementById('addToBagBtn').disabled = false;
-          document.getElementById('sizeError').style.display="none";
+          document.getElementById('sizeError').style.display = "none";
         })
       })
 
-        const size = document.querySelector('input[name="size"]:checked')
-        console.log("ajax:size: ",size)
-        if(!size){
-          document.getElementById('sizeError').style.display="block";
-          return ;
-        }
-        const quantity = document.querySelector('input[name="qttybutton"]').value
-        console.log("ajax-qnty: ",quantity);
-        
-        const productId ="<%= products._id%>"
-        fetch('/cart/add',{
-          method:"post",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({quantity,productId,size:size.value})
-        })
+      const size = document.querySelector('input[name="size"]:checked')
+      console.log("ajax:size: ", size)
+      if (!size) {
+        document.getElementById('sizeError').style.display = "block";
+        return;
+      }
+      const quantity = document.querySelector('input[name="qttybutton"]').value
+      console.log("ajax-qnty: ", quantity);
+
+      const productId = "<%= products._id%>"
+      fetch('/cart/add', {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ quantity, productId, size: size.value })
+      })
         .then(response => response.json())
-        
+
         .then((data) => {
           console.log(data)
-          if(data.success){
+          if (data.success) {
             Swal.fire({
               title: 'Success!',
-        text: 'Item added to cart successfully!',
-        icon: 'success',
-        confirmButtonText: 'OK'
+              text: data.message,
+              icon: 'success',
+              timer:2000
             })
-          }else{
+            .then(() => {
+              location.reload();
+            })
+          } else {
             Swal.fire({
               title: 'Error!',
-        text: 'Failed to add item to cart.',
-        icon: 'error',
-        confirmButtonText: 'OK'
+              text: data.message,
+              icon: 'error',
+              timer:2000
             })
           }
         })
@@ -300,42 +340,42 @@
           console.log(err)
           Swal.fire({
             title: 'Error!',
-      text: 'An unexpected error occurred.',
-      icon: 'error',
-      confirmButtonText: 'OK'
+            text: 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'OK'
           })
         })
-      }
-
-
-
-
-function changeMainImage(imageUrl) {
-  console.log("Image clicked:", imageUrl);
-        const mainProductImage = document.getElementById('mainProductImage');
-        mainProductImage.src = imageUrl;
-
-        mainProductImage.onload = function() {
-        $('.pd_img img').extmDestroy(); 
-        $('.pd_img img').extm({
-          zoomLevel:2,
-          position:'right',
-          offset:{x:0,y:0},
-          rightPad:20,
-          height:'auto'
-        }); 
     }
-  }
 
-    
-    $(document).ready(function() {
+
+
+
+    function changeMainImage(imageUrl) {
+      console.log("Image clicked:", imageUrl);
+      const mainProductImage = document.getElementById('mainProductImage');
+      mainProductImage.src = imageUrl;
+
+      mainProductImage.onload = function () {
+        $('.pd_img img').extmDestroy();
         $('.pd_img img').extm({
-            zoomLevel: 2, 
-            position:'right',
-            offset: { x: 0, y: 0 },
-            rightPad: 20,
-            height:'auto',
+          zoomLevel: 2,
+          position: 'right',
+          offset: { x: 0, y: 0 },
+          rightPad: 20,
+          height: 'auto'
         });
+      }
+    }
+
+
+    $(document).ready(function () {
+      $('.pd_img img').extm({
+        zoomLevel: 2,
+        position: 'right',
+        offset: { x: 0, y: 0 },
+        rightPad: 20,
+        height: 'auto',
+      });
     });
-      </script>
-<%-include('../../views/partials/user/footer')%>
+  </script>
+  <%-include('../../views/partials/user/footer')%>

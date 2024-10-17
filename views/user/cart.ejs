@@ -161,7 +161,7 @@
         if (data.success) {
           Swal.fire({
             title: 'Deleted!',
-            text: 'The item has been removed from your cart.',
+            text: data.message,
             icon: 'success',
             timer: 2000,
             showConfirmButton: false, 
@@ -172,7 +172,7 @@
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Failed to remove item from cart',
+            text:data.message,
             timer: 2000,
             showConfirmButton: false,
           });
