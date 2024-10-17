@@ -1,5 +1,32 @@
 <%-include('../../views/partials/admin/header')%>
+<style>
+  .size-stock-list {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+}
 
+.size-stock-item {
+  display: inline-flex; /* Use inline-flex for alignment */
+  align-items: center;
+  margin-right: 15px; /* Space between items */
+}
+
+.stock-box {
+  display: inline-block; /* Make it inline-block */
+  padding: 3px 5px; /* Smaller padding */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 3px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background color */
+  margin-left: 5px; /* Space between size and stock box */
+}
+
+.line-break {
+  display: block; /* Break line */
+  width: 100%; /* Full width for line break */
+  margin-top: 5px; /* Space between lines */
+}
+</style>
 <head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 </head>
@@ -56,7 +83,30 @@
                   </button>
                   <%}%>
               </td>
-              <td><%= product.quantity %></td>
+              <!-- <td><%= product.quantity %></td> -->
+
+              <!-- <td>
+                <ul>
+                  <% product.sizes.forEach(size => { %>
+                    <li><strong><%= size.size %>:</strong> <%= size.stock %></li>
+                  <% }) %>
+                </ul>
+              </td> -->
+
+              <td>
+                <ul class="size-stock-list">
+                  <% product.sizes.forEach((size, index) => { %>
+                    <li class="size-stock-item">
+                      <span class="size-text"><strong><%= size.size %>:</strong></span>
+                      <span class="stock-box"><%= size.stock %></span>
+                    </li>
+                    <% if ((index + 1) % 2 === 0) { %>
+                      <li class="line-break"></li> <!-- Add a break every two sizes -->
+                    <% } %>
+                  <% }) %>
+                </ul>
+              </td>
+
               <td>
                 <% if(product.isDeleted===false) {%>
                   <button class="btn btn-danger" style="width: 80px;">

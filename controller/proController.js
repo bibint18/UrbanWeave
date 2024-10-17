@@ -142,8 +142,11 @@ exports.blockProduct = async (req,res) => {
 exports.getEditProduct = async (req,res) => {
   const  id = req.query.id
   const products = await Product.findOne({_id:id})
+  console.log("edit: ",products)
   const categories = await Category.find({isDeleted:false})
-  return res.render('admin/ProductEdit',{products,categories})
+  const sizes = products.sizes
+  console.log("sizes: ",sizes)
+  return res.render('admin/ProductEdit',{products,categories,sizes})
 }
 
 exports.editProducts = async (req,res) => {
