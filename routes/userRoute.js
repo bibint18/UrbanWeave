@@ -67,4 +67,5 @@ router.post('/address/delete',authMiddleware.protect,HomeRoute.deleteAddress)
 
 router.get('/cart',authMiddleware.protect,CartRoute.getCart)
 router.post('/cart/add',authMiddleware.protect,CartRoute.AddCart)
+router.delete('/cart/delete/:id',authMiddleware.protect,CartRoute.deleteCart)
 module.exports = router;
