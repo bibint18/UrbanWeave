@@ -177,7 +177,7 @@ body {
   }
 }
 
-   </style>
+  </style>
 </head>
 <body>
   <div class="container">
@@ -225,56 +225,40 @@ body {
 
         <!-- Orders list -->
         <div class="order-list">
-          <!-- Order Item -->
-          
-          <div class="order-item">
-            <img src="bag.jpg" alt="Product Image">
-            <div class="order-details">
-              <h5>Cleto Black Sling Bag BLACK_BRF_13</h5>
-              <p>Color: Black</p>
-              <p>₹208</p>
-              <p><span class="status on-the-way">Delivery expected by Oct 24</span></p>
-              <p>Seller has processed your order.</p>
-            </div>
-          </div>
+          <% if (orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+              <!-- Order Item -->
+              <div class="order-item">
+                <!-- Product Image (Show first product's image as example) -->
+                <img src="/uploads/re-image/<%= order.products[0].product.productImage[0] %>" alt="Product Image">
 
-          <!-- <div class="order-item">
-            <img src="backpack.jpg" alt="Product Image">
-            <div class="order-details">
-              <h5>JMT Collection Attractive Women's & Girls Backpack</h5>
-              <p>Color: Grey</p>
-              <p>₹275</p>
-              <p><span class="status delivered">Delivered on Dec 04, 2023</span></p>
-              <a href="#" class="review-link">Rate & Review Product</a>
-            </div>
-          </div>
+                <div class="order-details">
+                  <!-- <h5>Order ID: <%= order._id %></h5> -->
+                  <p>Total Amount: ₹<%= order.totalAmount %></p>
+                  <p>Order Date: <%= new Date(order.orderDate).toLocaleDateString() %></p>
 
-          <div class="order-item">
-            <img src="dress.jpg" alt="Product Image">
-            <div class="order-details">
-              <h5>Deklook Women Pleated Purple Dress</h5>
-              <p>Color: Purple, Size: M</p>
-              <p>₹272</p>
-              <p><span class="status delivered">Delivered on Oct 17, 2023</span></p>
-              <a href="#" class="review-link">Rate & Review Product</a>
-            </div>
-          </div>
+                  <p><strong>Products:</strong></p>
+                  <ul style="list-style-type: none;">
+                    <% order.products.forEach(product => { %>
+                      <li style="list-style-type: none;">
+                        <%= product.product.ProductName %> - Size: <%= product.size %>, Quantity: <%= product.quantity %> 
+                        - ₹<%= product.price %>
+                      </ul>
+                    <% }) %>
+                    </ol>
 
-          <div class="order-item">
-            <img src="pink-backpack.jpg" alt="Product Image">
-            <div class="order-details">
-              <h5>MUSRAT PU Leather Backpack School Bag</h5>
-              <p>Color: Pink</p>
-              <p>₹338</p>
-              <p><span class="status delivered">Delivered on Apr 19, 2022</span></p>
-              <a href="#" class="review-link">Rate & Review Product</a>
-            </div>
-          </div> -->
-          
+                  <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= order.status %></span></p>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No orders found.</p>
+          <% } %>
         </div>
       </section>
     </div>
-  </div>
+</div>
+
 </body>
 </html>
 

@@ -6,6 +6,7 @@ const authMiddleware= require('../middleware/authMiddleware')
 const homePageRoute = require("../controller/homepage")
 const HomeRoute = require('../controller/homeController')
 const CartRoute = require('../controller/cartController')
+const OrderRoute = require('../controller/orderController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
 
@@ -75,4 +76,6 @@ router.post('/checkout/address',authMiddleware.protect,CartRoute.checkoutAddAddr
 router.get('/checkout/address/edit',authMiddleware.protect,CartRoute.getEditAddress)
 router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddress)
 router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
+//orders
+router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 module.exports = router;

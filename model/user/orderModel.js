@@ -18,11 +18,23 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  // address: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Address',
+  //   required: true
+  // },
   address: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Address',
-    required: true
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    addressLine1: { type: String, required: true },
+    addressLine2: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+    addType: { type: String, enum: ['office', 'home'], required: false }
   },
+  
   status: {
     type: String,
     enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
