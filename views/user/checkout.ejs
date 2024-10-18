@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Page</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .custom-radio {
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  padding-left: 35px; 
+  margin-bottom: 12px;
+  user-select: none;
+
+}
+
+
+.custom-radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+
+.custom-radio .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px; 
+  width: 25px; 
+  /* background-color: #c2185b; */
+  border-radius: 50%; 
+  border: 2px solid #c2185b;
+}
+
+
+.custom-radio input[type="radio"]:checked + .checkmark {
+  background-color: #E91E63; 
+}
+
+
+.custom-radio .checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+
+.custom-radio input[type="radio"]:checked + .checkmark::after {
+  display: block;
+}
+
+
+.custom-radio .checkmark::after {
+  top: 7px; 
+  left: 7px; 
+  width: 11px;
+  height: 11px; 
+  border-radius: 50%;
+  background: white;
+}
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .bg-rose {
+      background-color: #E91E63; 
+    }
+
+    .btn-rose {
+      background-color: #E91E63;
+      border-color: #E91E63;
+    }
+
+    .btn-rose:hover {
+      background-color: #c2185b;
+      border-color: #c2185b;
+    }
+
+    .text-primary {
+      color: #E91E63 !important; 
+    }
+
+    h5 {
+      font-weight: bold;
+    }
+
+    .card-header {
+      background-color: #E91E63; 
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <!-- <div class="navbar navbar-light bg-white p-3">
+    <a class="navbar-brand" href="#">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" style="height: 40px;">
+    </a> -->
+    <h1 class="font-weight-bold text-center mt-5">Checkout</h1>
+  <!-- </div> -->
+
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Left Section (Address & Delivery) -->
+      <div class="col-lg-8">
+        <!-- Address Section -->
+        <div class="card mb-3">
+          <div class="card-header bg-rose text-white">
+            <h5 class="mb-0">1. Select a delivery address</h5>
+          </div>
+          <div class="card-body">
+            <h6 class="font-weight-bold">Your addresses</h6>
+
+            <!-- Addresses Loop -->
+            <% addresses.forEach((address, index) => { %>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="address" id="address<%= index %>" <%= index === 0 ? 'checked' : '' %>>
+                <label class="form-check-label" for="address<%= index %>">
+                  <strong><%= address.fullName %></strong> <%= address.addressLine1 %>,<%= address.addressLine2 %> ,<%= address.city %>, <%= address.state %>, <%= address.postalCode %>, <%= address.country %>
+                </label>
+                <div>
+                  <a href="/checkout/address/edit?id=<%=address._id%>" class="text-primary">Edit address</a> 
+                </div>
+              </div>
+            <% }); %>
+
+            <!-- Add New Address -->
+            <div>
+              <a href="/checkout/address" class="text-primary">+ Add a new address</a>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-rose text-white mb-3">Use this address</button>
+
+        <!-- Payment Method -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>2. Payment method</h5>
+            <label class="custom-radio">
+                Cash On Delivery
+                <input type="radio" name="pay" value="COD">
+                <span class="checkmark"></span>
+              </label>
+          </div>
+        </div>
+
+        <!-- Items and Delivery -->
+        <div class="card mb-3">
+          <!-- <div class="card-body">
+            <h5>3. Items and delivery</h5>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Right Section (Order Summary) -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body">
+            <!-- <h5 class="font-weight-bold">Order Summary</h5> -->
+            <hr>
+            <p>Total Items: <span class="float-right"><%=totalProduct%></span></p>
+            <p>Delivery Fee: <span class="float-right">Free Delivery!</span></p>
+            <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
+            <hr>
+            <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right">₹<%=total%></span></h5>
+            <button class="btn btn-warning btn-block font-weight-bold mt-4">Proceed To Pay</button>
+            <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

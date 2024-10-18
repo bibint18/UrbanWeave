@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Page</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+}
+
+.bg-rose {
+  background-color: #E91E63; /* Rose color */
+}
+
+.btn-rose {
+  background-color: #E91E63;
+  border-color: #E91E63;
+}
+
+.btn-rose:hover {
+  background-color: #c2185b;
+  border-color: #c2185b;
+}
+
+.text-primary {
+  color: #E91E63 !important; /* Rose color */
+}
+
+h5 {
+  font-weight: bold;
+}
+
+.card-header {
+  background-color: #E91E63; /* Rose color */
+  color: white;
+}
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar navbar-light bg-white p-3">
+    <a class="navbar-brand" href="#">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" style="height: 40px;">
+    </a>
+    <h3 class="font-weight-bold ">Checkout</h3>
+  </div>
+
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Left Section (Address & Delivery) -->
+      <div class="col-lg-8">
+        <!-- Address Section -->
+        <div class="card mb-3">
+          <div class="card-header bg-rose text-white">
+            <h5 class="mb-0">1. Select a delivery address</h5>
+          </div>
+          <div class="card-body">
+            <h6 class="font-weight-bold">Your addresses</h6>
+
+            <!-- Address 1 -->
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="radio" name="address" id="address1" checked>
+              <label class="form-check-label" for="address1">
+                <strong>Bibin</strong> Arumadi House, pandikkadavu, Cherupuzha, Payyanur, Kannur, KANNUR, KERALA, 670511, India
+              </label>
+              <div>
+                <a href="#" class="text-primary">Edit address</a> 
+              </div>
+            </div>
+
+            <!-- Address 2 -->
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="radio" name="address" id="address2">
+              <label class="form-check-label" for="address2">
+                <strong>Bibin</strong> Ground floor 102, White orchid Apartment, Kodical 10 B cross, Kulur, Mangalore, MANGALURU, KARNATAKA, 575006, India
+              </label>
+              <div>
+                <a href="#" class="text-primary">Edit address</a> 
+              </div>
+            </div>
+
+            <!-- Add New Address -->
+            <div>
+              <a href="#" class="text-primary">+ Add a new address</a>
+            </div>
+
+            <!-- Pickup Location Section -->
+            
+          </div>
+        </div>
+
+        <button class="btn btn-rose text-white mb-3">Use this address</button>
+
+        <!-- Payment Method -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>2. Payment method</h5>
+          </div>
+        </div>
+
+        <!-- Items and Delivery -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5>3. Items and delivery</h5>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Section (Order Summary) -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="font-weight-bold">Order Summary</h5>
+            <hr>
+            <p>Items: <span class="float-right">--</span></p>
+            <p>Delivery: <span class="float-right">--</span></p>
+            <hr>
+            <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right">₹29,999.00</span></h5>
+            <button class="btn btn-warning btn-block font-weight-bold mt-4">Proceed To pay</button>
+            <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

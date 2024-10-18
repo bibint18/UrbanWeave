@@ -68,4 +68,10 @@ router.post('/address/delete',authMiddleware.protect,HomeRoute.deleteAddress)
 router.get('/cart',authMiddleware.protect,CartRoute.getCart)
 router.post('/cart/add',authMiddleware.protect,CartRoute.AddCart)
 router.delete('/cart/delete/:id',authMiddleware.protect,CartRoute.deleteCart)
+//checkout
+router.get('/checkout',authMiddleware.protect,CartRoute.getCheckout)
+router.get('/checkout/address',authMiddleware.protect,CartRoute.getAddAddress)
+router.post('/checkout/address',authMiddleware.protect,CartRoute.checkoutAddAddress)
+router.get('/checkout/address/edit',authMiddleware.protect,CartRoute.getEditAddress)
+router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddress)
 module.exports = router;
