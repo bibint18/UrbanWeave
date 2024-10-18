@@ -3,9 +3,45 @@ const Product = require('../model/admin/prodectModel')
 const User = require('../model/user/userModel')
 exports.ShopPage = async (req,res) => {
   try {
-    const products = await Product.find({isDeleted:false})
-    return res.render('user/shop',{products})
+    const pro = await Product.find({isDeleted:false})
+    console.log("prod: ",pro);
     
+    const {sort} = req.query
+    console.log("sort: ",sort);
+    let sortOptions ={};
+    switch(sort){
+      case 'priceLowHigh':
+        sortOptions = {salePrice:1};
+        break;
+      case 'priceHighLow':
+        sortOptions = {salePrice:-1};
+        break;
+      case 'newArrivals':
+        sortOptions = {createdAt:-1};
+        break;
+      case 'az':
+        const productsAZ = await Product.aggregate([
+          { $match: { isDeleted: false } },
+          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } },  // Trim and lowercase
+          { $sort: { ProductNameCleaned: 1 } }  // Sort A-Z
+        ]);
+        return res.render('user/shop', { products: productsAZ,sort });
+        // sortOptions = {productName:1}; 
+        // break;
+      case 'za':
+        const productsZA = await Product.aggregate([
+          { $match: { isDeleted: false } },
+          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
+          { $sort: { ProductNameCleaned: -1 } }  // Sort Z-A
+        ]);
+        return res.render('user/shop', { products: productsZA,sort });
+        // sortOptions = {productName:-1};
+        // break;
+      default:
+        sortOptions = {createdAt:-1}
+    }
+    const products= await Product.find({isDeleted:false}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).exec()
+    return res.render('user/shop',{products,sort})
   } catch (error) {
     console.log(error)
     return res.status(500).json({success:false})
