@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout Page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
   <style>
     .custom-radio {
   display: flex;
@@ -107,6 +108,7 @@
   <!-- </div> -->
 
   <div class="container mt-4">
+    <form id="checkoutForm" action="/place-order" method="POST">
     <div class="row">
       <!-- Left Section (Address & Delivery) -->
       <div class="col-lg-8">
@@ -121,7 +123,7 @@
             <!-- Addresses Loop -->
             <% addresses.forEach((address, index) => { %>
               <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="address" id="address<%= index %>" <%= index === 0 ? 'checked' : '' %>>
+                <input class="form-check-input" type="radio" name="address" value="<%= address._id %>" id="address<%= index %>" <%= index === 0 ? 'checked' : '' %>>
                 <label class="form-check-label" for="address<%= index %>">
                   <strong><%= address.fullName %></strong> <%= address.addressLine1 %>,<%= address.addressLine2 %> ,<%= address.city %>, <%= address.state %>, <%= address.postalCode %>, <%= address.country %>
                 </label>
@@ -138,7 +140,7 @@
           </div>
         </div>
 
-        <button class="btn btn-rose text-white mb-3">Use this address</button>
+        <button class="btn btn-rose text-white mb-3" type="button" id="useAddressBtn">Use this address</button>
 
         <!-- Payment Method -->
         <div class="card mb-3">
@@ -171,16 +173,62 @@
             <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
             <hr>
             <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right">₹<%=total%></span></h5>
-            <button class="btn btn-warning btn-block font-weight-bold mt-4">Proceed To Pay</button>
-            <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a>
+            <button class="btn btn-warning btn-block font-weight-bold mt-4">Place Order</button>
+            <!-- <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a> -->
           </div>
         </div>
       </div>
     </div>
+    </form>
   </div>
 
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    document.querySelector('#checkoutForm').addEventListener('submit',function(e){
+        e.preventDefault();
+        const address = document.querySelector('input[name="address"]').value
+        console.log(address);
+         
+        // const formData = new  FormData(this);
+        // console.log("inside: ",formData)
+        fetch('/placeOrder',{
+          method:'post',
+          headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ address:address})
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if(data.success){
+            Swal.fire({
+              title: 'Order Placed Successfully',
+              text: 'Your order has been placed successfully.',
+              icon:'success'
+            })
+            .then(()=>{
+              location.reload()
+            })
+          }else{
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to place order',
+              icon:'error'
+            })
+          }
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon:"error",
+            title:'Error',
+            text:"something went wrong!"
+          })
+        })
+    })
+  </script>
 </body>
 </html>

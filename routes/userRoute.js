@@ -74,4 +74,5 @@ router.get('/checkout/address',authMiddleware.protect,CartRoute.getAddAddress)
 router.post('/checkout/address',authMiddleware.protect,CartRoute.checkoutAddAddress)
 router.get('/checkout/address/edit',authMiddleware.protect,CartRoute.getEditAddress)
 router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddress)
+router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
 module.exports = router;

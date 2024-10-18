@@ -1,18 +1,14 @@
 const Cart = require("../model/user/cartModel");
 const Product = require("../model/admin/prodectModel");
 const User = require("../model/user/userModel");
+const Order = require('../model/user/orderModel')
 exports.getCart = async (req, res) => {
   try {
     const userId = req.user.id;
     const cartItems = await Cart.find({ user: userId })
       .populate("product")
       .exec();
-    if (!cartItems || cartItems.length == 0) {
-      return res.render("user/cart", {
-        cartItems: [],
-        message: "Cart is empty",
-      });
-    }
+   
     const itemsWithTotal = cartItems.map((item) => {
       const total = item.quantity * item.product.salePrice;
       return {
@@ -22,10 +18,20 @@ exports.getCart = async (req, res) => {
     });
 
     const items = await Cart.find({ user: userId }).populate("product");
-    const GrandTotal = items.reduce(
+    let GrandTotal =0;
+    if(cartItems.length >0){
+    GrandTotal = items.reduce(
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
     );
+  }
+  if (!cartItems || cartItems.length == 0) {
+    return res.render("user/cart", {
+      cartItems: [],
+      message: "Cart is empty",
+      GrandTotal
+    });
+  }
     console.log("grand", GrandTotal);
     return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal });
   } catch (error) {
@@ -123,14 +129,12 @@ exports.getCheckout = async (req, res) => {
     const user = await User.findById(userId);
     // console.log(user);
     const addresses = user.address;
-    console.log("add: ", addresses);
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     cartItem.forEach((item) => {
       totalProduct += item.quantity;
     });
     console.log("pro", totalProduct);
-
     const total = cartItem.reduce(
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
@@ -231,4 +235,44 @@ exports.editAddress =async (req,res) => {
   console.log(error)
   res.send(error)
 }
+}
+
+exports.placeOrder = async (req,res) => {
+  try {
+    const address = req.body;
+    console.log("add: ",address)
+    const userId = req.user._id
+    console.log(userId);
+    const cartItems = await Cart.find({user:userId}).populate('product')
+    if(cartItems.length ==0){
+      return res.status(400).json({success:false,message:"No items in cart"})
+    }
+    let totalAmount=0;
+    const products = cartItems.map((item) =>{
+      totalAmount += item.quantity * item.product.salePrice;
+      return{
+        product:item.product._id,
+        quantity:item.quantity,
+        size:item.size,
+        price:item.product.salePrice
+      }
+    })
+    const newOrder = new Order({
+      user:userId,
+      products:products,
+      totalAmount:totalAmount,
+      address:req.body.address,
+      status:'Processing'
+    })
+    console.log("ors: ",newOrder);
+    
+    await newOrder.save()
+    console.log("saved: ",newOrder);
+
+    await Cart.deleteMany({user:userId})
+    res.json({ success: true, message: 'Order placed successfully!' });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: 'something went wrong!'});
+  }
 }
