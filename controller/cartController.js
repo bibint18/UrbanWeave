@@ -4,6 +4,9 @@ const User = require("../model/user/userModel");
 const Order = require('../model/user/orderModel')
 exports.getCart = async (req, res) => {
   try {
+    const user = req.user
+    console.log("cartuser: ",user);
+    
     const userId = req.user.id;
     const cartItems = await Cart.find({ user: userId })
       .populate("product")
@@ -29,11 +32,11 @@ exports.getCart = async (req, res) => {
     return res.render("user/cart", {
       cartItems: [],
       message: "Cart is empty",
-      GrandTotal
+      GrandTotal,user
     });
   }
     console.log("grand", GrandTotal);
-    return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal });
+    return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal,user });
   } catch (error) {
     console.log(error);
     res.status(400).json({ success: false, message: "error" });
@@ -124,11 +127,12 @@ exports.deleteCart = async (req, res) => {
 
 exports.getCheckout = async (req, res) => {
   try {
+    const user = req.user
     const userId = req.user.id;
     console.log("usr: ", userId);
-    const user = await User.findById(userId);
+    const users = await User.findById(userId);
     // console.log(user);
-    const addresses = user.address;
+    const addresses = users.address;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     cartItem.forEach((item) => {
@@ -141,7 +145,7 @@ exports.getCheckout = async (req, res) => {
     );
     console.log("total", total);
 
-    return res.render("user/checkout", { addresses, totalProduct, total });
+    return res.render("user/checkout", { addresses, totalProduct, total ,user});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });

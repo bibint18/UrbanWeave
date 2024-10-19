@@ -71,18 +71,23 @@
 							<ul class="hdr_tp_right text-right">
 								<li class="account_area"><a href="/userProfile"><i class="ti-user"></i> My Account</a></li>
 								<li class="lan_area dropdown">
-                  <form action="/logout" method="post" class="d-inline bg-white">
-                    <button class="plain-text-btn ">logout</button>
-                  </form>
+                  
 								</li>
-							
+								<% if(user){ %> 
+								<form action="/logout" method="post" class="d-inline bg-white">
+									<button class="plain-text-btn ">logout</button>
+								</form>
+								<% } %>
 								<li class="currency_area dropdown">
-									<a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="ti-money"></i>SignUp</a>
+									<% if(!user) { %>
+									<a class="dropdown-toggle" href="#" data-toggle="dropdown"></i>SignUp</a>
 									<ul class="csub-menu dropdown-menu">
+										
 										<li class="dropdown-item"><a href="/userLogin">Login</a></li>	
 										<li class="dropdown-item"><a href="/userSignup">Signup</a></li>	
 										<!-- <li class="dropdown-item"><a href="#">£ - Pound</a></li>	 -->
-									</ul>								
+									</ul>	
+									<% } %>							
 								</li>
 							</ul>
 						</div>

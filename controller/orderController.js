@@ -5,6 +5,7 @@ const User = require('../model/user/userModel')
 
 exports.getOrdersPage =async (req,res) => {
   try {
+    const user = req.user
     const userId = req.user._id 
     console.log(userId);
     const {sort} =req.query
@@ -28,7 +29,7 @@ exports.getOrdersPage =async (req,res) => {
     }
     const orders = await Order.find({user:userId,...sortOptions}).populate('products.product').exec()
     console.log("or: ",orders);
-    return res.render('user/orders',{orders,sort})
+    return res.render('user/orders',{orders,sort,user})
   } catch (error) {
     console.log(error)
     return res.status(400).json({success:false,message:error})

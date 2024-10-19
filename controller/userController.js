@@ -16,8 +16,11 @@ exports.getUserLogin = (req, res) => {
 };
 exports.getHome =async (req, res) => {
   try{
+    const user = req.cookies.jwt
+    console.log('user: ',user);
+    
     const products =await Products.find({isDeleted:false})
-  return res.render("home",{products});
+  return res.render("home",{products,user});
   }catch(err){
     console.log(err);
     return res.status(500).json({success:false})
@@ -231,12 +234,12 @@ exports.logout = (req, res) => {
 exports.getProductDetails =async (req,res) => {
   const id = req.params.id
   console.log(id)
-
+  const user = req.cookies.jwt
   const products = await  Products.findById(id)
   if(products.isDeleted == true){
     return res.redirect('/home')
   }
   console.log(products)
   const prod = await Products.find({isDeleted:false});
-  res.render('user/product-details',{products,prod})
+  res.render('user/product-details',{products,prod,user})
 }

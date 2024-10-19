@@ -5,7 +5,7 @@ exports.ShopPage = async (req,res) => {
   try {
     const pro = await Product.find({isDeleted:false})
     console.log("prod: ",pro);
-    
+    const user = req.cookies.jwt
     const {sort} = req.query
     console.log("sort: ",sort);
     let sortOptions ={};
@@ -34,14 +34,14 @@ exports.ShopPage = async (req,res) => {
           { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
           { $sort: { ProductNameCleaned: -1 } }  // Sort Z-A
         ]);
-        return res.render('user/shop', { products: productsZA,sort });
+        return res.render('user/shop', { products: productsZA,sort,user });
         // sortOptions = {productName:-1};
         // break;
       default:
         sortOptions = {createdAt:-1}
     }
     const products= await Product.find({isDeleted:false}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).exec()
-    return res.render('user/shop',{products,sort})
+    return res.render('user/shop',{products,sort,user})
   } catch (error) {
     console.log(error)
     return res.status(500).json({success:false})
