@@ -241,8 +241,16 @@ exports.placeOrder = async (req,res) => {
   try {
     const address = req.body;
     console.log("add: ",address)
+
     const userId = req.user._id
     console.log(userId);
+    const user = await User.findById(userId)
+    console.log("user: ",user);
+    // const selectedAddress = user.address.id(address)
+    // const selectedAddress = user.address.find((addr) => addr._id.toString() === address);
+    // const selectedAddress = await User.findOne({"address._id":address},{"address.$":1})
+    // console.log("whole: ",selectedAddress);
+    
     const cartItems = await Cart.find({user:userId}).populate('product')
     if(cartItems.length ==0){
       return res.status(400).json({success:false,message:"No items in cart"})

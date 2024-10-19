@@ -16,22 +16,17 @@
   })
 
   document.querySelector('form').addEventListener('submit', function(event) {
-  // Enable all input fields (text, email, etc.)
   document.querySelectorAll('input').forEach((input) => {
       input.disabled = false;
   });
-
-  // Enable all textarea fields (if any)
   document.querySelectorAll('textarea').forEach((textarea) => {
       textarea.disabled = false;
   });
 
-  // Enable all select fields (if any)
   document.querySelectorAll('select').forEach((select) => {
       select.disabled = false;
   });
 
-  // Now the form will submit with all values enabled
 });
 
 

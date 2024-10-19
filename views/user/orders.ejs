@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Orders</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- <link rel="stylesheet" href="styles.css"> -->
    <style>
     * {
@@ -139,6 +143,26 @@ body {
   margin-top: 10px;
   display: inline-block;
 }
+.cancel-btn {
+  background-color: #e74c3c; /* Red color for cancel */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 6px 12px; /* Small padding */
+  border-radius: 4px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer on hover */
+  font-size: 14px; /* Small font size */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.cancel-btn:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+
+.cancel-btn:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 4px rgba(231, 76, 60, 0.7); /* Subtle shadow on focus */
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -183,8 +207,8 @@ body {
   <div class="container">
     <!-- Breadcrumb navigation -->
     <div class="breadcrumb">
-      <a href="#">Home</a> &gt; 
-      <a href="#">My Account</a> &gt; 
+      <a href="/home">Home</a> &gt; 
+      <a href="/userProfile">My Account</a> &gt; 
       <span>My Orders</span>
     </div>
 
@@ -195,16 +219,33 @@ body {
         <h3>Filters</h3>
 
         <!-- Order Status Filter -->
-        <div class="filter-group">
+        <div class="col-sm-6 col-xs-12 short_by_area">
+          <div class="short_by_inner">
+            <label>Sort by:</label>
+            <form id="sortForm" method="GET" action="/orders">
+              <select class="sort-select" name="sort" onchange="document.getElementById('sortForm').submit()">
+                <option value="">Select Sorting</option>
+                <option value="Processing" <% if (sort === 'Processing') { %> selected <% } %> >Status: Processing</option>
+                <option value="Shipped" <% if (sort === 'Shipped') { %> selected <% } %> >Status: Shipped</option>
+                <option value="Cancelled" <% if (sort === 'Cancelled') { %> selected <% } %> >Status: Cancelled </option>
+                <option value="Delivered" <% if (sort === 'Delivered') { %> selected <% } %> >Status: Delivered</option>
+                <!-- <option value="za" <% if (sort === 'za') { %> selected <% } %> >Product Name: Z - A</option> -->
+              </select>
+            </form>
+          </div>
+        </div>
+
+
+        <!-- <div class="filter-group">
           <h4>ORDER STATUS</h4>
           <label><input type="checkbox"> On the way</label>
           <label><input type="checkbox"> Delivered</label>
           <label><input type="checkbox"> Cancelled</label>
           <label><input type="checkbox"> Returned</label>
-        </div>
+        </div> -->
 
         <!-- Order Time Filter -->
-        <div class="filter-group">
+        <!-- <div class="filter-group">
           <h4>ORDER TIME</h4>
           <label><input type="checkbox"> Last 30 days</label>
           <label><input type="checkbox"> 2023</label>
@@ -212,7 +253,7 @@ body {
           <label><input type="checkbox"> 2021</label>
           <label><input type="checkbox"> 2020</label>
           <label><input type="checkbox"> Older</label>
-        </div>
+        </div> -->
       </aside>
 
       <!-- Orders Section -->
@@ -228,7 +269,7 @@ body {
           <% if (orders.length > 0) { %>
             <% orders.forEach(order => { %>
               <!-- Order Item -->
-              <div class="order-item">
+              <div class="order-item" id="order-<%= order._id %>">
                 <!-- Product Image (Show first product's image as example) -->
                 <img src="/uploads/re-image/<%= order.products[0].product.productImage[0] %>" alt="Product Image">
 
@@ -248,7 +289,19 @@ body {
                     </ol>
 
                   <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= order.status %></span></p>
+                  
                 </div>
+
+                <div class="">
+
+                  <% if (order.status === 'Processing' || order.status === 'Shipped') { %>
+                    <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                  <% } %>
+                  <% if (order.status === 'Delivered') { %>
+                    <button class="return-btn " onclick="returnOrder('<%= order._id %>')">Return Product</button>
+                  <% } %>
+                </div>
+
               </div>
             <% }) %>
           <% } else { %>
@@ -258,7 +311,64 @@ body {
       </section>
     </div>
 </div>
+<script>
+  function cancelOrder(orderId){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+})
+.then((result) => {
+  if(result.isConfirmed){
 
+    console.log(orderId);
+    fetch(`/order/cancel/${orderId}`,{
+      method:'post',
+      headers:{'Content-Type':'application/json'}
+    })
+    .then(response=> response.json())
+    .then((data) => {
+      if(data.success){
+        Swal.fire({
+          icon:'success',
+          title:'Order Cancelled',
+          text:'Your order has been cancelled.',
+          timer:1500,
+          showConfirmButton:false
+        })
+        const  orderElement = document.getElementById(`order-${orderId}`)
+        console.log("ele,",orderElement);
+        
+        if(orderElement){
+          orderElement.remove();
+        }
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:'Error',
+          text:'Failed to cancel order.',
+          timer:1500,
+          showConfirmButton:false
+        })
+      }
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'SOMETHING  WENT WRONG',
+        timer: 1500,
+        showConfirmButton:false
+      })
+    })
+  }
+  })
+  }
+</script>
 </body>
 </html>
 

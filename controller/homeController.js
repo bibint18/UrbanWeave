@@ -22,8 +22,8 @@ exports.ShopPage = async (req,res) => {
       case 'az':
         const productsAZ = await Product.aggregate([
           { $match: { isDeleted: false } },
-          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } },  // Trim and lowercase
-          { $sort: { ProductNameCleaned: 1 } }  // Sort A-Z
+          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
+          { $sort: { ProductNameCleaned: 1 } }  
         ]);
         return res.render('user/shop', { products: productsAZ,sort });
         // sortOptions = {productName:1}; 
