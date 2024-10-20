@@ -2,17 +2,19 @@ const jwt = require('jsonwebtoken')
 const User = require('../model/user/userModel')
 const Admin = require('../model/admin/adminModel')
 const jwtService = require('../services/jwtService')
+const { logout } = require('../controller/userController')
 exports.protect = async (req,res,next) => {
-  const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1];
+  const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1]; 
   if(!token){
     console.log("NO TOKEN USER NEED TO LOGIN")
     return res.redirect('/userLogin')
     
     // return res.send("no token user not loggedin")
   }
+  
   try{
     const decoded = jwt.verify(token,process.env.JWT_SECRET)
-    const user = await User.findById(decoded.id)
+    const user = await User.findById(decoded.id) 
     if(!user){
       return res.send("no user in databse");
     }

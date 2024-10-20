@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -51,14 +51,25 @@
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" value="<%= user.email %>" >
-                    <a href="#" class="edit-link" data-target="email">Edit</a>
+                    <input type="email" id="email" name="mail" value="<%= user.email %>" disabled>
+                    <!-- <a href="#" class="edit-link" data-target="email">Edit</a> -->
                 </div>
+                <input type="hidden" id="email" name="email" value="<%= user.email %>" >
                 <div class="form-group">
                     <label for="mobile">Mobile Number</label>
                     <input type="text" id="mobile" name="mobilePh" value="<%= user.mobile %>" disabled>
                     <a href="#" class="edit-link" data-target="mobile">Edit</a>
                 </div>
+                <div class="form-group">
+                  <label for="mobile">Reset Password</label>
+                  <input type="text" id="current" name="current" value="<%= user.currentPsw %>" placeholder="current Password" disabled>
+                  <a href="#" class="edit-link" data-target="current">Edit</a>
+                  <input type="text" id="neww" name="newPsw" value="<%= user.newPsw %>" placeholder="New Password" disabled>
+                  <a href="#" class="edit-link" data-target="neww">Edit</a>
+                  <input type="text" id="confirm" name="confirmPsw" value="<%= user.confirmPsw %>" placeholder="Confirm new Password" disabled>
+                  <a href="#" class="edit-link" data-target="confirm">Edit</a>
+              </div>
+                
                 <button type="submit" class="save-btn">Save Changes</button>
             </form>
         </div>

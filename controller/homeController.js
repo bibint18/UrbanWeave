@@ -1,6 +1,7 @@
 const { findByIdAndDelete } = require('../model/admin/adminModel')
 const Product = require('../model/admin/prodectModel')
 const User = require('../model/user/userModel')
+const bcrypt = require('bcrypt')
 exports.ShopPage = async (req,res) => {
   try {
     const pro = await Product.find({isDeleted:false})
@@ -54,19 +55,43 @@ exports.userProfile = async (req,res) => {
 }
 
 exports.EditUserProfile = async (req,res) => {
-  const {fullName,email,gender,mobilePh}= req.body
-  Lowgender = gender.toLowerCase();
+  const {fullName,email,gender,mobilePh,current,newPsw,confirmPsw}= req.body
+  console.log( 'hhih ',fullName,email,gender,mobilePh,current,newPsw,confirmPsw);
+  console.log(current,newPsw,confirmPsw);
+  
+  let Lowgender = gender.toLowerCase();
   const user = await User.findOne({email})
   if(!user){
     return res.status(404).json({success:false,message:"user not exist"})
   }
-  if(user){
-    user.username = fullName;
-    user.gender = Lowgender;
-    user.mobile = mobilePh;
-  await user.save()
-}
-  res.send("done")
+  if(fullName){
+    user.username = fullName
+  }
+  if(mobilePh){
+    user.mobile = mobilePh
+  }
+  if(gender){
+    user.gender = Lowgender
+  }
+
+  let isYes = await bcrypt.compare(current,user.password)
+  console.log(isYes)
+  if(isYes){
+    if(newPsw && confirmPsw && newPsw === confirmPsw){
+      bcrypt.hash(newPsw,10)
+      user.password = newPsw
+    }
+  }
+  //
+//   if(user){
+//     user.username = fullName;
+//     user.gender = Lowgender;
+//     user.mobile = mobilePh;
+//   await user.save()
+// }
+await user.save();
+  // res.send("done")
+  return res.redirect('/userProfile')
 }
 
 exports.userAddress = async (req,res) => {
@@ -81,10 +106,11 @@ exports.userAddress = async (req,res) => {
 
 exports.manageAddress =async (req,res) => {
   console.log(req.user.id)
+  const user = req.user
   const addresses = await User.findById(req.user.id)
   const addr = addresses.address;
   // console.log("rendering ",addr)
-  res.render('user/addressLand',{addr})
+  res.render('user/addressLand',{addr,user})
 }
 
 exports.addAddress = async (req,res) => {

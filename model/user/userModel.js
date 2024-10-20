@@ -15,6 +15,7 @@ const addressSchema = mongoose.Schema({
 })
 
 const userSchema = mongoose.Schema({
+  
   username:{
     type:String,
     required:false
