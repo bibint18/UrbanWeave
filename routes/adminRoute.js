@@ -5,6 +5,7 @@ const productRoute = require("../controller/productController")
 const productManage = require("../middleware/productmanage")
 const deletedRoute = require("../controller/deleted")
 const ProduRoute = require('../controller/proController')
+const OrderRoute = require('../controller/adminOrder')
 const router = express.Router();
 const  multer = require('multer');
 const storage = require('../helpers/multer')
@@ -50,4 +51,7 @@ router.get('/product/getEdit',protectAdmin,ProduRoute.getEditProduct)
 router.post('/product/edit/:id',protectAdmin,upload.array('images',4),ProduRoute.editProducts)
 router.post('/product/deleteImage',protectAdmin,ProduRoute.deleteImage)
 router.get('/product/search',protectAdmin,ProduRoute.SearchProduct)
+//orders page
+
+router.get('/orders',protectAdmin,OrderRoute.getOrderPage)
 module.exports = router;

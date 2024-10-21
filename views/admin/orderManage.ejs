@@ -1,0 +1,326 @@
+<%-include('../../views/partials/admin/header')%>
+
+<title>My Orders</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fce4ec;
+    color: #333;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .breadcrumb {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb a {
+    color: #e91e63;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  /* Search and Sort Container */
+  .search-sort {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    padding: 8px 15px;
+    width: 100%;
+    max-width: 250px;
+    border-radius: 30px;
+    border: 1px solid #e91e63;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .search-bar input:focus {
+    border-color: #c2185b;
+  }
+
+  .sort-options select {
+    padding: 8px 15px;
+    border-radius: 30px;
+    border: 1px solid #e91e63;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .table-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  table thead th {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  table tbody td img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .order-details {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .order-details p {
+    margin: 0;
+    padding: 2px 0;
+  }
+
+  .status {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .status.on-the-way {
+    color: #ffa500;
+  }
+
+  .status.delivered {
+    color: green;
+  }
+
+  .status.cancelled {
+    color: #e74c3c;
+  }
+
+  /* Action Buttons */
+  .order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .cancel-btn, .edit-status-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .cancel-btn {
+    background-color: #7e022c;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background-color: #d81b60;
+  }
+
+  .edit-status-btn {
+    background-color: #e91e63;
+    color: white;
+  }
+
+  .edit-status-btn:hover {
+    background-color: #c2185b;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .search-sort {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    table thead {
+      display: none;
+    }
+
+    table tbody td {
+      display: block;
+      width: 100%;
+      text-align: right;
+      border-bottom: none;
+      padding-left: 50%;
+      position: relative;
+    }
+
+    table tbody td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      text-transform: uppercase;
+      float: left;
+      margin-left: -50%;
+      width: 50%;
+      padding-right: 10px;
+      text-align: left;
+    }
+
+    table tbody td img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+</style>
+
+<div class="container">
+  <!-- Breadcrumb navigation -->
+  <div class="breadcrumb">
+    <a href="/home">Home</a> &gt; 
+    <a href="/userProfile">My Account</a> &gt; 
+    <span>My Orders</span>
+  </div>
+
+  <!-- Search and Sort Options -->
+  <div class="search-sort">
+    <div class="search-bar">
+      <input type="text" placeholder="Search orders..." id="orderSearch">
+    </div>
+    <div class="sort-options">
+      <select id="sortOrders" onchange="sortOrders()">
+        <option value="default">Sort by</option>
+        <option value="priceLowToHigh">Price (Low to High)</option>
+        <option value="priceHighToLow">Price (High to Low)</option>
+        <option value="newestFirst">Newest First</option>
+        <option value="oldestFirst">Oldest First</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Products</th>
+          <th>Order Details</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="orderTableBody">
+        <% orders.forEach((order) => { %> 
+          
+        <tr>
+          
+          <td data-label="Image">
+            <% order.products.forEach((productItem) => { %>
+            <img src="/uploads/re-image/<%= productItem.product.productImage[0] %>" alt="Product Image">
+            <% }) %>
+          </td>
+         
+          <td data-label="Products">
+            <div class="product-details">
+              <% order.products.forEach((productItem) => { %>
+              <p><strong><%= productItem.product.ProductName%></strong></p>
+              
+              <p>Size: <%=productItem.size%>, Quantity: <%=productItem.quantity%></p>
+              <p>Price: ₹<%=productItem.price%></p>
+              <% }) %>
+            </div>
+          </td>
+          <td data-label="Order Details">
+            <div class="order-details">
+              <p><strong>Total Amount:</strong> <%= order.totalAmount %></p>
+              <p><strong>Order Date:</strong> <%= order.orderDate%></p>
+            </div>
+          </td>
+          <td data-label="Status" >
+            <span class="status shipped"><%= order.status%></span>
+          </td>
+          <td data-label="Actions">
+            <div class="order-actions">
+              <button class="cancel-btn" onclick="cancelOrder('order-id')">Cancel</button>
+              <button class="edit-status-btn" onclick="editStatus('order-id')">Edit Status</button>
+            </div>
+          </td>
+        </tr>
+        
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  function cancelOrder(orderId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e91e63',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/order/cancel/${orderId}`, {
+          method: 'post',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Order Cancelled',
+              text: 'Your order has been cancelled.',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            document.getElementById(`order-${orderId}`).remove();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Failed to cancel the order.',
+            });
+          }
+        });
+      }
+    });
+  }
+</script>
+
+<%-include('../../views/partials/admin/footer')%>
