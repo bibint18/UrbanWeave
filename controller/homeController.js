@@ -74,14 +74,27 @@ exports.EditUserProfile = async (req,res) => {
     user.gender = Lowgender
   }
 
+  if(current){
   let isYes = await bcrypt.compare(current,user.password)
   console.log(isYes)
+  
   if(isYes){
+    if(!newPsw.length>=8 &&  !confirmPsw.length>=8 ){
+      return res.status(400).json({success:false,message:"password must be at least 8 charachters"})
+    }
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+    if(!passwordRegex.test(newPsw)){
+      return res.status(400).json({success:false,message:"password must include  at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special charachter "})
+    }
     if(newPsw && confirmPsw && newPsw === confirmPsw){
       bcrypt.hash(newPsw,10)
       user.password = newPsw
+      console.log("pasword changed"); 
     }
+  }else{
+    return res.status(404).json({success:false,message:"current password is incorrect"})
   }
+}
   //
 //   if(user){
 //     user.username = fullName;
@@ -91,7 +104,9 @@ exports.EditUserProfile = async (req,res) => {
 // }
 await user.save();
   // res.send("done")
-  return res.redirect('/userProfile')
+  // return res.redirect('/userProfile')
+  return res.status(200).json({success:true,message:"User updated  successfully"})
+
 }
 
 exports.userAddress = async (req,res) => {
