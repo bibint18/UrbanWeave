@@ -23,6 +23,10 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  totalQuantity:{
+    type:Number,
+    required:false
+  },
   // address: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: 'Address',

@@ -1,0 +1,203 @@
+<%-include('../../views/partials/admin/header')%>
+  <title>Order Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .order-summary,
+    .product-item,
+    .summary-item {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-item {
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .btn-dark {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .btn-dark:hover {
+      background-color: #333;
+    }
+
+    .total-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+
+    .btn-status {
+      background-color: #000;
+      color: #fff;
+      padding: 5px 15px;
+      font-size: 0.9rem;
+    }
+
+    .btn-status:hover {
+      background-color: #333;
+    }
+
+    .btn-cancel {
+      background-color: #e74c3c;
+      color: #fff;
+    }
+
+    .btn-cancel:hover {
+      background-color: #c0392b;
+    }
+
+    .custom-select {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .custom-select:hover,
+    .custom-select:focus {
+      background-color: #333;
+    }
+
+    @media (max-width: 576px) {
+      .product-item .d-flex {
+        flex-direction: column;
+      }
+
+      .product-item .d-flex .me-3 {
+        margin-right: 0 !important;
+        margin-bottom: 10px;
+      }
+
+      .product-item .d-flex align-items-center {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .summary-item p {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-8">
+          
+          <select class="custom-select me-sm-2 mb-3 mb-sm-0 ">
+            <option>Change Status</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="returned">Returned</option>
+          </select>
+          
+
+          <!-- Product Items -->
+          <% orders.products.forEach((productItem)=> { %>
+            <div class="product-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
+              <div class="d-flex align-items-center flex-column flex-sm-row">
+                
+                <img src="/uploads/re-image/<%= productItem.product.productImage[0] %>" class="me-sm-3 mb-3 mb-sm-0"
+                  alt="Product Image">
+                <div>
+                  <h5 class="mb-1">Product name</h5>
+                  <p class="mb-0">
+                    <%= productItem.product.ProductName %>
+                  </p>
+
+                </div>
+                <div class="ms-2">
+                <select class="custom-select me-sm-2 mb-3 mb-sm-0 ">
+                  <option>Change Status</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="returned">Returned</option>
+                </select>
+              </div>
+              </div>
+              <div class="d-flex align-items-center flex-column flex-sm-row">
+                <div>
+                <p class="mb-0 me-sm-3"><strong>Quantity:</strong> <%=productItem.quantity%></p>
+                <p class="mb-0 me-sm-3"><strong>Price:</strong> $ <%=productItem.price%></p>
+                </div>
+                <div class="custom-select me-sm-2 mb-3 mb-sm-0">
+                  <label >Status:</label>
+                  <span><%=orders.status%></span>
+                </div>
+                <button class="btn btn-cancel btn-sm">Cancel</button>
+              </div>
+            </div>
+            <% }) %>
+
+              <!-- Repeated Product Items (Repeat this block as needed for more products) -->
+
+
+              <!-- Summary -->
+              <div class="summary-item mt-4">
+                <h5>Cart Totals</h5>
+                <p><strong>Subtotal:</strong> $ <%=orders.totalAmount%></p>
+                <p><strong>Shipping:</strong> Free</p>
+                <!-- <p><strong>Tax (GST):</strong> $5.00</p> -->
+                <p><strong>Grand Total:</strong>$ <%=orders.totalAmount%></p>
+              </div>
+        </div>
+
+        <!-- Right Sidebar (Summary, Address, Payment, Delivery) -->
+        <div class="col-lg-4">
+          <div class="summary-item">
+            <h5>Summary</h5>
+            <p><strong>Order ID:</strong> <%= orders.oid%></p>
+            <p><strong>Date:</strong><%= new Date(orders.orderDate).toLocaleDateString('en-GB')%></p>
+            <p class="total-price">Total: $<%= orders.totalAmount%></p>
+          </div>
+
+          <div class="summary-item mt-4">
+            <h5>Shipping Address</h5>
+            <p>3517 W. Gray St. Utica, Pennsylvania 57867</p>
+          </div>
+
+          <div class="summary-item mt-4">
+            <h5>Payment Method</h5>
+            <p>Pay on Delivery (Cash/Card). Cash on delivery (COD) available. Card/Net banking acceptance subject to
+              device availability.</p>
+          </div>
+
+          <div class="summary-item mt-4">
+            <h5>Expected Date Of Delivery</h5>
+            <p><strong><%= new Date().toLocaleDateString('en-GB')%></strong></p>
+            <button class="btn btn-dark btn-sm">Track Order</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+    <%-include('../../views/partials/admin/footer')%>

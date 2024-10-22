@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app =express();
+const redis = require('redis')
 const mongoose = require('mongoose')
 const passport = require('./config/passport')
 const methodOverride = require('method-override');
@@ -10,10 +11,27 @@ const nodemailer = require('nodemailer')
 const crypto = require('crypto')
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
-mongoose.connect(process.env.MONGO_URI,{
+// const redisClient = redis.createClient();
+// redisClient.on('error', (err) => {
+//   console.error('Redis error:', err);
+// });
+// redisClient.connect().then(() => {
+//   console.log('Connected to Redis');
+// });
+// mongoose.connect(process.env.MONGO_URI,{
+// })
+// .then(() => console.log("Connected to mongodb")
+// initializeCounter();
+// )
+// .catch((err) => console.log('Failed to connect',err))
+
+mongoose.connect(process.env.MONGO_URI, {
 })
-.then(() => console.log("Connected to mongodb"))
-.catch((err) => console.log('Failed to connect',err))
+.then(() => {
+  console.log("Connected to mongodb");
+  initializeCounter();  
+})
+.catch((err) => console.log('Failed to connect', err));
 const port =2001;
 
 app.use(cookieParser())
@@ -42,6 +60,7 @@ app.use(passport.session(false));
 
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
+const { initializeCounter } = require('./utils/orderUtils');
 
 
 app.set('view engine','ejs');

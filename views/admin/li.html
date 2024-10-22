@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Orders List</title>
+  <style>
+    /* Resetting default styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000; /* Black background */
+      color: #fff; /* White text */
+      padding: 20px;
+    }
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #111; /* Darker background for the table */
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      color: #fff;
+    }
+
+    th {
+      background-color: #222; /* Dark grey for table headers */
+    }
+    
+    td {
+      background-color: #111; /* Darker black background */
+      border-bottom: 1px solid #333; /* Light grey borders */
+    }
+
+    /* Status classes for different order statuses */
+    .status {
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .status.success {
+      background-color: #28a745; /* Green for completed */
+    }
+
+    .status.pending {
+      background-color: #ffc107; /* Yellow for pending */
+      color: #000;
+    }
+
+    .status.cancelled {
+      background-color: #dc3545; /* Red for cancelled */
+    }
+
+    /* Details button style */
+    .btn-details {
+      background-color: #007bff; /* Blue button */
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-details:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+      }
+
+      td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
+        color: #999;
+      }
+
+      .table-container {
+        overflow-x: scroll;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Orders List</h2>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Created At</th>
+          <th>Customer</th>
+          <th>Total Amount</th>
+          <th>Total Quantity</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Sample Row 1 -->
+        <tr>
+          <td data-label="Order ID">#12345</td>
+          <td data-label="Created At">Oct 22, 2024</td>
+          <td data-label="Customer">John Doe</td>
+          <td data-label="Total Amount">$1234.00</td>
+          <td data-label="Total Quantity">5</td>
+          <td data-label="Status"><span class="status success">Completed</span></td>
+          <td data-label="Details"><button class="btn-details">View</button></td>
+        </tr>
+
+        <!-- Sample Row 2 -->
+        <tr>
+          <td data-label="Order ID">#12346</td>
+          <td data-label="Created At">Oct 21, 2024</td>
+          <td data-label="Customer">Jane Smith</td>
+          <td data-label="Total Amount">$456.00</td>
+          <td data-label="Total Quantity">2</td>
+          <td data-label="Status"><span class="status pending">Pending</span></td>
+          <td data-label="Details"><button class="btn-details">View</button></td>
+        </tr>
+
+        <!-- Sample Row 3 -->
+        <tr>
+          <td data-label="Order ID">#12347</td>
+          <td data-label="Created At">Oct 20, 2024</td>
+          <td data-label="Customer">Mark Taylor</td>
+          <td data-label="Total Amount">$789.00</td>
+          <td data-label="Total Quantity">3</td>
+          <td data-label="Status"><span class="status cancelled">Cancelled</span></td>
+          <td data-label="Details"><button class="btn-details">View</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -54,4 +54,5 @@ router.get('/product/search',protectAdmin,ProduRoute.SearchProduct)
 //orders page
 
 router.get('/orders',protectAdmin,OrderRoute.getOrderPage)
+router.get('/orders/details/:id',protectAdmin,OrderRoute.getOrderDetails)
 module.exports = router;

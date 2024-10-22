@@ -66,14 +66,4 @@ userSchema.methods.comparePassword = function(userPswd){
   return bcrypt.compare(userPswd,this.password)
 }
 
-// userSchema.methods.createPasswordResetToken =function(){
-//   const resetToken = crypto.randomBytes(32).toString('hex')
-//   const passwordResetToken=crypto.createHash('sha256').update(resetToken).digest('hex')
-//   const passwordResetExpiry= Date.now() + 10 * 60 * 1000
-//   return resetToken;
-// }
-
-
-
-
-module.exports = mongoose.model('users',userSchema)
+module.exports = mongoose.model('User',userSchema)

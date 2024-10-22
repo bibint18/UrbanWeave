@@ -2,6 +2,15 @@ const Cart = require("../model/user/cartModel");
 const Product = require("../model/admin/prodectModel");
 const User = require("../model/user/userModel");
 const Order = require('../model/user/orderModel')
+
+const{getNextOrderId} = require('../utils/orderUtils')
+
+// Function to get the next unique order ID
+
+
+
+
+
 exports.getCart = async (req, res) => {
   try {
     const user = req.user
@@ -250,6 +259,7 @@ exports.placeOrder = async (req,res) => {
     console.log(userId);
     const user = await User.findById(userId)
     console.log("user: ",user);
+    const orderId = await getNextOrderId();
     // const selectedAddress = user.address.id(address)
     // const selectedAddress = user.address.find((addr) => addr._id.toString() === address);
     // const selectedAddress = await User.findOne({"address._id":address},{"address.$":1})
@@ -260,21 +270,28 @@ exports.placeOrder = async (req,res) => {
       return res.status(400).json({success:false,message:"No items in cart"})
     }
     let totalAmount=0;
+    let totalQuantity=0
     const products = cartItems.map((item) =>{
       totalAmount += item.quantity * item.product.salePrice;
+      totalQuantity += item.quantity 
       return{
         product:item.product._id,
         quantity:item.quantity,
         size:item.size,
         price:item.product.salePrice
+        
       }
     })
+    console.log(products,"to the cart");
+    
     const newOrder = new Order({
       user:userId,
+      oid:orderId,
       products:products,
       totalAmount:totalAmount,
       address:req.body.address,
-      status:'Processing'
+      status:'Processing',
+      totalQuantity:totalQuantity
     })
     console.log("ors: ",newOrder);
     
