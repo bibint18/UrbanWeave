@@ -16,7 +16,9 @@ const orderSchema = new mongoose.Schema({
       product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
       size: { type: String, required: true },  // Size chosen by user
       quantity: { type: Number, required: true },
-      price: { type: Number, required: true }, // Price at the time of order
+      price: { type: Number, required: true }, // Price at the time of order,
+      ProductStatus:{type:String,required:false,enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled','Returned'],
+        default: 'Processing'},
     }
   ],
   totalAmount: {

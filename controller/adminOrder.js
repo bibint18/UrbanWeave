@@ -1,5 +1,6 @@
 const Order = require('../model/user/orderModel')
 const Product= require('../model/admin/prodectModel')
+const { loginSubmit } = require('./adminController')
 
 exports.getOrderPage = async (req,res) => {
   try {
@@ -14,10 +15,10 @@ exports.getOrderPage = async (req,res) => {
 exports.getOrderDetails = async (req,res) => {
   try {
     const id = req.params.id
-    console.log("dt:",id);
+    // console.log("dt:",id);
     
     const orders = await Order.findById(id).populate('products.product').populate('user')
-    console.log(orders);
+    // console.log(orders);
     return res.render('admin/orderDetails',{orders})
     
   } catch (error) {
@@ -37,3 +38,36 @@ exports.getOrderDetails = async (req,res) => {
 //    return res.send(error) 
 //   }
 // }
+
+exports.ChangeOrder = async (req,res) => {
+  try{
+  // const {orderId} = req.params
+  // console.log("id:  ",orderId);
+  let {productId ,newStatus,orderId} = req.body
+  console.log("ids got: ",productId,newStatus);
+  const order = await Order.findById(orderId)
+  console.log('order: ',order);
+  if (!order) {
+    return res.status(404).json({ success: false, message: 'Order not found' });
+  }
+  const product = order.products.find(p => p.product.toString() === productId);
+  if (product) {
+    product.ProductStatus = newStatus;
+
+    // If all products are cancelled, cancel the whole order
+    const allCancelled = order.products.every(p => p.ProductStatus === 'Cancelled');
+    if (allCancelled) {
+      order.status = 'Cancelled';
+    }
+
+    await order.save();
+    return res.json({ success: true, message: 'Product status updated' });
+  } else {
+    return res.status(404).json({ success: false, message: 'Product not found in order' });
+  }
+}catch(error){
+  console.log(error);
+  return res.send(error)
+  
+}
+}
