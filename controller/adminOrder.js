@@ -4,13 +4,31 @@ const { loginSubmit } = require('./adminController')
 
 exports.getOrderPage = async (req,res) => {
   try {
-    const  orders = await Order.find().populate('products.product').populate('user')
-    return res.render('admin/orderListing',{orders})
+    
+    const page =  req.query.page || 1
+    const limit = 7
+    const skip =  (page -1 )* limit
+    const  orders = await Order.find().populate('products.product').populate('user').skip(skip).limit(limit)
+
+const totalOrder = await Order.countDocuments()
+const totalPages = Math.ceil(totalOrder / limit)
+     return res.render('admin/orderListing',{orders,currentPage:page,totalPages})
+    
+    // statusCounts: {
+    //   processing: totalProcessing,
+    //   shipped: totalShipped,
+    //   delivered: totalDelivered,
+    //   cancelled: totalCancelled,
+    //   returned: totalReturned,
+    // }})
   } catch (error) {
     console.log(error); 
    return res.send(error) 
   }
 }
+
+
+
 
 exports.getOrderDetails = async (req,res) => {
   try {
@@ -97,9 +115,18 @@ exports.CancelProduct = async (req,res) => {
       await order.save()
   }
 }
+let total = Order.find({"products.Productstatus":'Processing'}).count()
+  console.log(total);
   res.status(200).json({success:true,message:" Product cancelled"})
   }catch(error){
     console.log(error);
     return res.status(400).json({success:false,message:error})
   }
+  let TotalCancel = 0;
+  let TotalDelivered = 0;
+  let TotalReturned = 0;
+  let TotalShipped = 0;
+  let TotalProcessing = 0;
+  
+  
 }

@@ -198,6 +198,9 @@ body {
   }
 }
 
+
+
+
   </style>
 </head>
 <body>
@@ -292,7 +295,8 @@ body {
                 <div class="">
 
                   <% if (ProductItem.ProductStatus === 'Processing' || ProductItem.ProductStatus === 'Shipped') { %>
-                    <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                    <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>','<%=ProductItem.product._id %>')">Cancel Order</button>
+
                   <% } %>
                   <% if (ProductItem.ProductStatus === 'Delivered') { %>
                     <button class="return-btn " onclick="returnOrder('<%= order._id %>')">Return Product</button>
@@ -309,8 +313,11 @@ body {
       </section>
     </div>
 </div>
+
+
 <script>
-  function cancelOrder(orderId){
+  function cancelOrder(orderId,ProId){
+    // const ProId = ProId
     Swal.fire({
   title: 'Are you sure?',
   text: "You won't be able to revert this!",
@@ -324,9 +331,10 @@ body {
   if(result.isConfirmed){
 
     console.log(orderId);
-    fetch(`/order/cancel/${orderId}`,{
+    fetch(`/order/cancel/${orderId}/${ProId}`,{
       method:'post',
-      headers:{'Content-Type':'application/json'}
+      headers:{'Content-Type':'application/json'},
+      // body:JSON.stringify({ProId:ProId})
     })
     .then(response=> response.json())
     .then((data) => {

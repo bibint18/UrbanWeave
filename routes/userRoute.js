@@ -78,5 +78,5 @@ router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddres
 router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
 //orders
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
-router.post('/order/cancel/:id',authMiddleware.protect,OrderRoute.cancelOrder)
+router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)
 module.exports = router;

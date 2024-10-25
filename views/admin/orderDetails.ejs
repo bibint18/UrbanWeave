@@ -136,13 +136,7 @@
 
                 </div>
                 <div class="ms-2">
-                <!-- <select class="custom-select me-sm-2 mb-3 mb-sm-0 ">
-                  <option>Change Status</option>
-                  <option value="processing">Processing</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="returned">Returned</option>
-                </select> -->
+               
 
                 <select class="custom-select me-sm-2 mb-3 mb-sm-0 status-dropdown" data-product-id="<%= productItem.product._id %>" data-order-id="<%= orders._id %>" data-size="<%=productItem.size%>">
                   <option value="Processing" <%= productItem.ProductStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
@@ -191,10 +185,10 @@
             <p class="total-price">Total: $<%= orders.totalAmount%></p>
           </div>
 
-          <div class="summary-item mt-4">
+          <!-- <div class="summary-item mt-4">
             <h5>Shipping Address</h5>
             <p>3517 W. Gray St. Utica, Pennsylvania 57867</p>
-          </div>
+          </div> -->
 
           <div class="summary-item mt-4">
             <h5>Payment Method</h5>

@@ -177,6 +177,43 @@
         color: #999;
       }
     }
+
+
+
+    /* Pagination container styling */
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Pagination link styling */
+.pagination-link {
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect */
+.pagination-link:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* Active page styling */
+.pagination-link.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border-color: #007bff;
+}
+
   </style>
 </head>
 <body>
@@ -184,27 +221,27 @@
   <h2>Orders List</h2>
 
   <!-- Dashboard Cards -->
-  <div class="dashboard">
+  <!-- <div class="dashboard"> -->
     <!-- <div class="card">
       <i class="icon">💸</i>
       <h3>490</h3>
       <p>Payment Refund</p>
     </div> -->
-    <div class="card">
+    <!-- <div class="card">
       <i class="icon">❌</i>
-      <h3>241</h3>
+      <h3></h3>
       <p>Order Cancel</p>
     </div>
     <div class="card">
       <i class="icon">📦</i>
-      <h3>630</h3>
+      <h3></h3>
       <p>Order Shipped</p>
     </div>
     <div class="card">
       <i class="icon">🚚</i>
-      <h3>170</h3>
+      <h3></h3>
       <p>Order Delivering</p>
-    </div>
+    </div> -->
     <!-- <div class="card">
       <i class="icon">🔄</i>
       <h3>210</h3>
@@ -215,17 +252,17 @@
       <h3>608</h3>
       <p>Pending Payment</p>
     </div> -->
-    <div class="card">
+    <!-- <div class="card">
       <i class="icon">✅</i>
-      <h3>200</h3>
+      <h3></h3>
       <p>Delivered</p>
-    </div>
-    <div class="card">
+    </div> -->
+    <!-- <div class="card">
       <i class="icon">🔧</i>
       <h3>656</h3>
       <p>In Progress</p>
-    </div>
-  </div>
+    </div> -->
+  <!-- </div> -->
 
   <!-- Order Table -->
   <div class="table-container">
@@ -240,7 +277,7 @@
           <!-- <th>Products</th> -->
           <th>Quantity</th>
           <!-- <th>Delivery Number</th> -->
-          <th>Order Status</th>
+          <!-- <th>Order Status</th> -->
           <th>Details</th>
         </tr>
       </thead>
@@ -258,7 +295,7 @@
           <td data-label="Items"><%=order.totalQuantity%></td>
         
           <!-- <td data-label="Delivery Number">-</td> -->
-          <td data-label="Order Status"><span class="status draft"><%=order.status%></span></td>
+          <!-- <td data-label="Order Status"><span class="status draft"><%=order.status%></span></td> -->
           <td data-label="Action">
             <a href="/admin/orders/details/<%=order._id%>"><button class="btn view">🔍</button></a>
             <!-- <button class="btn edit">✏️</button>
@@ -270,5 +307,24 @@
       </tbody>
     </table>
   </div>
+
+
+  <div class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+    <% } %>
+    
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+  
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+    <% } %>
+  </div>
+  
+  
+  
+  
 
 <%-include('../../views/partials/admin/footer')%>

@@ -10,7 +10,8 @@ exports.getOrdersPage =async (req,res) => {
     const userId = req.user._id 
     console.log(userId);
     const {sort} =req.query
-    console.log("query: ",sort);
+    // console.log("query: ",sort);
+    // const { sort, page = 1, limit = 3 } = req.query;
     let sortOptions ={}
 
     if (sort) {
@@ -21,7 +22,9 @@ exports.getOrdersPage =async (req,res) => {
       console.log(sortOptions)
     }
     console.log(sortOptions)
-    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }) .exec()
+    // const totalOrders = await Order.countDocuments({ user: userId, ...sortOptions });
+    // const totalPages = Math.ceil(totalOrders / limit);
+    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }).exec()
     console.log("or: ",orders);
 
     if (sort) {
@@ -42,15 +45,25 @@ exports.getOrdersPage =async (req,res) => {
 
 exports.cancelOrder =async (req,res) => {
   try {
-    const id = req.params.id
+    const {id,ProId} = req.params
+    // const {ProductId} = req.body
+    console.log("idPro ",ProId);
+    
     console.log(id,"id");
     const orders = await Order.findById(id)
     console.log("can: ",orders);
+    if(!orders){
+      return res.json({success:false,message:"No order"})
+    }
     
-    if(orders.status =='Processing' || orders.status =='Shipped'){
-      orders.status =  'Cancelled'
+    const product = orders.products.find(p => p.product.toString() == ProId)
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found in the order" });
+    }
+
+    if(product.ProductStatus =='Processing' || product.ProductStatus =='Shipped'){
+      product.ProductStatus =  'Cancelled'
       await orders.save()
-      
       return res.json({success:true,message:"order cancelled succesfully",orderId:id})
     }else{
       return res.json({success:false,message:"cant cancel  the order"})
