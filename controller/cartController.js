@@ -107,8 +107,8 @@ exports.AddCart = async (req, res) => {
       });
       await cartItem.save();
     }
-    sizeStock.stock -= requestedQuantity;
-    await product.save();
+    // sizeStock.stock -= requestedQuantity;
+    // await product.save();
 
     return res.status(200).json({ success: true, message: "added" });
   } catch (error) {
@@ -273,7 +273,9 @@ exports.placeOrder = async (req,res) => {
     let totalQuantity=0
     const products = cartItems.map((item) =>{
       totalAmount += item.quantity * item.product.salePrice;
-      totalQuantity += item.quantity 
+      totalQuantity += item.quantity
+      
+      
       return{
         product:item.product._id,
         quantity:item.quantity,
@@ -297,6 +299,24 @@ exports.placeOrder = async (req,res) => {
     
     await newOrder.save()
     console.log("saved: ",newOrder);
+
+    for (const item of products) {
+      const product = await Product.findById(item.product);
+
+      // Find the specific size in the product's sizes array
+      const sizeStock = product.sizes.find((s) => s.size === item.size);
+      if (sizeStock) {
+        // Decrease stock by the ordered quantity
+        sizeStock.stock -= item.quantity;
+
+        // Ensure stock doesn't go below zero
+        if (sizeStock.stock < 0) sizeStock.stock = 0;
+      }
+
+      // Save the updated product
+      await product.save();
+    }
+
 
     await Cart.deleteMany({user:userId})
     res.json({ success: true, message: 'Order placed successfully!' });

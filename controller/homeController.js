@@ -194,7 +194,7 @@ exports.editAddress = async (req,res) => {
         { new: true },
       )
       console.log("updated",updatedAddress)
-      res.send("done")
+      res.redirect('/manageAddress')
   } catch (error) {
     console.log(error)
     res.send(error)

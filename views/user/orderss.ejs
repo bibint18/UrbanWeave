@@ -1,0 +1,371 @@
+<%-include('../../views/partials/user/header')%>
+  <title>My Orders</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- <link rel="stylesheet" href="styles.css"> -->
+   <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.breadcrumb {
+  margin-bottom: 20px;
+}
+
+.breadcrumb a {
+  color: #666;
+  text-decoration: none;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Filters section */
+.filters {
+  width: 25%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.filters h3 {
+  margin-bottom: 10px;
+}
+
+.filters .filter-group h4 {
+  margin-bottom: 5px;
+}
+
+.filters label {
+  display: block;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* Orders Section */
+.orders-section {
+  width: 70%;
+  margin-left: 5%;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  border-radius: 4px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-item {
+  display: flex;
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.order-details {
+  flex-grow: 1;
+}
+
+.order-details h5 {
+  margin-bottom: 5px;
+}
+
+.status {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.status.on-the-way {
+  color: #ffa500;
+}
+
+.status.delivered {
+  color: green;
+}
+
+.review-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+}
+.cancel-btn {
+  background-color: #e74c3c; /* Red color for cancel */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 6px 12px; /* Small padding */
+  border-radius: 4px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer on hover */
+  font-size: 14px; /* Small font size */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+.cancel-btn:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+
+.cancel-btn:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 4px rgba(231, 76, 60, 0.7); /* Subtle shadow on focus */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .orders-section {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .search-bar input {
+    width: 60%;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .order-item img {
+    margin-bottom: 10px;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+
+  .search-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Breadcrumb navigation -->
+    <div class="breadcrumb">
+      <a href="/home">Home</a> &gt; 
+      <a href="/userProfile">My Account</a> &gt; 
+      <span>My Orders</span>
+    </div>
+
+    <!-- Filters and Orders section -->
+    <div class="content-wrapper">
+      <!-- Filters -->
+      <aside class="filters">
+        <h3>Filters</h3>
+
+        <!-- Order Status Filter -->
+        <div class="col-sm-6 col-xs-12 short_by_area">
+          <div class="short_by_inner">
+            <label>Sort by:</label>
+            <form id="sortForm" method="GET" action="/orders">
+              <select class="sort-select" name="sort" onchange="document.getElementById('sortForm').submit()">
+                <option value="">Select Sorting</option>
+                <option value="Processing" <% if (sort === 'Processing') { %> selected <% } %> >Status: Processing</option>
+                <option value="Shipped" <% if (sort === 'Shipped') { %> selected <% } %> >Status: Shipped</option>
+                <option value="Cancelled" <% if (sort === 'Cancelled') { %> selected <% } %> >Status: Cancelled </option>
+                <option value="Delivered" <% if (sort === 'Delivered') { %> selected <% } %> >Status: Delivered</option>
+                <!-- <option value="za" <% if (sort === 'za') { %> selected <% } %> >Product Name: Z - A</option> -->
+              </select>
+            </form>
+          </div>
+        </div>
+
+
+        <!-- <div class="filter-group">
+          <h4>ORDER STATUS</h4>
+          <label><input type="checkbox"> On the way</label>
+          <label><input type="checkbox"> Delivered</label>
+          <label><input type="checkbox"> Cancelled</label>
+          <label><input type="checkbox"> Returned</label>
+        </div> -->
+
+        <!-- Order Time Filter -->
+        <!-- <div class="filter-group">
+          <h4>ORDER TIME</h4>
+          <label><input type="checkbox"> Last 30 days</label>
+          <label><input type="checkbox"> 2023</label>
+          <label><input type="checkbox"> 2022</label>
+          <label><input type="checkbox"> 2021</label>
+          <label><input type="checkbox"> 2020</label>
+          <label><input type="checkbox"> Older</label>
+        </div> -->
+      </aside>
+
+      <!-- Orders Section -->
+      <section class="orders-section">
+        <!-- Search bar -->
+        <div class="search-bar">
+          <input type="text" placeholder="Search your orders here">
+          <button class="search-btn">Search Orders</button>
+        </div>
+
+        <!-- Orders list -->
+        <div class="order-list">
+          <% if (orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+              <!-- Order Item -->
+              <div class="order-item" id="order-<%= order._id %>">
+                <!-- Product Image (Show first product's image as example) -->
+                <img src="/uploads/re-image/<%= order.products[0].product.productImage[0] %>" alt="Product Image">
+
+                <div class="order-details">
+                  <!-- <h5>Order ID: <%= order._id %></h5> -->
+                  <p>Total Amount: ₹<%= order.totalAmount %></p>
+                  <p>Order Date: <%= new Date(order.orderDate).toLocaleDateString() %></p>
+
+                  <p><strong>Products:</strong></p>
+                  <ul style="list-style-type: none;">
+                    <% order.products.forEach(product => { %>
+                      <li style="list-style-type: none;">
+                        <%= product.product.ProductName %> - Size: <%= product.size %>, Quantity: <%= product.quantity %> 
+                        - ₹<%= product.price %>
+                      </ul>
+                    <% }) %>
+                    </ol>
+
+                  <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= order.status %></span></p>
+                  
+                </div>
+
+                <div class="">
+
+                  <% if (order.status === 'Processing' || order.status === 'Shipped') { %>
+                    <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
+                  <% } %>
+                  <% if (order.status === 'Delivered') { %>
+                    <button class="return-btn " onclick="returnOrder('<%= order._id %>')">Return Product</button>
+                  <% } %>
+                </div>
+
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No orders found.</p>
+          <% } %>
+        </div>
+      </section>
+    </div>
+</div>
+<script>
+  function cancelOrder(orderId){
+    Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+})
+.then((result) => {
+  if(result.isConfirmed){
+
+    console.log(orderId);
+    fetch(`/order/cancel/${orderId}`,{
+      method:'post',
+      headers:{'Content-Type':'application/json'}
+    })
+    .then(response=> response.json())
+    .then((data) => {
+      if(data.success){
+        Swal.fire({
+          icon:'success',
+          title:'Order Cancelled',
+          text:'Your order has been cancelled.',
+          timer:1500,
+          showConfirmButton:false
+        })
+        const  orderElement = document.getElementById(`order-${orderId}`)
+        console.log("ele,",orderElement);
+        
+        if(orderElement){
+          orderElement.remove();
+        }
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:'Error',
+          text:'Failed to cancel order.',
+          timer:1500,
+          showConfirmButton:false
+        })
+      }
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'SOMETHING  WENT WRONG',
+        timer: 1500,
+        showConfirmButton:false
+      })
+    })
+  }
+  })
+  }
+</script>
+<%-include('../../views/partials/user/footer')%>
+
+
+

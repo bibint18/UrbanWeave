@@ -229,14 +229,13 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
     console.log("from the admin: ", productId, orderId, newStatus,size);
 
     fetch(`/admin/orders/productStatus`, {
-      method: 'POST', // Ensure this is lowercase
+      method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ productId: productId, newStatus: newStatus ,orderId:orderId,size:size}),
     })
       .then(response => {
-        // Ensure the response is OK and complete
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -248,7 +247,7 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'success',
             title:'status changed',
             text: 'status changed successfully',
-            // timer:1000,
+            timer:1000,
             showConfirmButton:false
           })
           .then(() => {
@@ -259,7 +258,7 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'error',
             title:'Errorrr',
             text: data.message,
-            // timer:1000,
+            timer:1000,
             showConfirmButton:false
           })
         }
@@ -270,7 +269,7 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'success',
             title:'status changed',
             text: 'Error changing the status',
-            // timer:1000,
+            timer:1000,
             showConfirmButton:false
           })
       });
