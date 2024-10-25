@@ -40,6 +40,7 @@ body {
 
 /* Filters section */
 .filters {
+  height: 30%;
   width: 25%;
   background-color: white;
   padding: 20px;
@@ -264,41 +265,42 @@ body {
         <div class="order-list">
           <% if (orders.length > 0) { %>
             <% orders.forEach(order => { %>
+              <% order.products.forEach(ProductItem => { %>  
               <!-- Order Item -->
               <div class="order-item" id="order-<%= order._id %>">
                 <!-- Product Image (Show first product's image as example) -->
-                <img src="/uploads/re-image/<%= order.products[0].product.productImage[0] %>" alt="Product Image">
+                <img src="/uploads/re-image/<%= ProductItem.product.productImage[0] %>" alt="Product Image">
 
                 <div class="order-details">
                   <!-- <h5>Order ID: <%= order._id %></h5> -->
-                  <p>Total Amount: ₹<%= order.totalAmount %></p>
+                  <!-- <p>Total Amount: ₹<%= order.totalAmount %></p> -->
                   <p>Order Date: <%= new Date(order.orderDate).toLocaleDateString() %></p>
 
                   <p><strong>Products:</strong></p>
                   <ul style="list-style-type: none;">
-                    <% order.products.forEach(product => { %>
                       <li style="list-style-type: none;">
-                        <%= product.product.ProductName %> - Size: <%= product.size %>, Quantity: <%= product.quantity %> 
-                        - ₹<%= product.price %>
+                        <%= ProductItem.product.ProductName %> - Size: <%= ProductItem.size %>, Quantity: <%= ProductItem.quantity %> 
+                        - ₹<%= ProductItem.price %>
                       </ul>
-                    <% }) %>
+                    
                     </ol>
 
-                  <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= order.status %></span></p>
-                  
+                  <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= ProductItem.ProductStatus %></span></p>
+                  <p><span >OrderID: <%= order.oid %></span></p>
                 </div>
 
                 <div class="">
 
-                  <% if (order.status === 'Processing' || order.status === 'Shipped') { %>
+                  <% if (ProductItem.ProductStatus === 'Processing' || ProductItem.ProductStatus === 'Shipped') { %>
                     <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>')">Cancel Order</button>
                   <% } %>
-                  <% if (order.status === 'Delivered') { %>
+                  <% if (ProductItem.ProductStatus === 'Delivered') { %>
                     <button class="return-btn " onclick="returnOrder('<%= order._id %>')">Return Product</button>
                   <% } %>
                 </div>
 
               </div>
+              <% }) %>
             <% }) %>
           <% } else { %>
             <p>No orders found.</p>

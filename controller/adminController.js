@@ -18,7 +18,7 @@ exports.loginSubmit = async (req, res) => {
   console.log(admin)
   if (admin && (await admin.comparePassword(password))) {
     const token = jwtService.signAdminToken(admin)
-    res.cookie('jwt',token,{httpOnly:true,secure:false});
+    res.cookie('jwt_admin',token,{httpOnly:true,secure:false});
     req.session.loggedIn = true
     
     return res.redirect("/admin/dashboard");

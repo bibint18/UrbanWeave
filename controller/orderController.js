@@ -3,6 +3,7 @@ const Product = require('../model/admin/prodectModel')
 const Order = require('../model/user/orderModel')
 const User = require('../model/user/userModel')
 
+
 exports.getOrdersPage =async (req,res) => {
   try {
     const user = req.user
@@ -10,25 +11,28 @@ exports.getOrdersPage =async (req,res) => {
     console.log(userId);
     const {sort} =req.query
     console.log("query: ",sort);
-    let sortOptions ={};
-    switch(sort){
-      case "Processing":
-        sortOptions={Status:'Processing'}
-        break;
-      case 'Shipped':
-        sortOptions={status:'Shipped'}
-        break;
-      case  'Delivered':
-        sortOptions={status:'Delivered'}
-        break;
-      case 'Cancelled':
-        sortOptions={status:'Cancelled'}
-        break;
-      default:
-        sortOptions={};
+    let sortOptions ={}
+
+    if (sort) {
+      // Use $elemMatch to filter orders where any product has the specified ProductStatus
+      sortOptions = {
+        products: { $elemMatch: { ProductStatus: sort } },
+      };
+      console.log(sortOptions)
     }
-    const orders = await Order.find({user:userId,...sortOptions}).populate('products.product').exec()
+    console.log(sortOptions)
+    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }) .exec()
     console.log("or: ",orders);
+
+    if (sort) {
+       orders = orders.map(order => {
+        const filteredProducts = order.products.filter(
+          product => product.ProductStatus === sort
+        );
+        console.log("fill: ",filteredProducts)
+        return { ...order.toObject(), products: filteredProducts };
+      });
+    }
     return res.render('user/orders',{orders,sort,user})
   } catch (error) {
     console.log(error)

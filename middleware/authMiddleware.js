@@ -26,7 +26,7 @@ exports.protect = async (req,res,next) => {
 }
 
 exports.protectAdmin = async (req,res,next) => {
-  const token =  req.cookies.jwt || req.headers.authorization?.split(' ')[1];
+  const token =  req.cookies.jwt_admin || req.headers.authorization?.split(' ')[1];
   if(!token){
     return res.redirect('/admin/login')
   }
@@ -46,7 +46,7 @@ exports.protectAdmin = async (req,res,next) => {
 }
 
 exports.AdminLoggedIn = (req,res,next)=> {
-  const token = req.cookies.jwt ||  req.headers.authorization?.split(' ')[1];
+  const token = req.cookies.jwt_admin ||  req.headers.authorization?.split(' ')[1];
   console.log(token)
   if(!token){
     return next()  
