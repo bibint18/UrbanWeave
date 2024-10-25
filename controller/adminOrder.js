@@ -43,14 +43,14 @@ exports.ChangeOrder = async (req,res) => {
   try{
   // const {orderId} = req.params
   // console.log("id:  ",orderId);
-  let {productId ,newStatus,orderId} = req.body
-  console.log("ids got: ",productId,newStatus);
+  let {productId ,newStatus,orderId,size} = req.body
+  console.log("ids got: ",productId,newStatus,size);
   const order = await Order.findById(orderId)
   console.log('order: ',order);
   if (!order) {
     return res.status(404).json({ success: false, message: 'Order not found' });
   }
-  const product = order.products.find(p => p.product.toString() === productId);
+  const product = order.products.find(p => p.product.toString() === productId && p.size ===size);
   if (product) {
     product.ProductStatus = newStatus;
 
@@ -70,4 +70,16 @@ exports.ChangeOrder = async (req,res) => {
   return res.send(error)
   
 }
+}
+
+
+exports.CancelProduct = async (req,res) => {
+  try{
+  const {OrderID,ProductID} = req.body
+  console.log('frrrrrr: ',OrderID,ProductID)
+  res.status(200).json({success:true,message:"cancelled"})
+  }catch(error){
+    console.log(error);
+    return res.status(400).json({success:false,message:error})
+  }
 }

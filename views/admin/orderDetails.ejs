@@ -144,7 +144,7 @@
                   <option value="returned">Returned</option>
                 </select> -->
 
-                <select class="custom-select me-sm-2 mb-3 mb-sm-0 status-dropdown" data-product-id="<%= productItem.product._id %>" data-order-id="<%= orders._id %>">
+                <select class="custom-select me-sm-2 mb-3 mb-sm-0 status-dropdown" data-product-id="<%= productItem.product._id %>" data-order-id="<%= orders._id %>" data-size="<%=productItem.size%>">
                   <option value="Processing" <%= productItem.ProductStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
                   <option value="Shipped" <%= productItem.ProductStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                   <option value="Delivered" <%= productItem.ProductStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
@@ -164,7 +164,7 @@
                   <label >Status:</label>
                   <span ><%=productItem.ProductStatus%>%></span>
                 </div>
-                <button class="btn btn-cancel btn-sm">Cancel</button>
+                <button class="btn btn-cancel btn-sm" onclick="CancelOrder('<%=orders._id%>,<%=productItem.product._id%>')">Cancel</button>
               </div>
             </div>
             <% }) %>
@@ -223,16 +223,17 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
 
     const productId = this.getAttribute('data-product-id');
     const orderId = this.getAttribute('data-order-id');
+    const size = this.getAttribute('data-size')
     const newStatus = this.value;
     
-    console.log("from the admin: ", productId, orderId, newStatus);
+    console.log("from the admin: ", productId, orderId, newStatus,size);
 
     fetch(`/admin/orders/productStatus`, {
       method: 'POST', // Ensure this is lowercase
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ productId: productId, newStatus: newStatus ,orderId:orderId}),
+      body: JSON.stringify({ productId: productId, newStatus: newStatus ,orderId:orderId,size:size}),
     })
       .then(response => {
         // Ensure the response is OK and complete
@@ -247,8 +248,8 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'success',
             title:'status changed',
             text: 'status changed successfully',
-            timer:1000,
-            showConfirmBox:false,
+            // timer:1000,
+            showConfirmButton:false
           })
           .then(() => {
             location.reload()
@@ -258,8 +259,8 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'error',
             title:'Errorrr',
             text: data.message,
-            timer:1000,
-            showConfirmBox:false,
+            // timer:1000,
+            showConfirmButton:false
           })
         }
       })
@@ -269,49 +270,73 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             icon:'success',
             title:'status changed',
             text: 'Error changing the status',
-            timer:1000,
-            showConfirmBox:false,
+            // timer:1000,
+            showConfirmButton:false
           })
       });
   });
 });
 
 
+function CancelOrder(orderId,productId){
+  const OrderID  = orderId;
+  const ProductID = productId
 
-
-
-
-
-    //   document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-    //     console.log('inside');
-        
-    //     dropdown.addEventListener('change',function(){
-    //       console.log('again');
-          
-    //       const productId = this.getAttribute('data-product-id')
-    //       const orderId  = this.getAttribute('data-order-id')
-    //       const newStatus = this.value
-    //       console.log("from the admin: ",productId,orderId,newStatus);
-          
-    //       fetch(`/admin/orders/${orderId}/productStatus`,{
-    //         method:'patch',
-    //         headers:{
-    //           'Content-Type':'application/json'
-    //         },
-    //         body: JSON.stringify({productId:productId,newStatus:newStatus})
-    //       })
-        
-    //     .then(response => response.json())
-    //     .then((data) => {
-    //       if(data.success){
-    //         alert('changed')
-    //       }else{
-    //         alrt('failed')
-    //       }
-    //     })
-    //     .catch(error => console.error('Error:', error))
-    //   })
-    // })
+  Swal.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+})
+.then((result) => {
+  if(result.isConfirmed){
+   console.log("van: ",OrderID,ProductID);
+    fetch('/admin/orders/cancelProduct',{
+      method:"post",
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({OrderID:orderId,ProductID:productId})
+    })
+    .then(response => response.json())
+    .then((data) => {
+      if(data.success){
+        Swal.fire({
+          icon:'success',
+          title:'product cancelled',
+          text:'Product cancelled succesfully',
+          timer:1000,
+          showConfirmButton:false
+        })
+        .then(() => {
+          location.reload()
+        })
+      }else{
+        Swal.fire({
+          icon:'error',
+          title:"can't cancel ",
+          text:"can't cancel the product",
+          timer:1000,
+          showConfirmButton:false
+        })
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      Swal.fire({
+          icon:'error',
+          title:"can't cancel ",
+          text:"something went wrong!",
+          timer:1000,
+          showConfirmButton:false
+        })
+    })
+  }
+})
+}
     </script>
   
     <%-include('../../views/partials/admin/footer')%>
