@@ -164,7 +164,7 @@
                   <label >Status:</label>
                   <span ><%=productItem.ProductStatus%>%></span>
                 </div>
-                <button class="btn btn-cancel btn-sm" onclick="CancelOrder('<%=orders._id%>,<%=productItem.product._id%>')">Cancel</button>
+                <button class="btn btn-cancel btn-sm" onclick="CancelOrder('<%=orders._id%>','<%=productItem.product._id%>','<%=productItem.size%>')">Cancel</button>
               </div>
             </div>
             <% }) %>
@@ -277,11 +277,13 @@ document.querySelectorAll('.status-dropdown').forEach(dropdown => {
   });
 });
 
+</script>
 
-function CancelOrder(orderId,productId){
+<script>
+function CancelOrder(orderId,productId,Size){
   const OrderID  = orderId;
   const ProductID = productId
-
+  const ProductSize = Size
   Swal.fire({
   title: 'Are you sure?',
   text: "You won't be able to revert this!",
@@ -293,13 +295,13 @@ function CancelOrder(orderId,productId){
 })
 .then((result) => {
   if(result.isConfirmed){
-   console.log("van: ",OrderID,ProductID);
+   console.log("van: ",OrderID,ProductID,ProductSize);
     fetch('/admin/orders/cancelProduct',{
       method:"post",
       headers:{
         'Content-Type':'application/json'
       },
-      body:JSON.stringify({OrderID:orderId,ProductID:productId})
+      body:JSON.stringify({OrderID:OrderID,ProductID:ProductID,ProductSize:ProductSize})
     })
     .then(response => response.json())
     .then((data) => {
@@ -308,7 +310,7 @@ function CancelOrder(orderId,productId){
           icon:'success',
           title:'product cancelled',
           text:'Product cancelled succesfully',
-          timer:1000,
+          timer:1500,
           showConfirmButton:false
         })
         .then(() => {
@@ -318,8 +320,8 @@ function CancelOrder(orderId,productId){
         Swal.fire({
           icon:'error',
           title:"can't cancel ",
-          text:"can't cancel the product",
-          timer:1000,
+          text:data.message,
+          timer:1500,
           showConfirmButton:false
         })
       }
@@ -330,7 +332,7 @@ function CancelOrder(orderId,productId){
           icon:'error',
           title:"can't cancel ",
           text:"something went wrong!",
-          timer:1000,
+          timer:1500,
           showConfirmButton:false
         })
     })

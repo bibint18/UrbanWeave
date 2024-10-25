@@ -75,9 +75,29 @@ exports.ChangeOrder = async (req,res) => {
 
 exports.CancelProduct = async (req,res) => {
   try{
-  const {OrderID,ProductID} = req.body
-  console.log('frrrrrr: ',OrderID,ProductID)
-  res.status(200).json({success:true,message:"cancelled"})
+  const {OrderID,ProductID,ProductSize} = req.body
+  console.log('frrrrrr: ',OrderID,ProductID,ProductSize)
+  const order = await Order.findById(OrderID)
+  console.log("order: ",order);
+  if(!order){
+    return res.status(404).json({success:false,message:'Order not found'})
+  }
+  const product = order.products.find(p => p.product.toString() === ProductID && p.size ===ProductSize)
+  console.log("prooo: ",product);
+  
+  if(product){
+    if(product.ProductStatus =='Delivered' || product.ProductStatus == 'Returned'  ){
+      return res.status(400).json({success:false,message:'Product is not allowed to Cancel'})
+    }
+    if(product.ProductStatus =='Cancelled'){
+      return res.status(400).json({success:false,message:'Product already cancelled'})
+    }
+    if(product.ProductStatus =='Processing' || product.ProductStatus =='Shipped' ){
+      product.ProductStatus =  'Cancelled' 
+      await order.save()
+  }
+}
+  res.status(200).json({success:true,message:" Product cancelled"})
   }catch(error){
     console.log(error);
     return res.status(400).json({success:false,message:error})
