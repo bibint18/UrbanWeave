@@ -2,12 +2,15 @@ const { findByIdAndDelete } = require('../model/admin/adminModel')
 const Product = require('../model/admin/prodectModel')
 const User = require('../model/user/userModel')
 const bcrypt = require('bcrypt')
+
 exports.ShopPage = async (req,res) => {
   try {
     const pro = await Product.find({isDeleted:false})
     console.log("prod: ",pro);
     const user = req.cookies.jwt
-    const {sort} = req.query
+    const {sort,page=1} = req.query
+    const limit=8
+    const skip = (page - 1) * limit;
     console.log("sort: ",sort);
     let sortOptions ={};
     switch(sort){
@@ -41,8 +44,11 @@ exports.ShopPage = async (req,res) => {
       default:
         sortOptions = {createdAt:-1}
     }
-    const products= await Product.find({isDeleted:false}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).exec()
-    return res.render('user/shop',{products,sort,user})
+    const totalProducts = await Product.countDocuments({ isDeleted: false });
+    const totalPages = Math.ceil(totalProducts / limit);
+    const products= await Product.find({isDeleted:false}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).skip(skip)
+    .limit(limit).exec()
+    return res.render('user/shop',{products,sort,user,currentPage: parseInt(page, 10),totalPages})
   } catch (error) {
     console.log(error)
     return res.status(500).json({success:false})

@@ -31,11 +31,11 @@ const ProductSchema = new mongoose.Schema(
     },
     quantity: {
       type: Number,
-      default: true,
+      default: false,
     },
     color: {
       type: String,
-      required: true,
+      required: false,
     },
     productOffer: {
       type: Number,

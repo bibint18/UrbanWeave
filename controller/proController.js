@@ -75,9 +75,15 @@ exports.AddProduct = async (req,res) => {
 
 exports.ListProducts =async (req,res) => {
   try {
-    const products = await Product.find().populate('category');
+    const page = parseInt(req.query.page) || 1
+    const limit = 4;
+    const skip = (page-1) * limit 
+    const products = await Product.find().populate('category').skip(skip).limit(limit)
     const categories = await Category.find({isDeleted:false})
-    res.render('admin/productPage',{products,categories,searchQuery:null})
+    const totalProducts =  await Product.countDocuments()
+    const  totalPages = Math.ceil(totalProducts/limit)
+
+    res.render('admin/productPage',{products,categories,searchQuery:null,currentPage:page,totalPages})
   } catch (error) {
     console.log(error)
   }

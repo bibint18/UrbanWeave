@@ -9,22 +9,20 @@ exports.getOrdersPage =async (req,res) => {
     const user = req.user
     const userId = req.user._id 
     console.log(userId);
-    const {sort} =req.query
-    // console.log("query: ",sort);
-    // const { sort, page = 1, limit = 3 } = req.query;
+    const { sort, page = 1, limit = 3} = req.query;
+    const skip = (page - 1) * limit;
     let sortOptions ={}
 
     if (sort) {
-      // Use $elemMatch to filter orders where any product has the specified ProductStatus
       sortOptions = {
         products: { $elemMatch: { ProductStatus: sort } },
       };
       console.log(sortOptions)
     }
     console.log(sortOptions)
-    // const totalOrders = await Order.countDocuments({ user: userId, ...sortOptions });
-    // const totalPages = Math.ceil(totalOrders / limit);
-    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }).exec()
+    const totalOrders = await Order.countDocuments({ user: userId, ...sortOptions });
+    const totalPages = Math.ceil(totalOrders / limit);
+    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }).skip(skip).limit(limit).exec()
     console.log("or: ",orders);
 
     if (sort) {
@@ -36,7 +34,8 @@ exports.getOrdersPage =async (req,res) => {
         return { ...order.toObject(), products: filteredProducts };
       });
     }
-    return res.render('user/orders',{orders,sort,user})
+    return res.render('user/orders',{orders,sort,user, currentPage: parseInt(page, 10),
+      totalPages,})
   } catch (error) {
     console.log(error)
     return res.status(400).json({success:false,message:error})
@@ -75,3 +74,4 @@ exports.cancelOrder =async (req,res) => {
     
   }
 }
+

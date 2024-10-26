@@ -205,31 +205,11 @@ exports.logout = (req, res) => {
   console.log("Session after destroying:", req.session);
   return res.redirect('/userLogin')
   
-  // req.logout((err) => {
-  //   if (err) {
-  //     return next(err);
-  //   }
-  //   console.log('Session before destroying:', req.session);
-  //   console.log('Cookies before clearing:', req.cookies);
-  //   req.session.destroy((err) => {
-  //     if (err) {
-  //       return next(err);
-  //     }
-  //     console.log("Session after destroying:", req.session);
-  //     console.log('Cookies after clearing:', req.cookies);
-  //     res.redirect('/userSignup');
-  //   });
-  // });
 };
 
 
 
-// exports.forgotPassword =(req,res) => {
-//   res.redirect('/')
-// }
-// exports.getPasswordReset =(req,res) => {
-//   res.render('user/passwordReset')
-// }
+
 
 exports.getProductDetails =async (req,res) => {
   const id = req.params.id
