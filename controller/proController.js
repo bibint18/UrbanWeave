@@ -229,6 +229,10 @@ exports.deleteImage =async (req,res) => {
 exports.SearchProduct =async (req,res) => {
   try{
   const search = req.query.search
+  const page = parseInt(req.query.page) || 1;
+  const limit =7
+  const skip = (page -1) * limit
+  
   console.log(search)
   const categories = await Category.find({ isDeleted: false });
   console.log("cat",categories)
@@ -237,11 +241,19 @@ exports.SearchProduct =async (req,res) => {
     categoryName: { $regex: search, $options: 'i' }
   }).select('_id');
   console.log("match",matchingCategories)
+
+  const productCount = await Product.countDocuments({
+    $or: [
+      { ProductName: { $regex: search, $options: 'i' } },
+      { category: { $in: matchingCategories.map(cat => cat._id) } }
+    ]
+  });
+  const totalPages = Math.ceil(productCount / limit);
   // const products =await Product.find({ProductName:{$regex:search,$options:'i'}})
-  const products = await Product.find({$or:[{ProductName:{$regex:search,$options:'i'}},{category: { $in: matchingCategories.map(cat => cat._id)}}]}).populate('category');
+  const products = await Product.find({$or:[{ProductName:{$regex:search,$options:'i'}},{category: { $in: matchingCategories.map(cat => cat._id)}}]}).skip(skip).limit(limit).populate('category')
   console.log("pro",products);
   
-  return res.render('admin/productPage',{products,categories,searchQuery:search})
+  return res.render('admin/productPage',{products,categories,searchQuery:search,currentPage:page,totalPages})
 }catch(error){
   return res.send(error)
 }

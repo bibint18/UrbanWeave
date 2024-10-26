@@ -140,6 +140,24 @@ body {
   margin-top: 10px;
   display: inline-block;
 }
+
+.return-btn{
+  background-color:green; /* Red color for cancel */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 6px 12px; /* Small padding */
+  border-radius: 4px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer on hover */
+  font-size: 14px; /* Small font size */
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+.return-btn:hover{
+  background-color: #291515;
+}
+.return-btn:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 4px rgba(60, 231, 89, 0.7); /* Subtle shadow on focus */
+}
 .cancel-btn {
   background-color: #e74c3c; /* Red color for cancel */
   color: white; /* White text */
@@ -260,7 +278,8 @@ body {
                 <option value="Shipped" <% if (sort === 'Shipped') { %> selected <% } %> >Status: Shipped</option>
                 <option value="Cancelled" <% if (sort === 'Cancelled') { %> selected <% } %> >Status: Cancelled </option>
                 <option value="Delivered" <% if (sort === 'Delivered') { %> selected <% } %> >Status: Delivered</option>
-                <!-- <option value="za" <% if (sort === 'za') { %> selected <% } %> >Product Name: Z - A</option> -->
+                <option value="Returned" <% if (sort === 'Returned') { %> selected <% } %> >Status: Returned</option>
+                
               </select>
             </form>
           </div>
@@ -330,7 +349,7 @@ body {
 
                   <% } %>
                   <% if (ProductItem.ProductStatus === 'Delivered') { %>
-                    <button class="return-btn " onclick="returnOrder('<%= order._id %>')">Return Product</button>
+                    <button class="return-btn " onclick="returnOrder('<%= order._id %>','<%=ProductItem.product._id%>')">Return Product</button>
                   <% } %>
                 </div>
 
@@ -418,6 +437,56 @@ body {
     })
   }
   })
+  }
+
+
+  function returnOrder(OrderID,ProduId){
+    Swal.fire({
+      title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, Return it'
+    })
+    .then(result => {
+      if(result.isConfirmed){
+        fetch(`/orders/return/${OrderID}/${ProduId}`,{
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.success){
+            Swal.fire({
+              icon:'success',
+              title:'Product Returned',
+              text:'Product returned successfully.',
+              timer:1500,
+              showConfirmButton:false
+
+            })
+          }else{
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text:'Error deleting the product'
+            })
+          }
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:'Error deleting the product',
+            timer:1500,
+          })
+        })
+      }
+    })
   }
 </script>
 <%-include('../../views/partials/user/footer')%>

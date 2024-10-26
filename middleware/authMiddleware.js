@@ -18,11 +18,22 @@ exports.protect = async (req,res,next) => {
     if(!user){
       return res.send("no user in databse");
     }
+    if(user.isBlocked){
+      res.clearCookie('jwt')
+      return res.redirect('/userLogin')
+    }
     req.user = user
     next();
   }catch(err){
-    return res.send(err)
+    if (err.name === 'TokenExpiredError') {
+      console.log("Token expired: Redirecting to login.");
+      res.clearCookie('jwt'); // Clear expired token
+      return res.redirect('/userLogin'); // Redirect to login page
+    }
+    return res.send(err); // Handle other errors if needed
   }
+  
+  
 }
 
 exports.protectAdmin = async (req,res,next) => {

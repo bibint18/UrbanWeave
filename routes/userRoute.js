@@ -79,4 +79,5 @@ router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
 //orders
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)
+router.post('/orders/return/:id/:ProId',authMiddleware.protect,OrderRoute.ReturnProduct)
 module.exports = router;

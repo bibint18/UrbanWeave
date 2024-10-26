@@ -171,26 +171,17 @@ exports.userLogin =async (req,res) => {
   }
   if (!email|| email.trim() === '' || !password || password.trim() === '') {
     // return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
-    return res.json({success:false,message:"Input cannot be empty or spaces only!"})
+    return res.status(400).json({success:false,message:"Input cannot be empty or spaces only!"})
 }
 
-  if(user && user.isBlocked === true){
+  if(user.isBlocked){
     console.log(user.isBlocked)
-    return res.status(400).json({success:false,message:"user is blocked"})
+    return res.status(200).json({success:false,message:"User is Blocked"})
     // return res.render("user/login",{error:"User is Blocked"})
   }
   if(user && await user.comparePassword(password)){
     const token = jwtService.signToken(user)
     res.cookie('jwt', token, { httpOnly: true, secure: false });
-    // const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'12d'})
-    // res.cookie('token',token,{
-    //   httpOnly:true,
-    //   maxAge: 30* 24* 60 * 60* 1000,
-    //   secure:false,
-    //   sameSite:'Lax'
-    // })
-    //  return res.redirect('/home') 
-    
     return res.json({success:true,message:"Login Successfull"})
   }
   else{

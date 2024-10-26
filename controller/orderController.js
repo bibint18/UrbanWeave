@@ -75,3 +75,31 @@ exports.cancelOrder =async (req,res) => {
   }
 }
 
+exports.ReturnProduct = async (req,res) => {
+  try {
+    const {id,ProId} = req.params
+    console.log("id: ",id,"Po: ",ProId)
+
+    const orders = await Order.findById(id)
+    console.log("can: ",orders); 
+    if(!orders){
+      return res.json({success:false,message:"No order"})
+    } 
+    const product = orders.products.find(p => p.product.toString() == ProId)
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found in the order" });
+    }
+    if(product.ProductStatus =='Delivered'){
+      product.ProductStatus =  'Returned'
+      await orders.save()
+      return res.status(200).json({success:true,message:"Product Returned"})
+    }else{
+      return res.status(400).json({success:false,message:" cannot return the Product"})
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({success:false,message:"cant return the product"})
+  
+  }
+}
+
