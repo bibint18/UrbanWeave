@@ -250,78 +250,154 @@ exports.editAddress =async (req,res) => {
 }
 }
 
-exports.placeOrder = async (req,res) => {
-  try {
-    const address = req.body;
-    console.log("add: ",address)
+// exports.placeOrder = async (req,res) => {
+//   try {
+//     const address = req.body;
+//     console.log("add: ",address)
 
-    const userId = req.user._id
-    console.log(userId);
-    const user = await User.findById(userId)
-    console.log("user: ",user);
-    const orderId = await getNextOrderId();
-    // const selectedAddress = user.address.id(address)
-    // const selectedAddress = user.address.find((addr) => addr._id.toString() === address);
-    // const selectedAddress = await User.findOne({"address._id":address},{"address.$":1})
-    // console.log("whole: ",selectedAddress);
+//     const userId = req.user._id
+//     console.log(userId);
+//     const user = await User.findById(userId)
+//     console.log("user: ",user);
+//     const orderId = await getNextOrderId();
+//     // const selectedAddress = user.address.id(address)
+//     // const selectedAddress = user.address.find((addr) => addr._id.toString() === address);
+//     // const selectedAddress = await User.findOne({"address._id":address},{"address.$":1})
+//     // console.log("whole: ",selectedAddress);
     
-    const cartItems = await Cart.find({user:userId}).populate('product')
-    if(cartItems.length ==0){
-      return res.status(400).json({success:false,message:"No items in cart"})
-    }
-    let totalAmount=0;
-    let totalQuantity=0
-    const products = cartItems.map((item) =>{
-      totalAmount += item.quantity * item.product.salePrice;
-      totalQuantity += item.quantity
+//     const cartItems = await Cart.find({user:userId}).populate('product')
+//     if(cartItems.length ==0){
+//       return res.status(400).json({success:false,message:"No items in cart"})
+//     }
+//     let totalAmount=0;
+//     let totalQuantity=0
+
+
+
+//     const products = cartItems.map((item) =>{
+//       totalAmount += item.quantity * item.product.salePrice;
+//       totalQuantity += item.quantity
       
       
-      return{
-        product:item.product._id,
-        quantity:item.quantity,
-        size:item.size,
-        price:item.product.salePrice
+//       return{
+//         product:item.product._id,
+//         quantity:item.quantity,
+//         size:item.size,
+//         price:item.product.salePrice
         
-      }
-    })
-    console.log(products,"to the cart");
+//       }
+//     })
+//     console.log(products,"to the cart");
     
-    const newOrder = new Order({
-      user:userId,
-      oid:orderId,
-      products:products,
-      totalAmount:totalAmount,
-      address:req.body.address,
-      status:'Processing',
-      totalQuantity:totalQuantity
-    })
-    console.log("ors: ",newOrder);
+//     const newOrder = new Order({
+//       user:userId,
+//       oid:orderId,
+//       products:products,
+//       totalAmount:totalAmount,
+//       address:req.body.address,
+//       status:'Processing',
+//       totalQuantity:totalQuantity
+//     })
+//     console.log("ors: ",newOrder);
     
-    await newOrder.save()
-    console.log("saved: ",newOrder);
+//     await newOrder.save()
+//     console.log("saved: ",newOrder);
 
+//     for (const item of products) {
+//       const product = await Product.findById(item.product);
+
+//       // Find the specific size in the product's sizes array
+//       const sizeStock = product.sizes.find((s) => s.size === item.size);
+//       if (sizeStock) {
+//         // Decrease stock by the ordered quantity
+//         sizeStock.stock -= item.quantity;
+
+//         // Ensure stock doesn't go below zero
+//         if (sizeStock.stock < 0) sizeStock.stock = 0;
+//       }
+
+//       // Save the updated product
+//       await product.save();
+//     }
+
+
+//     await Cart.deleteMany({user:userId})
+//     res.json({ success: true, message: 'Order placed successfully!' });
+//   } catch (error) {
+//     console.log(error);
+//     res.json({ success: false, message: 'something went wrong!'});
+//   }
+// }
+
+
+exports.placeOrder = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const cartItems = await Cart.find({ user: userId }).populate('product');
+
+    if (cartItems.length === 0) {
+      return res.status(400).json({ success: false, message: "No items in cart" });
+    }
+
+    let totalAmount = 0;
+    let totalQuantity = 0;
+    const products = [];
+
+    // Check stock for each item in cart
+    for (const item of cartItems) {
+      const product = await Product.findById(item.product._id);
+
+      // Find the size stock
+      const sizeStock = product.sizes.find(s => s.size === item.size);
+      if (!sizeStock || sizeStock.stock < item.quantity) {
+        // If insufficient stock, respond with error
+        return res.status(400).json({ 
+          success: false, 
+          message: `${product.ProductName} (${item.size}) has insufficient stock. Only ${sizeStock ? sizeStock.stock : 0} left.` 
+        });
+      }
+
+      // Add to total amount and quantity if stock is sufficient
+      totalAmount += item.quantity * product.salePrice;
+      totalQuantity += item.quantity;
+      products.push({
+        product: item.product._id,
+        quantity: item.quantity,
+        size: item.size,
+        price: product.salePrice
+      });
+    }
+
+    const orderId = await getNextOrderId();
+
+    // Proceed with placing order
+    const newOrder = new Order({
+      user: userId,
+      oid: orderId,
+      products: products,
+      totalAmount: totalAmount,
+      address: req.body.address,
+      status: 'Processing',
+      totalQuantity: totalQuantity
+    });
+    await newOrder.save();
+
+    // Update stock levels
     for (const item of products) {
       const product = await Product.findById(item.product);
-
-      // Find the specific size in the product's sizes array
-      const sizeStock = product.sizes.find((s) => s.size === item.size);
+      const sizeStock = product.sizes.find(s => s.size === item.size);
       if (sizeStock) {
-        // Decrease stock by the ordered quantity
         sizeStock.stock -= item.quantity;
-
-        // Ensure stock doesn't go below zero
-        if (sizeStock.stock < 0) sizeStock.stock = 0;
       }
-
-      // Save the updated product
       await product.save();
     }
 
-
-    await Cart.deleteMany({user:userId})
+    // Clear cart after order
+    await Cart.deleteMany({ user: userId });
     res.json({ success: true, message: 'Order placed successfully!' });
+
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: 'something went wrong!'});
+    console.error(error);
+    res.json({ success: false, message: 'Something went wrong!' });
   }
-}
+};

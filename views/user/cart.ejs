@@ -45,7 +45,10 @@
                 <td><a href="#" class="cp_title"><%= item.product.ProductName%></a></td>
                 <td>										
                   <div class="cp_quntty">																			
-                    <input name="quantity" value="<%= item.quantity%>" size="2" type="number">													
+                    <input name="quantity" value="<%= item.quantity%>" size="2" type="number" min="1" max="5">	
+                    <% if (item.quantity > item.product.sizes.find(s => s.size === item.size).stock) { %>
+                      <p style="color:red;">Out of Stock</p>
+                    <% } %>											
                   </div>
                 </td>
                 <td><p class="cp_price"><%= item.product.salePrice %></p></td>
@@ -133,7 +136,9 @@
         <div class="wrap">
           <!-- <p><span>Subtotal</span><span>$200.00</span></p> -->
           <h4><span>Grand total:</span><span>Rs: <%= GrandTotal %></span></h4>
-          <a href="/checkout" class="btn border-btn">process to checkout</a>
+          <!-- <a href="/checkout" class="btn border-btn">process to checkout</a> -->
+          <% let outOfStock = cartItems.some(item => item.quantity > item.product.sizes.find(s => s.size === item.size).stock); %>
+          <a href="/checkout" class="btn border-btn" <%= outOfStock ? 'disabled' : '' %>>Process to Checkout</a>
         </div>
       </div>
       
@@ -191,5 +196,20 @@
 });
 
   }
+
+
+
+  document.querySelector('.cart-checkout-process .border-btn').addEventListener('click', function (e) {
+  if (this.hasAttribute('disabled')) {
+    e.preventDefault();
+    Swal.fire({
+      icon: 'error',
+      title: 'Out of Stock',
+      text: 'Some items in your cart are out of stock. Please adjust quantities before proceeding.',
+      showConfirmButton: true
+    });
+  }
+});
+
 </script>
 <%-include('../../views/partials/user/footer') %>
