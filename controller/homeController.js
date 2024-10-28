@@ -2,58 +2,138 @@ const { findByIdAndDelete } = require('../model/admin/adminModel')
 const Product = require('../model/admin/prodectModel')
 const User = require('../model/user/userModel')
 const bcrypt = require('bcrypt')
+const Category = require('../model/admin/categoryModel')
+
 
 exports.ShopPage = async (req,res) => {
   try {
-    const pro = await Product.find({isDeleted:false})
-    console.log("prod: ",pro);
     const user = req.cookies.jwt
-    const {sort,page=1} = req.query
+    const {sort,page=1,search,categoryQuery} = req.query
     const limit=8
-    const skip = (page - 1) * limit;
-    console.log("sort: ",sort);
+    const skip = (page - 1) * limit;    
     let sortOptions ={};
-    switch(sort){
+    let filterCriteria = {isDeleted:false}
+    if(categoryQuery){
+      filterCriteria.category =  categoryQuery
+    }
+    if (search) {
+      filterCriteria.$or = [
+        { ProductName: { $regex: new RegExp(search, 'i') } },
+        { description: { $regex: new RegExp(search, 'i') } }
+      ];
+    }
+    switch (sort) {
       case 'priceLowHigh':
-        sortOptions = {salePrice:1};
+        sortOptions = { salePrice: 1 };
         break;
       case 'priceHighLow':
-        sortOptions = {salePrice:-1};
+        sortOptions = { salePrice: -1 };
         break;
       case 'newArrivals':
-        sortOptions = {createdAt:-1};
+        sortOptions = { createdAt: -1 };
         break;
       case 'az':
-        const productsAZ = await Product.aggregate([
-          { $match: { isDeleted: false } },
-          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
-          { $sort: { ProductNameCleaned: 1 } }  
-        ]);
-        return res.render('user/shop', { products: productsAZ,sort });
-        // sortOptions = {productName:1}; 
-        // break;
+        sortOptions = { ProductName: 1 };
+        break;
       case 'za':
-        const productsZA = await Product.aggregate([
-          { $match: { isDeleted: false } },
-          { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
-          { $sort: { ProductNameCleaned: -1 } }  // Sort Z-A
-        ]);
-        return res.render('user/shop', { products: productsZA,sort,user });
-        // sortOptions = {productName:-1};
-        // break;
+        sortOptions = { ProductName: -1 };
+        break;
       default:
-        sortOptions = {createdAt:-1}
+        sortOptions = { createdAt: -1 };
     }
-    const totalProducts = await Product.countDocuments({ isDeleted: false });
-    const totalPages = Math.ceil(totalProducts / limit);
-    const products= await Product.find({isDeleted:false}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).skip(skip)
-    .limit(limit).exec()
-    return res.render('user/shop',{products,sort,user,currentPage: parseInt(page, 10),totalPages})
+    const products = await Product.find(filterCriteria)
+      .collation({ locale: 'en', strength: 2 })
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+      const categories = await Category.find({ isDeleted: false });
+      const totalProducts = await Product.countDocuments(filterCriteria);
+      const totalPages = Math.ceil(totalProducts / limit);
+    return res.render('user/shop', {
+      products,
+      sort,
+      user,
+      currentPage: parseInt(page, 10),
+      totalPages,
+      search,
+      categoryQuery,
+      categories
+    });
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({success:false})
+    console.log(error);
+    return res.send(error)
+    
   }
 }
+
+
+
+
+// exports.ShopPage = async (req,res) => {
+//   try {
+//     const pro = await Product.find({isDeleted:false})
+//     const user = req.cookies.jwt
+//     const {sort,page=1,search,categoryQuery} = req.query
+//     const limit=8
+//     const skip = (page - 1) * limit;    
+//     let sortOptions ={};
+//     let searchQuery = await Product.find({$or:[{
+//       ProductName: { $regex: new RegExp(search, 'i') } 
+//   },{description:{$regex:new RegExp(search,'i')}}]});
+//   const categories = await Category.find({isDeleted:false})
+//   const totalProducts = await Product.countDocuments({ isDeleted: false });
+//     const totalPages = Math.ceil(totalProducts / limit);
+//     switch(sort){
+//       case 'priceLowHigh':
+//         sortOptions = {salePrice:1};
+//         break;
+//       case 'priceHighLow':
+//         sortOptions = {salePrice:-1};
+//         break;
+//       case 'newArrivals':
+//         sortOptions = {createdAt:-1};
+//         break;
+//       case 'az':
+//         const productsAZ = await Product.aggregate([
+//           { $match: { isDeleted: false } },
+//           { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
+//           { $sort: { ProductNameCleaned: 1 } }  
+//         ]);
+//         return res.render('user/shop', { products: productsAZ,sort ,searchQuery,search,user,currentPage: parseInt(page, 10),totalPages,categories});
+//       case 'za':
+//         const productsZA = await Product.aggregate([
+//           { $match: { isDeleted: false } },
+//           { $addFields: { ProductNameCleaned: { $trim: { input: { $toLower: "$ProductName" } } } } }, 
+//           { $sort: { ProductNameCleaned: -1 } } 
+//         ]);
+//         return res.render('user/shop', { products: productsZA,sort,user,searchQuery,search,user,currentPage: parseInt(page, 10),totalPages,categories });
+//       default:
+//         sortOptions = {createdAt:-1}
+//     }
+    
+//     const products= await Product.find({isDeleted:false,category:categoryQuery,$or: [
+//       { ProductName: { $regex: new RegExp(search, 'i') } },
+//       { description: { $regex: new RegExp(search, 'i') } }
+//   ]}).collation({ locale: 'en', strength: 2 }).sort(sortOptions).skip(skip)
+//     .limit(limit).exec()
+//     return res.render('user/shop',{products,sort,user,currentPage: parseInt(page, 10),totalPages,searchQuery,search,categories})
+//   } catch (error) {
+//     console.log(error)
+//     return res.status(500).json({success:false})
+//   }
+// }
+
+// exports.SearchProduct = async (req,res) => {
+//   try {
+//     const  search = req.query.search;
+//     const searchQuery = await Product.find({$or:[{ProductName:{$regex: new RegExp(search,'i')}},{description:{$regex: new RegExp(search,'i')}}]})
+//     return res.render('user/shop',{searchQuery})
+//   } catch (error) {
+//     console.log(error);
+//     return res.send(error)
+//   }
+// } 
 
 exports.userProfile = async (req,res) => {
   const user = await User.findById(req.user.id)

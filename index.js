@@ -11,20 +11,6 @@ const nodemailer = require('nodemailer')
 const crypto = require('crypto')
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
-// const redisClient = redis.createClient();
-// redisClient.on('error', (err) => {
-//   console.error('Redis error:', err);
-// });
-// redisClient.connect().then(() => {
-//   console.log('Connected to Redis');
-// });
-// mongoose.connect(process.env.MONGO_URI,{
-// })
-// .then(() => console.log("Connected to mongodb")
-// initializeCounter();
-// )
-// .catch((err) => console.log('Failed to connect',err))
-
 mongoose.connect(process.env.MONGO_URI, {
 })
 .then(() => {

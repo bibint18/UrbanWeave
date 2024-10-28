@@ -43,8 +43,13 @@
 						</div> -->
 
 						<div class="col-sm-6 col-xs-12 short_by_area">
+							<form action="/shop" method="GET">
+								<input type="text"  name="search" placeholder="Search...">
+								<button type="submit">Search</button>
+							</form>
+
 							<div class="short_by_inner">
-								<label>Sort by:</label>
+								<label>Sort by Products:</label>
 								<form id="sortForm" method="GET" action="/shop">
 									<select class="sort-select" name="sort" onchange="document.getElementById('sortForm').submit()">
 										<option value="">Select Sorting</option>
@@ -55,6 +60,20 @@
 										<option value="za" <% if (sort === 'za') { %> selected <% } %> >Product Name: Z - A</option>
 									</select>
 								</form>
+
+							</div>
+
+							<div class="short_by_inner">
+								<label>Sort by category:</label>
+								<form id="CategoryForm" method="GET" action="/shop">
+									<select class="sort-select" name="categoryQuery" onchange="document.getElementById('CategoryForm').submit()">
+										<option value="">Select Sorting</option>
+										<% categories.forEach((category) => { %>
+										<option value='<%=category._id%>'   ><%=category.categoryName%></option>
+									<% }) %>
+									</select>
+								</form>
+
 							</div>
 						</div>
 
@@ -74,7 +93,7 @@
 					
 				<div class="shop_details text-center">
 					<div class="row">	
-						
+					
 						<% products.forEach(product => { %>
 						<div class="col-lg-3 col-md-4 col-sm-6">
 							<div class="product-grid">
@@ -140,15 +159,15 @@
 						<div class="pagination text-center">
 							<ul>
 								<% if (currentPage > 1) { %>
-									<li><a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>"><i class="fa fa-angle-left"></i></a></li>
+									<li><a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>&search=<%= search %>"><i class="fa fa-angle-left"></i></a></li>
 								<% } %>
 				
 								<% for (let i = 1; i <= totalPages; i++) { %>
-									<li><a href="?page=<%= i %>&sort=<%= sort %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a></li>
+									<li><a href="?page=<%= i %>&sort=<%= sort %>&search=<%= search %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a></li>
 								<% } %>
 				
 								<% if (currentPage < totalPages) { %>
-									<li><a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>"><i class="fa fa-angle-right"></i></a></li>
+									<li><a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>&search=<%= search %>"><i class="fa fa-angle-right"></i></a></li>
 								<% } %>
 							</ul>
 						</div>
