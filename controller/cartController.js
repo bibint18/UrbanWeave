@@ -66,7 +66,7 @@ exports.AddCart = async (req, res) => {
         .json({ success: false, message: "product not found" });
     }
 
-    const sizeStock = await product.sizes.find((s) => s.size === size);
+    const sizeStock = product.sizes.find((s) => s.size === size);
     if (!sizeStock) {
       return res
         .status(400)
@@ -263,8 +263,13 @@ exports.placeOrder = async (req, res) => {
     const user=await User.findById(userId).lean()
     console.log("user:   ",user);
     
-    const selectedAddress = user.address.find(addr => addr._id.toString() ===address)
-    console.log("seletected: ",selectedAddress);
+    const selectedIndex = user.address.findIndex(addr => addr._id.toString() ===address)
+
+    console.log("seletected: ",selectedIndex);
+    const  selectedAddress = user.address[selectedIndex];
+    console.log("sesese",selectedAddress);
+    
+
     
     if(!selectedAddress){
       return res.status(400).json({ success: false, message: 'Invalid address selected' });

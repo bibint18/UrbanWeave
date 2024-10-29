@@ -7,6 +7,7 @@ const authMiddleware= require('../middleware/authMiddleware')
 const HomeRoute = require('../controller/homeController')
 const CartRoute = require('../controller/cartController')
 const OrderRoute = require('../controller/orderController')
+const WishRoute = require('../controller/wishlistController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
 
@@ -36,23 +37,6 @@ router.get("/products/details/:id",userRouter.getProductDetails)
 
 router.get('/shop',HomeRoute.ShopPage)
 
-
-// Example of revoking access token from Google
-// app.get('/revoke', (req, res) => {
-//   const accessToken = req.user.accessToken; // Assuming you saved access token
-//   const revokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`;
-
-//   axios.post(revokeUrl)
-//     .then(() => {
-//       req.logout();
-//       res.redirect('/');
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).send('Error revoking token');
-//     });
-// });
-
 //userProfile
 
 router.get('/userProfile',authMiddleware.protect,HomeRoute.userProfile)
@@ -80,4 +64,8 @@ router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)
 router.post('/orders/return/:id/:ProId',authMiddleware.protect,OrderRoute.ReturnProduct)
+//wishlist 
+router.get('/wishlist',authMiddleware.protect,WishRoute.getWishlist)
+router.post("/wishlist/add",authMiddleware.protect,WishRoute.addWishlist)
+router.post('/wishlist/remove/:id',authMiddleware.protect,WishRoute.removeWishlist)
 module.exports = router;

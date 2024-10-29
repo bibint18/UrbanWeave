@@ -1,0 +1,125 @@
+<%-include('../../views/partials/user/header')%>
+
+<div id="page_item_area">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6 text-left">
+        <h3>Wishlist</h3>
+      </div>		
+
+      <div class="col-sm-6 text-right">
+        <ul class="p_items">
+          <li><a href="/home">home</a></li>
+          <li><a href="/shop">Shop</a></li>
+          <li><span>Wishlist</span></li>
+        </ul>					
+      </div>	
+    </div>
+  </div>
+</div>
+
+<!-- Wishlist Page -->
+<div class="wishlist-page">
+  <div class="container">
+    <div class="table-responsive">
+      <table class="table cart-table cart_prdct_table text-center">
+       
+        <thead>
+          <tr>
+            <th class="cpt_no">#</th>
+            <th class="cpt_img">image</th>
+            <th class="cpt_pn">product name</th>
+            <th class="cpt_pr">Size</th>
+            <th class="stock">stock status</th>
+            <th class="cpt_p">price</th>
+            <th class="add-cart">add to cart</th>
+            <th class="cpt_r">remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(products.length >0)  { %>
+
+          <% products.forEach((product,index) => { %> 
+          <tr>
+            <td><span class="cart-number"><%= index +1 %></span></td>
+            <td><a href="#" class="cp_img"><img src="/uploads/re-image/<%= product.Product.productImage[0] %>" alt="" /></a></td>
+            <td><a href="#" class="cart-pro-title"><%= product.Product.ProductName%></a></td>
+            <td><p class="stock in-stock"><%=product.size %></p></td>
+            <td><p class="stock in-stock">
+              <% let selectedSize = product.Product.sizes.find(s => s.size == product.size)
+                let availableStock = selectedSize  ? selectedSize.stock : 0
+              %>
+              <%=  availableStock %>
+
+            </p></td>
+            <td><p class="cart-pro-price">$<%= product.Product.salePrice %></p></td>
+            <td><a href="#" class="btn border-btn">add to cart</a></td>
+            <td><a class="cp_remove"><i class="fa fa-trash" onclick="RemoveFromWish('<%= product._id %>')"></i></a></td>          
+          </tr>
+          <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="8">No products in your wishlist</td>
+            </tr>
+            <% } %>
+        </tbody>
+        
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function RemoveFromWish(WishId){
+    Swal.fire({
+      icon:"warning",
+      title:"Are You sure",
+      text:"Want to remove product from  wishlist",
+
+    })
+    .then((result) => {
+    if(result.isConfirmed){
+    fetch(`/wishlist/remove/${WishId}`,{
+      method: 'POST',
+      headers: {
+        "Content-Type":"application/json"
+      },
+    })
+    .then(response => response.json())
+    .then((data) => {
+      if(data.success){
+        Swal.fire({
+          icon:'success',
+          title: 'Product removed from wishlist',
+          text: 'You have successfully removed the product from your wishlist',
+          timer:1500,
+          showConfirmButton:false
+        })
+        .then(() => {
+          window.location.reload();
+        })
+      }else{
+        Swal.fire({
+          icon:'error',
+          title: 'Error',
+          text:"Error removing Product",
+          timer:1500,
+          showConfirmButton:false
+        })
+      }
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon:'error',
+        text:'Something went wrong!',
+        title:'error',
+        timer:1500,
+        showConfirmButton:false
+      })
+    })
+  }
+  })
+  }
+</script>
+
+<%-include('../../views/partials/user/footer')%>

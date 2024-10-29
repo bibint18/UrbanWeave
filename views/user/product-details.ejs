@@ -75,7 +75,7 @@
 
         <div class="col-md-6 col-xs-12">
           <div class="prdct_dtls_content">
-            <a class="pd_title" href="#">
+            <a class="pd_title" href="">
               <%=products.ProductName%>
             </a>
             <div class="pd_price_dtls fix">
@@ -102,46 +102,7 @@
               </p>
             </div>
 
-            <!-- <div class="pd_img_size fix">
-            <h4>size:</h4>
-            <label class="size-label">
-              <input type="radio" name="size" value="S"> S
-            </label>
-            <label class="size-label">
-              <input type="radio" name="size" value="M"> M
-            </label>
-            <label class="size-label">
-              <input type="radio" name="size" value="L"> L
-            </label>
-            <label class="size-label">
-              <input type="radio" name="size" value="XL"> XL
-            </label>
-            <div id="sizeError" style="color: red; display: none;">Please select a size</div>
-          </div> -->
-
-            <!-- <div class="pd_img_size fix">
-              <h4>size:</h4>
-              <% products.sizes.forEach(function(sizeItem) { %>
-                <label class="size-label">
-                  <input type="radio" name="size" value="<%= sizeItem.size %>">
-                  <%= sizeItem.size %> - Available: <%= sizeItem.stock %>
-                </label>
-                <% }) %>
-                  <div id="sizeError" style="color: red; display: none;">Please select a size</div>
-            </div>
-
-            <div class="pd_text">
-              <h4>Available quantity</h4>
-              <p>
-                <% if(products.quantity==0) { %>
-                  OUT OF STOCK
-                  <% } else { %>
-                    <%= products.quantity %>
-                      <% } %>
-              </p>
-            </div> -->
-
-
+            
 
             <% let allSizesOutOfStock = products.sizes.every(size => size.stock === 0); %>
   
@@ -181,18 +142,18 @@
             <!-- Product Action -->
             <div class="pd_btn fix">
               <a id="addToBagBtn" class="btn btn-default acc_btn" onclick="addToCart()" disabled>add to bag</a>
-              <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-heart"></i></a>
+              <a id="addWish" class="btn btn-default acc_btn btn_icn" onclick="AddToWishlist()" disabled><i class="fa fa-heart" ></i>Add To Wishlist</a>
               <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-refresh"></i></a>
             </div>
             <div class="pd_share_area fix">
               <h4>share this on:</h4>
               <div class="pd_social_icon">
-                <a class="facebook" href="#"><i class="fa fa-facebook"></i></a>
-                <a class="twitter" href="#"><i class="fa fa-twitter"></i></a>
-                <a class="vimeo" href="#"><i class="fa fa-vimeo"></i></a>
-                <a class="google_plus" href="#"><i class="fa fa-google-plus"></i></a>
-                <a class="tumblr" href="#"><i class="fa fa-tumblr"></i></a>
-                <a class="pinterest" href="#"><i class="fa fa-pinterest"></i></a>
+                <a class="facebook" href=""><i class="fa fa-facebook"></i></a>
+                <a class="twitter" href=""><i class="fa fa-twitter"></i></a>
+                <a class="vimeo" href=""><i class="fa fa-vimeo"></i></a>
+                <a class="google_plus" href=""><i class="fa fa-google-plus"></i></a>
+                <a class="tumblr" href=""><i class="fa fa-tumblr"></i></a>
+                <a class="pinterest" href=""><i class="fa fa-pinterest"></i></a>
               </div>
             </div>
           </div>
@@ -225,9 +186,9 @@
 
                 </a>
                 <ul class="social">
-                  <li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
-                  <li><a href="#" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
-                  <li><a href="#" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
+                  <li><a href="" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
+                  <li><a href="" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
+                  <li><a href="" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
                 </ul>
                 <% if (product.isOnSale) { %>
                   <span class="product-new-label">Sale</span>
@@ -249,7 +210,7 @@
                       <span>$<%= product.regularPrice %></span>
                       <% } %>
                 </div>
-                <a class="add-to-cart" href="#">+ Add To Cart</a>
+                <a class="add-to-cart" href="">+ Add To Cart</a>
               </div>
             </div>
           </div>
@@ -287,6 +248,64 @@
     }
   </style>
   <script>
+
+
+    function AddToWishlist(){
+      console.log("works");
+      
+      document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
+        sizeInput.addEventListener('change',function(){
+          document.getElementById('addWish').disabled=false;
+          document.getElementById('sizeError').style.display='none';
+        })
+      })
+      const selectedSize = document.querySelector('input[name="size"]:checked')
+      console.log(selectedSize,"sele");
+      
+      if(!selectedSize){
+        document.getElementById('sizeError').style.display='block';
+      }
+      const Quantity=1;
+      const ProductID = '<%= products._id %>'
+      fetch('/wishlist/add',{
+        method:'post',
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({ProductID:ProductID,Quantity:Quantity, selectedSize:selectedSize.value})
+      })
+      .then(response => response.json())
+      .then((data) => {
+        if(data.success){
+          Swal.fire({
+            icon:"success",
+            title:"Product Added to wishlist",
+            text:"You can view your wishlist by clicking on wishlist tab",
+            timer:1500,
+            showConfirmButton:false,
+
+          })
+        }else{
+          Swal.fire({
+            icon:"error",
+            title:"Error",
+            text:"Error adding Product to Wishlist",
+            timer:1500,
+            showConfirmButton:false,
+          })
+        }
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon:"error",
+          title:"Error",
+          text:"Error adding Product to Wishlist",
+          timer:1500,
+          showConfirmButton:false
+        })
+      })
+    }
+
 
     function addToCart() {
       document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
