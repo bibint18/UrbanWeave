@@ -259,7 +259,7 @@ exports.placeOrder = async (req, res) => {
     console.log("add: ",address)
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate('product');
-
+    console.log(cartItems)
     const user=await User.findById(userId).lean()
     console.log("user:   ",user);
     

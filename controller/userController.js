@@ -214,3 +214,7 @@ exports.getProductDetails =async (req,res) => {
   const prod = await Products.find({isDeleted:false});
   res.render('user/product-details',{products,prod,user})
 }
+
+exports.getPayment = (req,res) => {
+  return res.render('payment')
+}

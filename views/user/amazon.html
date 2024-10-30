@@ -1,135 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout Page</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- <link rel="stylesheet" href="styles.css"> -->
-  <style>
-    body {
-  font-family: Arial, sans-serif;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupons Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.bg-rose {
-  background-color: #E91E63; /* Rose color */
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 20px;
+        }
 
-.btn-rose {
-  background-color: #E91E63;
-  border-color: #E91E63;
-}
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
 
-.btn-rose:hover {
-  background-color: #c2185b;
-  border-color: #c2185b;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-.text-primary {
-  color: #E91E63 !important; /* Rose color */
-}
+        .header h1 {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
 
-h5 {
-  font-weight: bold;
-}
+        .header .icons {
+            display: flex;
+            gap: 15px;
+        }
 
-.card-header {
-  background-color: #E91E63; /* Rose color */
-  color: white;
-}
-  </style>
+        .header .icons i {
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            max-width: 250px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+
+        /* Table styling */
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2b2b45;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .product-table th, .product-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: #3a3a55;
+            font-size: 0.9em;
+        }
+
+        .product-table td {
+            border-bottom: 1px solid #3a3a55;
+            font-size: 0.85em;
+        }
+
+        .product-table .status-active {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .product-table .status-expired {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .actions i {
+            font-size: 1.2em;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+
+        .actions .edit {
+            color: #f0ad4e;
+        }
+
+        .actions .view {
+            color: #17a2b8;
+        }
+
+        .actions .delete {
+            color: #dc3545;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .header, .product-table th, .product-table td {
+                font-size: 0.8em;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .search-bar {
+                max-width: 180px;
+            }
+
+            .actions i {
+                margin: 0 4px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .product-table {
+                font-size: 0.7em;
+            }
+
+            .product-table th, .product-table td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <div class="navbar navbar-light bg-white p-3">
-    <a class="navbar-brand" href="#">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" style="height: 40px;">
-    </a>
-    <h3 class="font-weight-bold ">Checkout</h3>
-  </div>
-
-  <div class="container mt-4">
-    <div class="row">
-      <!-- Left Section (Address & Delivery) -->
-      <div class="col-lg-8">
-        <!-- Address Section -->
-        <div class="card mb-3">
-          <div class="card-header bg-rose text-white">
-            <h5 class="mb-0">1. Select a delivery address</h5>
-          </div>
-          <div class="card-body">
-            <h6 class="font-weight-bold">Your addresses</h6>
-
-            <!-- Address 1 -->
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="radio" name="address" id="address1" checked>
-              <label class="form-check-label" for="address1">
-                <strong>Bibin</strong> Arumadi House, pandikkadavu, Cherupuzha, Payyanur, Kannur, KANNUR, KERALA, 670511, India
-              </label>
-              <div>
-                <a href="#" class="text-primary">Edit address</a> 
-              </div>
+<div class="container">
+    <div class="header">
+        <h1>Coupons</h1>
+        <div class="icons">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-bell"></i>
+            <i class="fas fa-cog"></i>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
             </div>
-
-            <!-- Address 2 -->
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="radio" name="address" id="address2">
-              <label class="form-check-label" for="address2">
-                <strong>Bibin</strong> Ground floor 102, White orchid Apartment, Kodical 10 B cross, Kulur, Mangalore, MANGALURU, KARNATAKA, 575006, India
-              </label>
-              <div>
-                <a href="#" class="text-primary">Edit address</a> 
-              </div>
-            </div>
-
-            <!-- Add New Address -->
-            <div>
-              <a href="#" class="text-primary">+ Add a new address</a>
-            </div>
-
-            <!-- Pickup Location Section -->
-            
-          </div>
         </div>
-
-        <button class="btn btn-rose text-white mb-3">Use this address</button>
-
-        <!-- Payment Method -->
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5>2. Payment method</h5>
-          </div>
-        </div>
-
-        <!-- Items and Delivery -->
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5>3. Items and delivery</h5>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Section (Order Summary) -->
-      <div class="col-lg-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="font-weight-bold">Order Summary</h5>
-            <hr>
-            <p>Items: <span class="float-right">--</span></p>
-            <p>Delivery: <span class="float-right">--</span></p>
-            <hr>
-            <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right">₹29,999.00</span></h5>
-            <button class="btn btn-warning btn-block font-weight-bold mt-4">Proceed To pay</button>
-            <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>Product Name & Type</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Code</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><img src="product1.png" alt="Product" width="30"> Black T-shirt<br><small>Fashion</small></td>
+                <td>$80.00</td>
+                <td>$20.00</td>
+                <td>FASHION123</td>
+                <td>12 May 2023</td>
+                <td>12 Jun 2023</td>
+                <td><span class="status-active">Active</span></td>
+                <td class="actions">
+                    <i class="fas fa-eye view"></i>
+                    <i class="fas fa-edit edit"></i>
+                    <i class="fas fa-trash-alt delete"></i>
+                </td>
+            </tr>
+            <!-- Repeat similar <tr> for other products -->
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>

@@ -47,12 +47,11 @@ app.use(passport.session(false));
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 const { initializeCounter } = require('./utils/orderUtils');
-
-
-app.set('view engine','ejs');
+const paymentRoutes = require('./routes/paymentRoutes');
+app.use('/api/payment', paymentRoutes);
 app.use('/admin',adminRoute);
 app.use('/',userRoute);
-
+app.set('view engine','ejs');
 // app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.get('/',(req,res) => {
   res.send("helo")

@@ -1,0 +1,403 @@
+<%-include('../../views/partials/admin/header')%>
+  <title>Coupons Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Basic reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .header .icons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .header .icons i {
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .search-bar {
+      max-width: 250px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+
+    /* Table styling */
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #040407;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .product-table th,
+    .product-table td {
+      padding: 30px;
+      text-align: left;
+    }
+
+    .product-table th {
+      background-color: #3a3a55;
+      font-size: 0.9em;
+      color: white;
+    }
+
+    .product-table td {
+      border-bottom: 1px solid #3a3a55;
+      font-size: 0.85em;
+      color: white;
+    }
+
+    .product-table .status-active {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .product-table .status-expired {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .actions i {
+      font-size: 1.2em;
+      margin: 0 8px;
+      cursor: pointer;
+    }
+
+    .actions .edit {
+      color: #f0ad4e;
+    }
+
+    .actions .view {
+      color: #17a2b8;
+    }
+
+    .actions .delete {
+      color: #dc3545;
+    }
+
+    .btn {
+      background-color: #3a3a55;
+      color: white;
+    }
+
+    .btn:hover {
+      background-color: rgb(167, 152, 152);
+    }
+
+    form label {
+      color: black;
+    }
+
+    /* Responsive styling */
+    @media (max-width: 768px) {
+
+      .header,
+      .product-table th,
+      .product-table td {
+        font-size: 0.8em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .search-bar {
+        max-width: 180px;
+      }
+
+      .actions i {
+        margin: 0 4px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .product-table {
+        font-size: 0.7em;
+      }
+
+      .product-table th,
+      .product-table td {
+        padding: 10px;
+      }
+    }
+  </style>
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <h1>Coupons</h1>
+        <div class="icons">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-bell"></i>
+          <i class="fas fa-cog"></i>
+          <button class="btn " data-bs-toggle="modal" data-bs-target="#addCouponModal">
+            Add Coupon
+          </button>
+          <div class="search-bar">
+            <input type="text" placeholder="Search...">
+          </div>
+        </div>
+      </div>
+
+      <table class="product-table">
+        <thead>
+          <tr>
+            <!-- <th>Product Name & Type</th> -->
+            <!-- <th>Price</th> -->
+            <th>Discount</th>
+            <th>Code</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!-- <td><img src="product1.png" alt="Product" width="30"> Black T-shirt<br><small>Fashion</small></td>
+                <td>$80.00</td> -->
+            <td>$20.00</td>
+            <td>FASHION123</td>
+            <td>12 May 2023</td>
+            <td>12 Jun 2023</td>
+            <td><span class="status-active">Active</span></td>
+            <td class="actions">
+              <i class="fas fa-eye view"></i>
+              <i class="fas fa-edit edit"></i>
+              <i class="fas fa-trash-alt delete"></i>
+            </td>
+          </tr>
+          <!-- Repeat similar <tr> for other products -->
+        </tbody>
+      </table>
+    </div>
+    <!--modal-->
+    <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addCouponForm">
+              <div class="mb-3">
+                <label for="couponCode" class="form-label">Coupon Code</label>
+                <input type="text" class="form-control" id="couponCode" name="code" placeholder="Enter coupon code">
+                <div class="error-message" id="couponCodeError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="startDate" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="start_date" placeholder="Starting Date">
+                <div class="error-message" id="startDateError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="endDate" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="end_date" placeholder="Ending Date">
+                <div class="error-message" id="endDateError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="minimum" class="form-label">Minimum Purchase</label>
+                <input type="text" class="form-control" id="minimum" name="minimum">
+                <div class="error-message" id="minimumError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="maximum" class="form-label">Maximum Purchase</label>
+                <input type="text" class="form-control" id="maximum" name="maximum">
+                <div class="error-message" id="maximumError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="discount" class="form-label">Coupon Offer Percentage</label>
+                <input type="number" class="form-control" id="discount" name="discount" min="1" max="100">
+                <div class="error-message" id="discountError"></div>
+              </div>
+              <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+                <div class="error-message" id="statusError"></div>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Coupon</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+
+
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const addCouponForm = document.getElementById('addCouponForm');
+        const today = new Date().toISOString().split('T')[0];
+
+        // Set minimum dates
+        document.getElementById('startDate').setAttribute('min', today);
+        document.getElementById('endDate').setAttribute('min', today);
+
+        addCouponForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+
+          // Clear previous errors
+          document.querySelectorAll('.error-message').forEach(div => div.textContent = '');
+
+          const code = document.getElementById('couponCode').value.trim();
+        
+
+          const startDate = document.getElementById('startDate').value;
+          const endDate = document.getElementById('endDate').value;
+          const minimum = parseFloat(document.getElementById('minimum').value.trim());
+          const maximum = parseFloat(document.getElementById('maximum').value.trim());
+          const discount = parseFloat(document.getElementById('discount').value.trim());
+          const status = document.getElementById('status').value;
+
+          let isValid = true;
+
+          if (!code) {
+            document.getElementById('couponCodeError').textContent = 'Please enter a coupon code.';
+            isValid = false;
+          }
+          if (!startDate) {
+            document.getElementById('startDateError').textContent = 'Please select a start date.';
+            isValid = false;
+          } else if (new Date(startDate) < new Date(today)) {
+            document.getElementById('startDateError').textContent = 'Start date cannot be in the past.';
+            isValid = false;
+          }
+          if (!endDate) {
+            document.getElementById('endDateError').textContent = 'Please select an end date.';
+            isValid = false;
+          } else if (new Date(endDate) < new Date(today)) {
+            document.getElementById('endDateError').textContent = 'End date cannot be in the past.';
+            isValid = false;
+          } else if (new Date(endDate) < new Date(startDate)) {
+            document.getElementById('endDateError').textContent = 'End date cannot be before the start date.';
+            isValid = false;
+          }
+          if (isNaN(minimum) || minimum < 0) {
+            document.getElementById('minimumError').textContent = 'Minimum purchase must be a non-negative number.';
+            isValid = false;
+          }
+          if (isNaN(maximum) || maximum < 0) {
+            document.getElementById('maximumError').textContent = 'Maximum purchase must be a non-negative number.';
+            isValid = false;
+          }
+          if (isNaN(discount) || discount < 1 || discount > 100) {
+            document.getElementById('discountError').textContent = 'Discount must be between 1 and 100.';
+            isValid = false;
+          }
+          if (!status) {
+            document.getElementById('statusError').textContent = 'Please select a status.';
+            isValid = false;
+          }
+
+          // Check if minimum is less than maximum
+          if (!isNaN(minimum) && !isNaN(maximum) && minimum >= maximum) {
+            document.getElementById('maximumError').textContent = 'Maximum purchase must be greater than minimum purchase.';
+            isValid = false;
+          }
+
+          if (isValid) {
+
+
+            fetch("/admin/coupons/add", {
+              method: 'post',
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ code: code, start_date: startDate, end_date: endDate, minimum: minimum, maximum: maximum, discount: discount, status: status })
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Coupon Added Successfully",
+                    text: "Added",
+                    timer: 1500,
+                    showConfirmButton: false
+                  })
+                  .then(() => {
+                    location.reload()
+                  })
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Error",
+                    timer: 1500,
+                    showConfirmButton: false
+                  })
+                }
+              })
+              .catch((error) => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: error.message,
+                  timer: 1500,
+                  showConfirmButton: false
+                })
+              })
+          }
+        });
+      });
+
+    </script>
+
+    <style>
+      .error-message {
+        color: red;
+        font-size: 0.875em;
+        margin-top: 0.25em;
+      }
+    </style>
+  
+  <%-include('../../views/partials/admin/footer')%>

@@ -1,0 +1,39 @@
+<h2>Make a Payment</h2>
+<button id="rzp-button1">Pay Now</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('rzp-button1').onclick = async function (e) {
+        e.preventDefault();
+
+        // Call the backend to create a Razorpay order
+        const response = await fetch('/api/payment/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: 5000, currency: 'INR' })
+        });
+
+        const { orderId } = await response.json();
+
+        var options = {
+            "key": "rzp_test_MwTWNrgjxNDf8T", // Replace with your actual Key ID
+            "amount": orderId.amount, 
+            "currency": "INR",
+            "name": "Your Company Name",
+            "description": "Test Transaction",
+            "image": "/your_logo.png",
+            "order_id": orderId, 
+            "handler": function (response) {
+                alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+            },
+            "prefill": {
+                "name": "Your Name",
+                "email": "your_email@example.com",
+                "contact": "1234567890"
+            },
+            "theme": { "color": "#3399cc" }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+</script>

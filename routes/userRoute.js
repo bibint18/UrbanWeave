@@ -8,11 +8,17 @@ const HomeRoute = require('../controller/homeController')
 const CartRoute = require('../controller/cartController')
 const OrderRoute = require('../controller/orderController')
 const WishRoute = require('../controller/wishlistController')
+// const paymentController = require('../controller/paymentController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
 
 
 const {protect} = require('../middleware/authMiddleware')
+//RAZORPAY
+
+
+//
+router.get('/payment',userRouter.getPayment)
 router.get('/userLogin',userRouter.getUserLogin)
 router.get('/home',userRouter.getHome)
 router.get('/userSignup',userRouter.getUserSignup)

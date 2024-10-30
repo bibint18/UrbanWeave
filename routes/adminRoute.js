@@ -6,6 +6,7 @@ const productManage = require("../middleware/productmanage")
 const deletedRoute = require("../controller/deleted")
 const ProduRoute = require('../controller/proController')
 const OrderRoute = require('../controller/adminOrder')
+const CouponRoute = require('../controller/couponController')
 const router = express.Router();
 const  multer = require('multer');
 const storage = require('../helpers/multer')
@@ -57,4 +58,7 @@ router.get('/orders',protectAdmin,OrderRoute.getOrderPage)
 router.get('/orders/details/:id',protectAdmin,OrderRoute.getOrderDetails)
 router.post('/orders/productStatus',protectAdmin,OrderRoute.ChangeOrder)
 router.post('/orders/cancelProduct',protectAdmin,OrderRoute.CancelProduct)
+//coupons
+router.get('/coupons',protectAdmin,CouponRoute.getCoupons)
+router.post('/coupons/add',protectAdmin,CouponRoute.AddCoupon)
 module.exports = router;
