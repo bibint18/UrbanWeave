@@ -3,8 +3,8 @@ const Coupon = require('../model/admin/CouponModel')
 
 exports.getCoupons =async (req,res) => {
   try {
-
-    return res.render('admin/coupons',{coupons:null})
+    const coupons = await Coupon.find()
+    return res.render('admin/coupons',{coupons})
   } catch (error) {
     console.log(error)
     return res.send(error)
@@ -13,15 +13,21 @@ exports.getCoupons =async (req,res) => {
 
 exports.AddCoupon = async(req,res) => {
   try {
-    const{code,start_date,end_date,minimum,maximum,discount,status} = req.body
-    console.log("from copun received:  ",code,start_date,end_date,minimum,maximum,discount,status)
+    const{code,start_date,end_date,minimum,maximum,discount,Maxdiscount,status} = req.body
+    console.log("from copun received:  ",code,start_date,end_date,minimum,maximum,discount,Maxdiscount,status)
+    const exist= await Coupon.findOne({code:code})
+    if(exist){
+      return res.status(400).json({success:false,message:"coupon code already exist"})
+    }
+    let discountt = Number(discount)
     const coupon = new Coupon({
       code:code,
       startDate:start_date,
       endDate:end_date,
       minimum:minimum,
       maximum:maximum,
-      discount:discount,
+      discount:discountt,
+      maximumDiscount:Maxdiscount,
       status:status
     })
     await coupon.save();
@@ -31,3 +37,4 @@ exports.AddCoupon = async(req,res) => {
     return res.status(400).json({success:false,message:"something went wrong!"})
   }
 }
+

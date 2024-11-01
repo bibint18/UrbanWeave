@@ -22,6 +22,13 @@ const CouponSchema = new mongoose.Schema({
     type:Number,
     required:true
   },
+  discount:{
+    type:Number,
+    required:true 
+  },
+  maximumDiscount:{
+    type:Number, 
+  },
   status:{
     type:String,
     enum: ["active", "inactive"],

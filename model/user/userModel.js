@@ -48,6 +48,10 @@ const userSchema = mongoose.Schema({
   },
   address:[addressSchema]
   ,
+  usedCoupons: {
+    type: [String],
+    default: []
+},
   isVerified: {
      type: Boolean, 
      default: false 

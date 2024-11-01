@@ -196,20 +196,22 @@
           </tr>
         </thead>
         <tbody>
+          <% coupons.forEach(coupon => { %> 
           <tr>
             <!-- <td><img src="product1.png" alt="Product" width="30"> Black T-shirt<br><small>Fashion</small></td>
                 <td>$80.00</td> -->
-            <td>$20.00</td>
-            <td>FASHION123</td>
-            <td>12 May 2023</td>
-            <td>12 Jun 2023</td>
-            <td><span class="status-active">Active</span></td>
+            <td><%= coupon.discount%></td>
+            <td><%= coupon.code%></td>
+            <td><%= coupon.startDate %></td>
+            <td><%= coupon.endDate %></td>
+            <td><span class="status-active"><%= coupon.status %></span></td>
             <td class="actions">
               <i class="fas fa-eye view"></i>
               <i class="fas fa-edit edit"></i>
               <i class="fas fa-trash-alt delete"></i>
             </td>
           </tr>
+          <% }) %>
           <!-- Repeat similar <tr> for other products -->
         </tbody>
       </table>
@@ -255,6 +257,11 @@
                 <div class="error-message" id="discountError"></div>
               </div>
               <div class="mb-3">
+                <label for="discount" class="form-label">Maximum Discount Amount</label>
+                <input type="number" class="form-control" id="Maxdiscount" name="Maxdiscount" min="1">
+                <div class="error-message" id="MaxDiscountError"></div>
+              </div>
+              <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status" required>
                   <option value="active">Active</option>
@@ -296,6 +303,9 @@
           const minimum = parseFloat(document.getElementById('minimum').value.trim());
           const maximum = parseFloat(document.getElementById('maximum').value.trim());
           const discount = parseFloat(document.getElementById('discount').value.trim());
+          const Maxdiscount = parseFloat(document.getElementById('Maxdiscount').value.trim());
+          console.log(Maxdiscount);
+          
           const status = document.getElementById('status').value;
 
           let isValid = true;
@@ -337,6 +347,9 @@
             document.getElementById('statusError').textContent = 'Please select a status.';
             isValid = false;
           }
+          if(!Maxdiscount){
+            document.getElementById('MaxdiscountError').textContent = 'Please enter a maximum discount.';
+          }
 
           // Check if minimum is less than maximum
           if (!isNaN(minimum) && !isNaN(maximum) && minimum >= maximum) {
@@ -352,7 +365,7 @@
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify({ code: code, start_date: startDate, end_date: endDate, minimum: minimum, maximum: maximum, discount: discount, status: status })
+              body: JSON.stringify({ code: code, start_date: startDate, end_date: endDate, minimum: minimum, maximum: maximum, discount: discount, Maxdiscount:Maxdiscount, status: status })
             })
               .then(response => response.json())
               .then(data => {
@@ -371,7 +384,7 @@
                   Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "Error",
+                    text: data.message,
                     timer: 1500,
                     showConfirmButton: false
                   })

@@ -1,72 +1,75 @@
-<%-include('../../views/partials/user/header')%>
+<%-include('../../views/partials/user/header.ejs')%>
   <title>Checkout Page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <style>
     .custom-radio {
-  display: flex;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  cursor: pointer;
-  position: relative;
-  padding-left: 35px; 
-  margin-bottom: 12px;
-  user-select: none;
+      display: flex;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      user-select: none;
 
-}
-
-
-.custom-radio input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
+    }
 
 
-.custom-radio .checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 25px; 
-  width: 25px; 
-  /* background-color: #c2185b; */
-  border-radius: 50%; 
-  border: 2px solid #c2185b;
-}
+    .custom-radio input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
 
 
-.custom-radio input[type="radio"]:checked + .checkmark {
-  background-color: #E91E63; 
-}
+    .custom-radio .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 25px;
+      width: 25px;
+      /* background-color: #c2185b; */
+      border-radius: 50%;
+      border: 2px solid #c2185b;
+    }
 
 
-.custom-radio .checkmark::after {
-  content: "";
-  position: absolute;
-  display: none;
-}
+    .custom-radio input[type="radio"]:checked+.checkmark {
+      background-color: #E91E63;
+    }
 
 
-.custom-radio input[type="radio"]:checked + .checkmark::after {
-  display: block;
-}
+    .custom-radio .checkmark::after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
 
 
-.custom-radio .checkmark::after {
-  top: 7px; 
-  left: 7px; 
-  width: 11px;
-  height: 11px; 
-  border-radius: 50%;
-  background: white;
-}
+    .custom-radio input[type="radio"]:checked+.checkmark::after {
+      display: block;
+    }
+
+
+    .custom-radio .checkmark::after {
+      top: 7px;
+      left: 7px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: white;
+    }
+
     body {
       font-family: Arial, sans-serif;
     }
 
     .bg-rose {
-      background-color: #E91E63; 
+      background-color: #E91E63;
     }
 
     .btn-rose {
@@ -80,7 +83,7 @@
     }
 
     .text-primary {
-      color: #E91E63 !important; 
+      color: #E91E63 !important;
     }
 
     h5 {
@@ -88,187 +91,355 @@
     }
 
     .card-header {
-      background-color: #E91E63; 
+      background-color: #E91E63;
       color: white;
     }
   </style>
-</head>
-<body>
+  </head>
 
-  <!-- Navbar -->
-  <!-- <div class="navbar navbar-light bg-white p-3">
+  <body>
+
+    <!-- Navbar -->
+    <!-- <div class="navbar navbar-light bg-white p-3">
     <a class="navbar-brand" href="#">
       <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" style="height: 40px;">
     </a> -->
     <h1 class="font-weight-bold text-center mt-5">Checkout</h1>
-  <!-- </div> -->
+    <!-- </div> -->
 
-  <div class="container mt-4">
-    <form id="checkoutForm" action="/place-order" method="POST">
-    <div class="row">
-      <!-- Left Section (Address & Delivery) -->
-      <div class="col-lg-8">
-        <!-- Address Section -->
-        <div class="card mb-3">
-          <div class="card-header bg-rose text-white">
-            <h5 class="mb-0">1. Select a delivery address</h5>
-          </div>
-          <div class="card-body">
-            <h6 class="font-weight-bold">Your addresses</h6>
-
-            <!-- Addresses Loop -->
-            <% addresses.forEach((address, index) => { %>
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="address" value="<%= address._id %>" id="address<%= index %>"  value === <%= address._id %> %> ? 'checked' : '' %>>
-                <label class="form-check-label" for="address<%= index %>">
-                  <strong><%= address.fullName %></strong> <%= address.addressLine1 %>,<%= address.addressLine2 %> ,<%= address.city %>, <%= address.state %>, <%= address.postalCode %>, <%= address.country %>
-                </label>
-                <div>
-                  <a href="/checkout/address/edit?id=<%=address._id%>" class="text-primary">Edit address</a> 
-                </div>
+    <div class="container mt-4">
+      <form id="checkoutForm" action="/place-order" method="POST">
+        <div class="row">
+          <!-- Left Section (Address & Delivery) -->
+          <div class="col-lg-8">
+            <!-- Address Section -->
+            <div class="card mb-3">
+              <div class="card-header bg-rose text-white">
+                <h5 class="mb-0">1. Select a delivery address</h5>
               </div>
-            <% }); %>
+              <div class="card-body">
+                <h6 class="font-weight-bold">Your addresses</h6>
 
-            <!-- Add New Address -->
+                <!-- Addresses Loop -->
+                <% addresses.forEach((address, index)=> { %>
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="address" value="<%= address._id %>"
+                      id="address<%= index %>" value===<%=address._id %> %> ? 'checked' : '' %>>
+                    <label class="form-check-label" for="<%address._id%>">
+                      <strong>
+                        <%= address.fullName %>
+                      </strong>
+                      <%= address.addressLine1 %>,<%= address.addressLine2 %> ,<%= address.city %>, <%= address.state %>
+                              , <%= address.postalCode %>, <%= address.country %>
+                    </label>
+                    <div>
+                      <a href="/checkout/address/edit?id=<%=address._id%>" class="text-primary">Edit address</a>
+                    </div>
+                  </div>
+                  <% }); %>
+
+                    <!-- Add New Address -->
+                    <div>
+                      <a href="/checkout/address" class="text-primary">+ Add a new address</a>
+                    </div>
+              </div>
+            </div>
+
+            <button class="btn btn-rose text-white mb-3" type="button" id="useAddressBtn">Use this address</button>
             <div>
-              <a href="/checkout/address" class="text-primary">+ Add a new address</a>
+              <!-- <button class="btn btn-dark text-white mb-3" type="button" id="useAddressBtn">Apply Coupon</button> -->
+              <button class="btn btn-dark text-white mb-3" type="button" id="useAddressBtn" data-bs-toggle="modal"
+                data-bs-target="#couponModal">Available Coupon</button>
+              <div>
+                <form id="couponForm" onsubmit="return false;">
+                  <input type="text" placeholder="Enter coupon code" name="CouponCode" id="CouponCode">
+                  <button type="button" id="applyCouponBtn">Apply</button>
+                </form>
+                <p id="discountMessage" class="text-success"></p>
+                <p id="errorMessage" class="text-danger"></p>
+              </div>
+            </div>
+            <!-- Payment Method -->
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5>2. Payment method</h5>
+                <label class="custom-radio">
+                  Cash On Delivery
+                  <input type="radio" name="pay" value="COD" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Items and Delivery -->
+            <div class="card mb-3">
+              <!-- <div class="card-body">
+            <h5>3. Items and delivery</h5>
+          </div> -->
+            </div>
+          </div>
+
+          <!-- Right Section (Order Summary) -->
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <!-- <h5 class="font-weight-bold">Order Summary</h5> -->
+                <hr>
+                <p>Total Items: <span class="float-right">
+                    <%=totalProduct%>
+                  </span></p>
+                <p>Delivery Fee: <span class="float-right">Free Delivery!</span></p>
+                <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
+                <hr>
+                <p id="discountMessageBox" class="text-success"></p>
+                <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right" id="TotalAmount">₹
+                    <%=total%>
+                  </span></h5>
+                <button class="btn btn-warning btn-block font-weight-bold mt-4" id="">Place Order</button>
+                <!-- <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a> -->
+              </div>
             </div>
           </div>
         </div>
-
-        <button class="btn btn-rose text-white mb-3" type="button" id="useAddressBtn">Use this address</button>
-
-        <!-- Payment Method -->
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5>2. Payment method</h5>
-            <label class="custom-radio">
-                Cash On Delivery
-                <input type="radio" name="pay" value="COD" checked>
-                <span class="checkmark"></span>
-              </label>
-          </div>
-        </div>
-
-        <!-- Items and Delivery -->
-        <div class="card mb-3">
-          <!-- <div class="card-body">
-            <h5>3. Items and delivery</h5>
-          </div> -->
-        </div>
-      </div>
-
-      <!-- Right Section (Order Summary) -->
-      <div class="col-lg-4">
-        <div class="card">
-          <div class="card-body">
-            <!-- <h5 class="font-weight-bold">Order Summary</h5> -->
-            <hr>
-            <p>Total Items: <span class="float-right"><%=totalProduct%></span></p>
-            <p>Delivery Fee: <span class="float-right">Free Delivery!</span></p>
-            <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
-            <hr>
-            <h5 class="text-danger font-weight-bold" >Order Total: <span class="float-right" id="TotalAmount">₹<%=total%></span></h5>
-            <button class="btn btn-warning btn-block font-weight-bold mt-4" id="rzp-button1">Place Order</button>
-            <!-- <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a> -->
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
-    </form>
-  </div>
+    <%-include('../../views/partials/user/footer.ejs')%>
+      <!-- modal-->
+      <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <% coupons.forEach(coupon=> { %>
+            <div class="modal-content border border-2 rounded-3 shadow">
+              <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="max-height: 250px; overflow-y: auto;">
+                <div class="coupon-entry p-3 mb-3 border border-secondary rounded bg-light">
 
-  <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    document.getElementById('rzp-button1').onclick = async function (e) {
-        e.preventDefault();
-      
-        const totalAmount = document.getElementById('TotalAmount').innerText.replace('₹', '');
-        // Call the backend to create a Razorpay order
-        console.log("tooo: ",totalAmount);
-        
-        const response = await fetch('/api/payment/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount:parseFloat(totalAmount) * 100, currency: 'INR' })
+                  <div class="d-flex justify-content-between mb-2">
+                    <div><strong>Code:</strong> <span class="text-uppercase">
+                        <%= coupon.code%>
+                      </span></div>
+                    <div><strong>Discount:</strong> <span>
+                        <%= coupon.discount%>
+                      </span></div>
+                    <div><strong>Min Spend:</strong> <span>
+                        <%= coupon.minimum%>
+                      </span></div>
+                    <div><strong>Max Discount:</strong> <span>
+                        <%= coupon.maximum%>
+                      </span></div>
+                  </div>
+                  <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                    <div><strong>Valid From:</strong> <span>
+                        <%= coupon.startDate%>
+                      </span></div>
+                    <div><strong>Expires On:</strong> <span>
+                        <%= coupon.endDate%>
+                      </span></div>
+                    <div><strong>Status:</strong> <span class="text-success">
+                        <%= coupon.status%>
+                      </span></div>
+                  </div>
+                  <div><strong>Maximum Discount:</strong> <span class="text-success">
+                      <%= coupon.maximumDiscount%>
+                    </span></div>
+                </div>
+              </div>
+              <% }) %>
+                <!-- <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary btn-sm">Apply Selected Coupon</button>
+            </div> -->
+            </div>
+        </div>
+      </div>
+
+      <!-- Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <script>
+
+        document.querySelector('#applyCouponBtn').addEventListener('click', function () {
+          const couponCode = document.querySelector('#CouponCode').value.trim()
+          const totalAmount = parseFloat(document.getElementById('TotalAmount').textContent.replace('₹', '').trim());
+          console.log("total", totalAmount);
+
+          const appliedCoupon = sessionStorage.getItem('appliedCoupon');
+  if (appliedCoupon === couponCode) {
+    document.getElementById('errorMessage').textContent = "Coupon has already been applied.";
+    Swal.fire({
+      icon: 'error',
+      title: 'Coupon Already Applied',
+      text: 'You can only apply this coupon once per session.',
+      timer: 1500,
+      showConfirmButton: false
+    });
+    return; // Exit the function early
+  }
+
+
+          if (couponCode) {
+            fetch('/verifyCoupon', {
+              method: 'post',
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ couponCode: couponCode, totalAmount: totalAmount })
+            })
+              .then(response => response.json())
+              .then((data) => {
+                if (data.success) {
+                  sessionStorage.setItem('appliedCoupon', couponCode);
+                  document.getElementById('discountMessage').textContent = `Discount Applied: ₹${data.discountAmount}`;
+                  document.getElementById('discountMessageBox').textContent = `Discount Applied: ₹${data.discountAmount}`;
+                  document.getElementById('TotalAmount').textContent = `₹${data.newTotal}`;
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Applied',
+                    text: `You saved ₹${data.discountAmount}!`,
+                    timer: 1500,
+                    showConfirmButton: false
+                  });
+
+                } else {
+                  document.getElementById('errorMessage').textContent = data.message;
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Coupon',
+                    text: data.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                  });
+                }
+              })
+              .catch(error => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Something went wrong!',
+                  timer: 1500
+                });
+              });
+          } else {
+            // If no coupon is applied, display the total as usual
+            document.getElementById('discountMessage').textContent = '';
+            document.getElementById('errorMessage').textContent = '';
+            document.getElementById('TotalAmount').textContent = `₹ ${totalAmount}`;
+
+          }
+        })
+        window.addEventListener('beforeunload', () => {
+          sessionStorage.removeItem('appliedCoupon');
         });
 
-        const  orderId  = await response.json();
-        console.log(response)
-        var options = {
+
+
+
+        document.getElementById('rzp-button1').onclick = async function (e) {
+          e.preventDefault();
+
+          const totalAmount = document.getElementById('TotalAmount').innerText.replace('₹', '');
+          // Call the backend to create a Razorpay order
+          console.log("tooo: ", totalAmount);
+
+          const response = await fetch('/api/payment/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: parseFloat(totalAmount) * 100, currency: 'INR' })
+          });
+
+          const orderId = await response.json();
+          console.log(response)
+          var options = {
             "key": "rzp_test_MwTWNrgjxNDf8T", // Replace with your actual Key ID
-            "amount": orderId.amount , 
+            "amount": orderId.amount,
             "currency": "INR",
             "name": "Your Company Name",
             "description": "Test Transaction",
             "image": "/your_logo.png",
-            "order_id": orderId.id, 
+            "order_id": orderId.id,
             "handler": function (response) {
-                alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+              alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
             },
             "prefill": {
-                "name": "Your Name",
-                "email": "your_email@example.com",
-                "contact": "1234567890"
+              "name": "Your Name",
+              "email": "your_email@example.com",
+              "contact": "1234567890"
             },
             "theme": { "color": "#3399cc" }
-        };
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
-    }
-</script>
-  
-  <script>
+          };
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+        }
+      </script>
 
-    document.querySelector('#checkoutForm').addEventListener('submit',function(e){
-        e.preventDefault();
-        const address = document.querySelector('input[name="address"]').value
-        console.log(address);
-        
-        // const formData = new  FormData(this);
-        // console.log("inside: ",formData)
-        fetch('/placeOrder',{
-          method:'post',
-          headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ address:address})
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          if(data.success){
-            Swal.fire({
-              title: 'Order Placed Successfully',
-              text: 'Your order has been placed successfully.',
-              icon:'success',
-              timer:1500,
-            })
-            .then(()=>{
-              window.location.href='/orders'
-            })
-          }else{
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to place order',
-              icon:'error',
-              timer:1500,
+      <script>
 
-            })
+        document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          // Check if an address is selected
+          const selectedAddress = document.querySelector('input[name="address"]:checked');
+
+          // If no address is selected, show SweetAlert
+          if (!selectedAddress) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please select an address',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            return; // Stop further execution
           }
-        })
-        .catch((error) => {
-          Swal.fire({
-            icon:"error",
-            title:'Error',
-            text:"something went wrong!",
-            timer:1500
+
+          // If an address is selected, proceed to get its value
+          const address = selectedAddress.value;
+          console.log(address);
+
+          // const formData = new  FormData(this);
+          // console.log("inside: ",formData)
+          fetch('/placeOrder', {
+            method: 'post',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ address: address })
           })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                Swal.fire({
+                  title: 'Order Placed Successfully',
+                  text: 'Your order has been placed successfully.',
+                  icon: 'success',
+                  timer: 1500,
+                })
+                  .then(() => {
+                    window.location.href = '/orders'
+                  })
+              } else {
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Failed to place order',
+                  icon: 'error',
+                  timer: 1500,
+
+                })
+              }
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: "something went wrong!",
+                timer: 1500
+              })
+            })
         })
-    })
-  </script>
-<%-include('../../views/partials/user/footer')%>
+      </script>

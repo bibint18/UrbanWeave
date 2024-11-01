@@ -2,7 +2,7 @@ const Cart = require("../model/user/cartModel");
 const Product = require("../model/admin/prodectModel");
 const User = require("../model/user/userModel");
 const Order = require('../model/user/orderModel')
-
+const Coupon = require('../model/admin/CouponModel')
 const{getNextOrderId} = require('../utils/orderUtils')
 
 // Function to get the next unique order ID
@@ -140,6 +140,7 @@ exports.getCheckout = async (req, res) => {
     const userId = req.user.id;
     console.log("usr: ", userId);
     const users = await User.findById(userId);
+    const coupons = await Coupon.find()
     // console.log(user);
     const addresses = users.address;
     const cartItem = await Cart.find({ user: userId }).populate("product");
@@ -154,7 +155,7 @@ exports.getCheckout = async (req, res) => {
     );
     console.log("total", total);
 
-    return res.render("user/checkout", { addresses, totalProduct, total ,user});
+    return res.render("user/checkout", { addresses, totalProduct, total ,user,coupons});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
