@@ -61,4 +61,5 @@ router.post('/orders/cancelProduct',protectAdmin,OrderRoute.CancelProduct)
 //coupons
 router.get('/coupons',protectAdmin,CouponRoute.getCoupons)
 router.post('/coupons/add',protectAdmin,CouponRoute.AddCoupon)
+router.post('/coupon/delete/:id',protectAdmin,CouponRoute.CouponDelete)
 module.exports = router;

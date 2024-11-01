@@ -256,8 +256,9 @@ exports.editAddress =async (req,res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const {address} = req.body;
+    const {address,totalToPay} = req.body;
     console.log("add: ",address)
+    console.log('PAy: ',totalToPay)
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate('product');
     console.log(cartItems)
@@ -312,7 +313,7 @@ exports.placeOrder = async (req, res) => {
       user: userId,
       oid: orderId,
       products: products,
-      totalAmount: totalAmount,
+      totalAmount:totalToPay ,
       
       status: 'Processing',
       totalQuantity: totalQuantity,

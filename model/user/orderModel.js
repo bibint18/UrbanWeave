@@ -25,6 +25,12 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  totalAfterOffer:{
+    type: Number, 
+  },
+  OfferApplied:{
+    type:Number
+  },
   totalQuantity:{
     type:Number,
     required:false

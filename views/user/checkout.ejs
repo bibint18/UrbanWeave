@@ -160,7 +160,7 @@
               </div>
             </div>
             <!-- Payment Method -->
-            <div class="card mb-3">
+            <!-- <div class="card mb-3">
               <div class="card-body">
                 <h5>2. Payment method</h5>
                 <label class="custom-radio">
@@ -169,6 +169,23 @@
                   <span class="checkmark"></span>
                 </label>
               </div>
+            </div> -->
+
+            <h3>Select Payment Method</h3>
+            <div>
+              <label>
+                <input type="radio" name="paymentMethod" value="cod" checked> Cash on Delivery
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="radio" name="paymentMethod" value="online"> Online Payment
+              </label>
+            </div>
+          
+            <!-- Show payment options dynamically if online payment is selected -->
+            <div id="rzp-button1" style="display: none;">
+              <button type="button"  onclick="startOnlinePayment()">Proceed with Online Payment</button>
             </div>
 
             <!-- Items and Delivery -->
@@ -264,6 +281,13 @@
 
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
+
+const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+  paymentOptions.forEach(option => {
+    option.addEventListener('change', function () {
+      document.getElementById('rzp-button1').style.display = this.value === 'online' ? 'block' : 'none';
+    });
+  });
 
         document.querySelector('#applyCouponBtn').addEventListener('click', function () {
           const couponCode = document.querySelector('#CouponCode').value.trim()
@@ -385,7 +409,7 @@
           e.preventDefault();
           // Check if an address is selected
           const selectedAddress = document.querySelector('input[name="address"]:checked');
-
+          const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
           // If no address is selected, show SweetAlert
           if (!selectedAddress) {
             Swal.fire({
@@ -409,7 +433,7 @@
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ address: address })
+            body: JSON.stringify({ address: address,totalToPay:totalToPay })
           })
             .then((response) => response.json())
             .then((data) => {
