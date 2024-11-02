@@ -7,6 +7,7 @@ const deletedRoute = require("../controller/deleted")
 const ProduRoute = require('../controller/proController')
 const OrderRoute = require('../controller/adminOrder')
 const CouponRoute = require('../controller/couponController')
+const OfferRoute = require('../controller/AdminOfferController')
 const router = express.Router();
 const  multer = require('multer');
 const storage = require('../helpers/multer')
@@ -62,4 +63,8 @@ router.post('/orders/cancelProduct',protectAdmin,OrderRoute.CancelProduct)
 router.get('/coupons',protectAdmin,CouponRoute.getCoupons)
 router.post('/coupons/add',protectAdmin,CouponRoute.AddCoupon)
 router.post('/coupon/delete/:id',protectAdmin,CouponRoute.CouponDelete)
+//offers
+router.get('/offers',protectAdmin,OfferRoute.ListCategoryOffer)
+router.post('/offers/add',protectAdmin,OfferRoute.AddCategoryOffer)
+router.post('/offer/delete/:id',protectAdmin,OfferRoute.deleteCatOffer)
 module.exports = router;

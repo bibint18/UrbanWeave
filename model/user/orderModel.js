@@ -35,11 +35,6 @@ const orderSchema = new mongoose.Schema({
     type:Number,
     required:false
   },
-  // address: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Address',
-  //   required: true
-  // },
   address: {
     fullName: { type: String, required: false },
     phone: { type: String, required: false },
@@ -60,6 +55,20 @@ const orderSchema = new mongoose.Schema({
   orderDate: {
     type: Date,
     default: Date.now
+  },
+  PaymentMethod:{
+    type:String,
+    enum:['ONLINE PAYMENT (RAZORPAY)','CASH ON DELIVERY'],
+  },
+  DiscountAmount:{
+    type:Number,
+
+  },
+  AmountPaid:{
+    type:Number,
+  },
+  OriginalTotal:{
+    type:Number,
   }
 });
 

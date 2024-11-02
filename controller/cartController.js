@@ -23,29 +23,33 @@ exports.getCart = async (req, res) => {
    
     const itemsWithTotal = cartItems.map((item) => {
       const total = item.quantity * item.product.salePrice;
+      // const MFTotal = item.quantity * item.product.regularPrice
       return {
         ...item.toObject(),
         total,
+        
       };
     });
 
     const items = await Cart.find({ user: userId }).populate("product");
     let GrandTotal =0;
+    let MFtotal =0
     if(cartItems.length >0){
     GrandTotal = items.reduce(
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
     );
+    MFtotal = items.reduce((acc,curr) => acc + curr.quantity * curr.product.regularPrice,0)
   }
   if (!cartItems || cartItems.length == 0) {
     return res.render("user/cart", {
       cartItems: [],
       message: "Cart is empty",
-      GrandTotal,user
+      GrandTotal,user,MFtotal
     });
   }
     console.log("grand", GrandTotal);
-    return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal,user });
+    return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal,user ,MFtotal});
   } catch (error) {
     console.log(error);
     res.status(400).json({ success: false, message: "error" });
@@ -104,6 +108,7 @@ exports.AddCart = async (req, res) => {
         product: productId,
         quantity: parseInt(quantity, 10),
         size: size,
+        
       });
       await cartItem.save();
     }
@@ -153,9 +158,10 @@ exports.getCheckout = async (req, res) => {
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
     );
+    const OriginalTotal = cartItem.reduce((acc,curr) => acc + curr.quantity * curr.product.regularPrice,0)
     console.log("total", total);
 
-    return res.render("user/checkout", { addresses, totalProduct, total ,user,coupons});
+    return res.render("user/checkout", { addresses, totalProduct, total ,user,coupons,OriginalTotal});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
@@ -256,35 +262,24 @@ exports.editAddress =async (req,res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const {address,totalToPay} = req.body;
-    console.log("add: ",address)
-    console.log('PAy: ',totalToPay)
+    const {address,totalToPay,PayMethod,DiscountAmount,Subtotal} = req.body;
+    console.log(Subtotal)
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate('product');
     console.log(cartItems)
     const user=await User.findById(userId).lean()
-    console.log("user:   ",user);
-    
     const selectedIndex = user.address.findIndex(addr => addr._id.toString() ===address)
-
-    console.log("seletected: ",selectedIndex);
     const  selectedAddress = user.address[selectedIndex];
-    console.log("sesese",selectedAddress);
-    
-
-    
     if(!selectedAddress){
       return res.status(400).json({ success: false, message: 'Invalid address selected' });
     }
-    
     if (cartItems.length === 0) {
       return res.status(400).json({ success: false, message: "No items in cart" });
     }
-
     let totalAmount = 0;
     let totalQuantity = 0;
+    let OriginalTotal =0
     const products = [];
-
     for (const item of cartItems) {
       const product = await Product.findById(item.product._id);
       const sizeStock = product.sizes.find(s => s.size === item.size);
@@ -294,9 +289,8 @@ exports.placeOrder = async (req, res) => {
           message: `${product.ProductName} (${item.size}) has insufficient stock. Only ${sizeStock ? sizeStock.stock : 0} left.` 
         });
       }
-
-      // Add to total amount and quantity if stock is sufficient
       totalAmount += item.quantity * product.salePrice;
+      OriginalTotal += item.quantity * product.regularPrice
       totalQuantity += item.quantity;
       products.push({
         product: item.product._id,
@@ -305,18 +299,18 @@ exports.placeOrder = async (req, res) => {
         price: product.salePrice
       });
     }
-
     const orderId = await getNextOrderId();
-
-    // Proceed with placing order
     const newOrder = new Order({
       user: userId,
       oid: orderId,
       products: products,
-      totalAmount:totalToPay ,
-      
+      totalAmount:Subtotal ,
       status: 'Processing',
       totalQuantity: totalQuantity,
+      PaymentMethod:PayMethod,
+      DiscountAmount:DiscountAmount,
+      AmountPaid:totalToPay,
+      OriginalTotal:OriginalTotal,
       address: {
         fullName:selectedAddress.fullName,
         addressLine1:selectedAddress.addressLine1,
@@ -326,12 +320,10 @@ exports.placeOrder = async (req, res) => {
         state: selectedAddress.state,
         postalCode: selectedAddress.postalCode,
         country: selectedAddress.country,
-        addType: selectedAddress.addType
+        addType: selectedAddress.addType,
       }
     });
     await newOrder.save();
-
-    // Update stock levels
     for (const item of products) {
       const product = await Product.findById(item.product);
       const sizeStock = product.sizes.find(s => s.size === item.size);
@@ -340,11 +332,8 @@ exports.placeOrder = async (req, res) => {
       }
       await product.save();
     }
-
-    // Clear cart after order
     await Cart.deleteMany({ user: userId });
     res.json({ success: true, message: 'Order placed successfully!' });
-
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: 'Something went wrong!' });

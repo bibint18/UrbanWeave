@@ -136,6 +136,7 @@
         <div class="wrap">
           <!-- <p><span>Subtotal</span><span>$200.00</span></p> -->
           <h4><span>Grand total:</span><span>Rs: <%= GrandTotal %></span></h4>
+          <h4><span>all total:</span><span>Rs: <%= MFtotal %></span></h4>
           <!-- <a href="/checkout" class="btn border-btn">process to checkout</a> -->
           <% let outOfStock = cartItems.some(item => item.quantity > item.product.sizes.find(s => s.size === item.size).stock); %>
           <a href="/checkout" class="btn border-btn" <%= outOfStock ? 'disabled' : '' %>>Process to Checkout</a>

@@ -175,12 +175,12 @@
             <h3>Select Payment Method</h3>
             <div>
               <label>
-                <input type="radio" name="paymentMethod" value="cod" checked> Cash on Delivery
+                <input type="radio" name="paymentMethod" value="CASH ON DELIVERY" checked> Cash on Delivery
               </label>
             </div>
             <div>
               <label>
-                <input type="radio" name="paymentMethod" value="online"> Online Payment
+                <input type="radio" name="paymentMethod" value="ONLINE PAYMENT (RAZORPAY)"> Online Payment
               </label>
             </div>
 
@@ -207,10 +207,13 @@
                     <%=totalProduct%>
                   </span></p>
                 <p>Delivery Fee: <span class="float-right">Free Delivery!</span></p>
-                <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
+                <!-- <p>Payment Method: <span class="float-right"></span></p> -->
+                <p>Original Total: <span class="float-right"><%=OriginalTotal%></span></p>
+                <p>Sub Total: <span class="float-right" id="Subtotal"><%= total %></span></p>
                 <hr>
                 <p id="discountMessageBox" class="text-success"></p>
-                <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right"  data-original-amount="<%= total %>" id="TotalAmount">₹
+                <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right"
+                    data-original-amount="<%= total %>" id="TotalAmount">₹
                     <%=total%>
                   </span></h5>
                 <button class="btn btn-warning btn-block font-weight-bold mt-4" id="">Place Order</button>
@@ -221,7 +224,7 @@
         </div>
       </form>
     </div>
-    <%-include('../../views/partials/user/footer.ejs')%>
+<%-include('../../views/partials/user/footer.ejs')%>
       <!-- modal-->
       <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -282,9 +285,9 @@
 
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
-         const originalTotalAmount = parseInt('<%= total %>;')
-         console.log("loooooL: ",originalTotalAmount);
-         
+        const originalTotalAmount = parseInt('<%= total %>;')
+        console.log("loooooL: ", originalTotalAmount);
+
 
         const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
         paymentOptions.forEach(option => {
@@ -296,6 +299,7 @@
         document.querySelector('#applyCouponBtn').addEventListener('click', function () {
           const couponCode = document.querySelector('#CouponCode').value.trim()
           const totalAmount = parseFloat(document.getElementById('TotalAmount').textContent.replace('₹', '').trim());
+
           console.log("total", totalAmount);
 
           const appliedCoupon = sessionStorage.getItem('appliedCoupon');
@@ -415,7 +419,16 @@
           // Check if an address is selected
           const selectedAddress = document.querySelector('input[name="address"]:checked');
           const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
-          // If no address is selected, show SweetAlert
+          const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
+          const Subtotal = document.getElementById('Subtotal').textContent
+          const DiscountApplied = document.getElementById('discountMessageBox');
+          let DiscountAmount = 0; 
+          if (DiscountApplied && DiscountApplied.textContent) {
+            const match = DiscountApplied.textContent.match(/(\d+)/); 
+            if (match) {
+              DiscountAmount = parseInt(match[0], 10);
+            }
+          }
           if (!selectedAddress) {
             Swal.fire({
               icon: 'error',
@@ -424,21 +437,28 @@
               timer: 1500,
               showConfirmButton: false
             });
-            return; // Stop further execution
+            return; 
           }
 
-          // If an address is selected, proceed to get its value
+          if (!Paymethod) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please select a Payment Method',
+              timer: 11500,
+              showConfirmButton: false
+            });
+            return; 
+          }
           const address = selectedAddress.value;
           console.log(address);
-
-          // const formData = new  FormData(this);
-          // console.log("inside: ",formData)
+          const PayMethod = Paymethod.value
           fetch('/placeOrder', {
             method: 'post',
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ address: address, totalToPay: totalToPay })
+            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal })
           })
             .then((response) => response.json())
             .then((data) => {
@@ -476,7 +496,7 @@
         document.querySelector('#removeCouponBtn').addEventListener('click', function (event) {
           event.preventDefault();
           const totalAmountElement = document.getElementById('TotalAmount');
-          console.log("totalAmointElement: ",totalAmountElement);
+          console.log("totalAmointElement: ", totalAmountElement);
           console.log('Original Total Amount:', originalTotalAmount, typeof originalTotalAmount);
 
           totalAmountElement.textContent = `₹${originalTotalAmount.toFixed(2)}`;
