@@ -202,8 +202,8 @@
                 <td>$80.00</td> -->
             <td><%= coupon.discount%></td>
             <td><%= coupon.code%></td>
-            <td><%= coupon.startDate %></td>
-            <td><%= coupon.endDate %></td>
+            <td><%= new Date(coupon.startDate).toLocaleDateString('en-GB') %></td>
+            <td><%= new Date(coupon.endDate).toLocaleDateString('en-GB') %></td>
             <td><span class="status-active"><%= coupon.status %></span></td>
             <td class="actions">
               <i class="fas fa-eye view"></i>

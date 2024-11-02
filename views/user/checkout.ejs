@@ -154,6 +154,7 @@
                 <form id="couponForm" onsubmit="return false;">
                   <input type="text" placeholder="Enter coupon code" name="CouponCode" id="CouponCode">
                   <button type="button" id="applyCouponBtn">Apply</button>
+                  <button id="removeCouponBtn" style="display: none;">Remove Coupon</button>
                 </form>
                 <p id="discountMessage" class="text-success"></p>
                 <p id="errorMessage" class="text-danger"></p>
@@ -182,10 +183,10 @@
                 <input type="radio" name="paymentMethod" value="online"> Online Payment
               </label>
             </div>
-          
+
             <!-- Show payment options dynamically if online payment is selected -->
             <div id="rzp-button1" style="display: none;">
-              <button type="button"  onclick="startOnlinePayment()">Proceed with Online Payment</button>
+              <button type="button" onclick="startOnlinePayment()">Proceed with Online Payment</button>
             </div>
 
             <!-- Items and Delivery -->
@@ -209,7 +210,7 @@
                 <p>Payment Method: <span class="float-right">Cash on Delivery</span></p>
                 <hr>
                 <p id="discountMessageBox" class="text-success"></p>
-                <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right" id="TotalAmount">₹
+                <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right"  data-original-amount="<%= total %>" id="TotalAmount">₹
                     <%=total%>
                   </span></h5>
                 <button class="btn btn-warning btn-block font-weight-bold mt-4" id="">Place Order</button>
@@ -281,13 +282,16 @@
 
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
+         const originalTotalAmount = parseInt('<%= total %>;')
+         console.log("loooooL: ",originalTotalAmount);
+         
 
-const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-  paymentOptions.forEach(option => {
-    option.addEventListener('change', function () {
-      document.getElementById('rzp-button1').style.display = this.value === 'online' ? 'block' : 'none';
-    });
-  });
+        const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentOptions.forEach(option => {
+          option.addEventListener('change', function () {
+            document.getElementById('rzp-button1').style.display = this.value === 'online' ? 'block' : 'none';
+          });
+        });
 
         document.querySelector('#applyCouponBtn').addEventListener('click', function () {
           const couponCode = document.querySelector('#CouponCode').value.trim()
@@ -295,17 +299,17 @@ const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
           console.log("total", totalAmount);
 
           const appliedCoupon = sessionStorage.getItem('appliedCoupon');
-  if (appliedCoupon === couponCode) {
-    document.getElementById('errorMessage').textContent = "Coupon has already been applied.";
-    Swal.fire({
-      icon: 'error',
-      title: 'Coupon Already Applied',
-      text: 'You can only apply this coupon once per session.',
-      timer: 1500,
-      showConfirmButton: false
-    });
-    return; // Exit the function early
-  }
+          if (appliedCoupon === couponCode) {
+            document.getElementById('errorMessage').textContent = "Coupon has already been applied.";
+            Swal.fire({
+              icon: 'error',
+              title: 'Coupon Already Applied',
+              text: 'You can only apply this coupon once per session.',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            return; // Exit the function early
+          }
 
 
           if (couponCode) {
@@ -330,6 +334,7 @@ const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
                     timer: 1500,
                     showConfirmButton: false
                   });
+                  document.getElementById('removeCouponBtn').style.display = 'block';
 
                 } else {
                   document.getElementById('errorMessage').textContent = data.message;
@@ -433,7 +438,7 @@ const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ address: address,totalToPay:totalToPay })
+            body: JSON.stringify({ address: address, totalToPay: totalToPay })
           })
             .then((response) => response.json())
             .then((data) => {
@@ -466,4 +471,28 @@ const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
               })
             })
         })
+
+
+        document.querySelector('#removeCouponBtn').addEventListener('click', function (event) {
+          event.preventDefault();
+          const totalAmountElement = document.getElementById('TotalAmount');
+          console.log("totalAmointElement: ",totalAmountElement);
+          console.log('Original Total Amount:', originalTotalAmount, typeof originalTotalAmount);
+
+          totalAmountElement.textContent = `₹${originalTotalAmount.toFixed(2)}`;
+          sessionStorage.removeItem('appliedCoupon');
+          document.getElementById('removeCouponBtn').style.display = 'none';
+          document.getElementById('errorMessage').textContent = "";
+          document.getElementById('discountMessageBox').textContent = ""
+          document.getElementById('discountMessage').textContent = ""
+          Swal.fire({
+            icon: 'success',
+            title: 'Coupon Removed',
+            text: 'Your coupon has been successfully removed.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        });
+
+
       </script>
