@@ -119,16 +119,6 @@
             </div>
           </div>
           
-          <!-- <div class="col-sm-5">
-            <div class="cuppon-wrap">
-              <h4>Discount Code</h4>
-              <p>Enter your coupon code if you have</p>
-              <form action="#" class="cuppon-form">
-                <input type="text" />
-                <button class="btn border-btn">apply coupon</button>
-              </form>
-            </div>
-          </div> -->
         </div>
       </div>
       
@@ -136,7 +126,7 @@
         <div class="wrap">
           <!-- <p><span>Subtotal</span><span>$200.00</span></p> -->
           <h4><span>Grand total:</span><span>Rs: <%= GrandTotal %></span></h4>
-          <h4><span>all total:</span><span>Rs: <%= MFtotal %></span></h4>
+          <!-- <h4><span>all total:</span><span>Rs: <%= MFtotal %></span></h4> -->
           <!-- <a href="/checkout" class="btn border-btn">process to checkout</a> -->
           <% let outOfStock = cartItems.some(item => item.quantity > item.product.sizes.find(s => s.size === item.size).stock); %>
           <a href="/checkout" class="btn border-btn" <%= outOfStock ? 'disabled' : '' %>>Process to Checkout</a>

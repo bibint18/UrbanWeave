@@ -330,6 +330,7 @@
                   sessionStorage.setItem('appliedCoupon', couponCode);
                   document.getElementById('discountMessage').textContent = `Discount Applied: ₹${data.discountAmount}`;
                   document.getElementById('discountMessageBox').textContent = `Discount Applied: ₹${data.discountAmount}`;
+                  document.getElementById('errorMessage').textContent = "";
                   document.getElementById('TotalAmount').textContent = `₹${data.newTotal}`;
                   Swal.fire({
                     icon: 'success',
@@ -342,6 +343,8 @@
 
                 } else {
                   document.getElementById('errorMessage').textContent = data.message;
+                  document.getElementById('discountMessage').textContent = '';
+                  document.getElementById('discountMessageBox').textContent = '';
                   Swal.fire({
                     icon: 'error',
                     title: 'Invalid Coupon',
@@ -422,6 +425,7 @@
           const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
           const Subtotal = document.getElementById('Subtotal').textContent
           const DiscountApplied = document.getElementById('discountMessageBox');
+          const CouponCode = document.querySelector('#CouponCode').value
           let DiscountAmount = 0; 
           if (DiscountApplied && DiscountApplied.textContent) {
             const match = DiscountApplied.textContent.match(/(\d+)/); 
@@ -458,7 +462,7 @@
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal })
+            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode})
           })
             .then((response) => response.json())
             .then((data) => {

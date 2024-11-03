@@ -19,7 +19,13 @@ exports.VerifyCoupon = async (req, res) => {
     return res.json({ success: false, message: "Invalid or expired coupon." });
   }
   const user = await User.findById(userId);
-
+  console.log(user)
+  const AlreadyClaimed = await User.findOne({_id:userId,usedCoupons:{$in:[couponCode]}})
+  console.log("already: ",AlreadyClaimed);
+  
+  if(AlreadyClaimed){
+    return res.status(400).json({success:false,message:"Coupon aalready claimed once!"})
+  }
   const minimumSpend = coupon.minimum;
   if (minimumSpend > totalAmount) {
     return res.json({

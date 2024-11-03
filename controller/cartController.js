@@ -262,8 +262,8 @@ exports.editAddress =async (req,res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const {address,totalToPay,PayMethod,DiscountAmount,Subtotal} = req.body;
-    console.log(Subtotal)
+    const {address,totalToPay,PayMethod,DiscountAmount,Subtotal,CouponCode} = req.body;
+    console.log(CouponCode)
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate('product');
     console.log(cartItems)
@@ -311,6 +311,7 @@ exports.placeOrder = async (req, res) => {
       DiscountAmount:DiscountAmount,
       AmountPaid:totalToPay,
       OriginalTotal:OriginalTotal,
+      usedCoupons:CouponCode,
       address: {
         fullName:selectedAddress.fullName,
         addressLine1:selectedAddress.addressLine1,
