@@ -8,11 +8,10 @@ const jwt = require("jsonwebtoken")
 exports.VerifyCoupon = async (req, res) => {
   const userId = req.user._id;
 
-  const { couponCode, totalAmount } = req.body;
-  console.log("from front: ", couponCode, totalAmount);
-  // if (sessionCoupons[userId] && sessionCoupons[userId].includes(couponCode)) {
-  //   return res.status(400).json({ success: false, message: "Coupon already applied in this session!" });
-  // }
+  const { couponCode, totalAmount ,YouSaved} = req.body;
+  console.log("from front: ", couponCode, totalAmount,YouSaved);
+  let Saved = parseFloat(YouSaved.match(/[\d.]+/)[0]); 
+  console.log("saveeeeeeeeeeeeeed: ",Saved)
   const coupon = await Coupon.findOne({ code: couponCode, status: "active" });
   console.log(coupon);
   if (!coupon) {
@@ -43,31 +42,16 @@ exports.VerifyCoupon = async (req, res) => {
 
   const newTotal = totalAmount - discountAmount;
   console.log("newtotal: ", newTotal);
-  // sessionCoupons[userId] = sessionCoupons[userId] || [];
-  // sessionCoupons[userId].push(couponCode);
-  // const newToken = generateToken(req.user);
+  const AmountSaved = Saved + discountAmount
+  console.log("final savig: ",AmountSaved);
+  
   console.log(req.user)
   return res.status(200).json({
     success: true,
     message: "Coupon applied",
     discountAmount,
     newTotal,
-    
+    AmountSaved
   });
 };
 
-// const generateToken = (user) => {
-//   return jwt.sign(
-//     { id: user._id, appliedCoupons: user.appliedCoupons }, // Include appliedCoupons
-//     process.env.JWT_SECRET,
-//     { expiresIn: '1h' } // Adjust as needed
-//   );
-// };
-
-// signToken=((user) => {
-//   return jwt.sign(
-//     {id:user._id,email:user.email},
-//     process.env.JWT_SECRET,
-//     {expiresIn:'1hr'}
-//   )
-// })

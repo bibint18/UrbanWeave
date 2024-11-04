@@ -203,19 +203,21 @@
               <div class="card-body">
                 <!-- <h5 class="font-weight-bold">Order Summary</h5> -->
                 <hr>
-                <p>Total Items: <span class="float-right">
+                <p>Total Items: <span class="float-right" id="quantity">
                     <%=totalProduct%>
                   </span></p>
                 <p>Delivery Fee: <span class="float-right">Free Delivery!</span></p>
-                <!-- <p>Payment Method: <span class="float-right"></span></p> -->
-                <p>Original Total: <span class="float-right"><%=OriginalTotal%></span></p>
-                <p>Sub Total: <span class="float-right" id="Subtotal"><%= total %></span></p>
+                
+                <p>Original Total: <span class="float-right" id="OriginalTotal"><%=OriginalTotal%></span></p>
+                <p>Sub Total: <span class="float-right" id="Subtotal"><%= RegularTotal %></span></p>
                 <hr>
+                <p>Offer Amount: <span class="float-right" id="CatOffer"><%=OfferAmount%></span></p>
                 <p id="discountMessageBox" class="text-success"></p>
                 <h5 class="text-danger font-weight-bold">Order Total: <span class="float-right"
                     data-original-amount="<%= total %>" id="TotalAmount">₹
                     <%=total%>
                   </span></h5>
+                  <p id="SavedOffer" class="text-success">You saved <%= saved%> from this Order</p>
                 <button class="btn btn-warning btn-block font-weight-bold mt-4" id="">Place Order</button>
                 <!-- <a href="#" class="text-primary d-block text-center mt-3">How are delivery costs calculated?</a> -->
               </div>
@@ -299,7 +301,8 @@
         document.querySelector('#applyCouponBtn').addEventListener('click', function () {
           const couponCode = document.querySelector('#CouponCode').value.trim()
           const totalAmount = parseFloat(document.getElementById('TotalAmount').textContent.replace('₹', '').trim());
-
+          const YouSaved = document.getElementById('SavedOffer').textContent
+          console.log("you saved: ",YouSaved)
           console.log("total", totalAmount);
 
           const appliedCoupon = sessionStorage.getItem('appliedCoupon');
@@ -322,7 +325,7 @@
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify({ couponCode: couponCode, totalAmount: totalAmount })
+              body: JSON.stringify({ couponCode: couponCode, totalAmount: totalAmount ,YouSaved})
             })
               .then(response => response.json())
               .then((data) => {
@@ -332,6 +335,7 @@
                   document.getElementById('discountMessageBox').textContent = `Discount Applied: ₹${data.discountAmount}`;
                   document.getElementById('errorMessage').textContent = "";
                   document.getElementById('TotalAmount').textContent = `₹${data.newTotal}`;
+                  document.getElementById('SavedOffer').textContent = `You saved ${data.AmountSaved} from this Order`
                   Swal.fire({
                     icon: 'success',
                     title: 'Coupon Applied',
@@ -424,6 +428,9 @@
           const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
           const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
           const Subtotal = document.getElementById('Subtotal').textContent
+          const OriginalTotal = document.getElementById('OriginalTotal').textContent
+          const Quantity = document.getElementById('quantity').textContent
+          const CatOffer = document.getElementById('CatOffer').textContent
           const DiscountApplied = document.getElementById('discountMessageBox');
           const CouponCode = document.querySelector('#CouponCode').value
           let DiscountAmount = 0; 
@@ -462,7 +469,7 @@
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode})
+            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode,OriginalTotal,CatOffer,Quantity})
           })
             .then((response) => response.json())
             .then((data) => {

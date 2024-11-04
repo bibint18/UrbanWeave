@@ -1,39 +1,47 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
-  oid:{
+  oid: {
     type: String,
     required: false,
-    unique:true
+    unique: true,
   },
   products: [
     {
-      product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-      size: { type: String, required: true },  // Size chosen by user
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      size: { type: String, required: true }, // Size chosen by user
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, // Price at the time of order,
-      ProductStatus:{type:String,required:false,enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled','Returned'],
-        default: 'Processing'},
-    }
+      ProductStatus: {
+        type: String,
+        required: false,
+        enum: ["Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
+        default: "Processing",
+      },
+    },
   ],
   totalAmount: {
     type: Number,
-    required: true
+    required: true,
   },
-  totalAfterOffer:{
-    type: Number, 
+  totalAfterOffer: {
+    type: Number,
   },
-  OfferApplied:{
-    type:Number
+  OfferApplied: {
+    type: Number,
   },
-  totalQuantity:{
-    type:Number,
-    required:false
+  totalQuantity: {
+    type: Number,
+    required: false,
   },
   address: {
     fullName: { type: String, required: false },
@@ -44,32 +52,40 @@ const orderSchema = new mongoose.Schema({
     state: { type: String, required: false },
     postalCode: { type: String, required: false },
     country: { type: String, required: false },
-    addType: { type: String, enum: ['office', 'home'], required: false }
+    addType: { type: String, enum: ["office", "home"], required: false },
   },
-  
+
   status: {
     type: String,
-    enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
-    default: 'Processing'
+    enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
+    default: "Processing",
   },
   orderDate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
-  PaymentMethod:{
-    type:String,
-    enum:['ONLINE PAYMENT (RAZORPAY)','CASH ON DELIVERY'],
+  PaymentMethod: {
+    type: String,
+    enum: ["ONLINE PAYMENT (RAZORPAY)", "CASH ON DELIVERY"],
   },
-  DiscountAmount:{
-    type:Number,
-
+  CouponDiscount: {
+    type: Number,
+    default: 0,
   },
-  AmountPaid:{
-    type:Number,
+  CategoryOffer: {
+    type: Number,
+    default: 0,
   },
-  OriginalTotal:{
-    type:Number,
-  }
+  AmountPaid: {
+    type: Number,
+  },
+  OriginalTotal: {
+    type: Number,
+  },
+  usedCoupons: {
+    type: [String],
+    default: [],
+  },
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model("Order", orderSchema);

@@ -3,6 +3,7 @@ const Product = require("../model/admin/prodectModel");
 const User = require("../model/user/userModel");
 const Order = require('../model/user/orderModel')
 const Coupon = require('../model/admin/CouponModel')
+const CategoryOffer = require('../model/admin/CategoryOfferModel')
 const{getNextOrderId} = require('../utils/orderUtils')
 
 // Function to get the next unique order ID
@@ -146,22 +147,49 @@ exports.getCheckout = async (req, res) => {
     console.log("usr: ", userId);
     const users = await User.findById(userId);
     const coupons = await Coupon.find()
-    // console.log(user);
     const addresses = users.address;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     cartItem.forEach((item) => {
       totalProduct += item.quantity;
     });
-    console.log("pro", totalProduct);
+    const RegularTotal = cartItem.reduce(
+      (acc, curr) => acc + curr.quantity * curr.product.salePrice,
+      0
+    );
     const total = cartItem.reduce(
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
     );
+    let discountAmount =0;
+      let discountedTotalAmount =0
+      let totalAmount=0
+      let finalPrice=0
+      let saved=0
+    for(const items of cartItem){
+      const product = items.product;
+      const salePrice =product.salePrice
+      const quantity = items.quantity
+      const categoryOffer = await CategoryOffer.findOne({
+        category:product.category._id,
+        isActive:true,
+        startDate:{$lte:new Date()},
+        endDate:{$gte: new Date()}
+      })
+      if(categoryOffer){
+        discountAmount = salePrice * (categoryOffer.discountPercentage / 100)
+      }
+      finalPrice = salePrice - discountAmount;
+      totalAmount += salePrice * quantity;
+      discountedTotalAmount += finalPrice * quantity
+      
+    }
+    console.log("finalPrie: ",saved);
     const OriginalTotal = cartItem.reduce((acc,curr) => acc + curr.quantity * curr.product.regularPrice,0)
-    console.log("total", total);
-
-    return res.render("user/checkout", { addresses, totalProduct, total ,user,coupons,OriginalTotal});
+    console.log(OriginalTotal)
+    saved =(OriginalTotal - discountedTotalAmount).toFixed(2)
+    console.log("saved: ",saved)
+    return res.render("user/checkout", { addresses, totalProduct,total:discountedTotalAmount ,user,coupons,OriginalTotal,OfferAmount:discountAmount,saved,RegularTotal});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
@@ -262,8 +290,11 @@ exports.editAddress =async (req,res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    const {address,totalToPay,PayMethod,DiscountAmount,Subtotal,CouponCode} = req.body;
-    console.log(CouponCode)
+    const {address,totalToPay,PayMethod,DiscountAmount,Subtotal,CouponCode,OriginalTotal,CatOffer,Quantity} = req.body;
+    let CategoryOffer = Number(CatOffer)
+    let originalTotal = Number(OriginalTotal)
+    let totalQuantity = Number(Quantity)
+    console.log("from here",Quantity,typeof(Quantity))
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate('product');
     console.log(cartItems)
@@ -276,9 +307,6 @@ exports.placeOrder = async (req, res) => {
     if (cartItems.length === 0) {
       return res.status(400).json({ success: false, message: "No items in cart" });
     }
-    let totalAmount = 0;
-    let totalQuantity = 0;
-    let OriginalTotal =0
     const products = [];
     for (const item of cartItems) {
       const product = await Product.findById(item.product._id);
@@ -289,16 +317,21 @@ exports.placeOrder = async (req, res) => {
           message: `${product.ProductName} (${item.size}) has insufficient stock. Only ${sizeStock ? sizeStock.stock : 0} left.` 
         });
       }
-      totalAmount += item.quantity * product.salePrice;
-      OriginalTotal += item.quantity * product.regularPrice
-      totalQuantity += item.quantity;
       products.push({
         product: item.product._id,
         quantity: item.quantity,
         size: item.size,
         price: product.salePrice
       });
+      console.log("till here");
+      // totalPrice += product.salePrice * product.quantity;
+      // console.log("totalPrice: ",totalPrice)
+      // discountTotalAmount += finalPrice * product.quantity
     }
+    // const productzz = await 
+    // console.log("finallyy : ",discountTotalAmount);
+    // console.log(OriginalTotal)
+    
     const orderId = await getNextOrderId();
     const newOrder = new Order({
       user: userId,
@@ -306,12 +339,13 @@ exports.placeOrder = async (req, res) => {
       products: products,
       totalAmount:Subtotal ,
       status: 'Processing',
-      totalQuantity: totalQuantity,
-      PaymentMethod:PayMethod,
-      DiscountAmount:DiscountAmount,
+      totalQuantity: totalQuantity,  //backend
+      PaymentMethod:PayMethod,     
+      CouponDiscount:DiscountAmount,
       AmountPaid:totalToPay,
-      OriginalTotal:OriginalTotal,
+      OriginalTotal:originalTotal,
       usedCoupons:CouponCode,
+      CategoryOffer: CategoryOffer,
       address: {
         fullName:selectedAddress.fullName,
         addressLine1:selectedAddress.addressLine1,
