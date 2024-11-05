@@ -9,6 +9,7 @@ const CartRoute = require('../controller/cartController')
 const OrderRoute = require('../controller/orderController')
 const WishRoute = require('../controller/wishlistController')
 const CouponRoute = require('../controller/UserCouponController')
+const WalletRoute = require('../controller/walletController')
 // const paymentController = require('../controller/paymentController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
@@ -77,4 +78,7 @@ router.post("/wishlist/add",authMiddleware.protect,WishRoute.addWishlist)
 router.post('/wishlist/remove/:id',authMiddleware.protect,WishRoute.removeWishlist)
 //coupon
 router.post('/verifyCoupon',authMiddleware.protect,CouponRoute.VerifyCoupon)
+//wallet
+router.get('/wallet',authMiddleware.protect,WalletRoute.loadWallet)
+router.post('/wallet/add',authMiddleware.protect,WalletRoute.AddMoney)
 module.exports = router;

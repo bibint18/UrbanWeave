@@ -3,7 +3,7 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    document.getElementById('rzp-button1').onclick = async function (e) {
+    document.getElementById('rzp-button').onclick = async function (e) {
         e.preventDefault();
 
         // Call the backend to create a Razorpay order
@@ -16,7 +16,7 @@
         const { orderId } = await response.json();
 
         var options = {
-            "key": "rzp_test_MwTWNrgjxNDf8T", // Replace with your actual Key ID
+            "key": "", // Replace with your actual Key ID
             "amount": orderId.amount, 
             "currency": "INR",
             "name": "Your Company Name",

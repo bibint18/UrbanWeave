@@ -290,14 +290,97 @@
         const originalTotalAmount = parseInt('<%= total %>;')
         console.log("loooooL: ", originalTotalAmount);
 
+        //function for placing order
+        async function PlaceOrder(){
+          document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          const selectedAddress = document.querySelector('input[name="address"]:checked');
+          const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
+          const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
+          const Subtotal = document.getElementById('Subtotal').textContent
+          const OriginalTotal = document.getElementById('OriginalTotal').textContent
+          const Quantity = document.getElementById('quantity').textContent
+          const CatOffer = document.getElementById('CatOffer').textContent
+          const DiscountApplied = document.getElementById('discountMessageBox');
+          const CouponCode = document.querySelector('#CouponCode').value
+          let DiscountAmount = 0; 
+          if (DiscountApplied && DiscountApplied.textContent) {
+            const match = DiscountApplied.textContent.match(/(\d+)/); 
+            if (match) {
+              DiscountAmount = parseInt(match[0], 10);
+            }
+          }
+          if (!selectedAddress) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please select an address',
+              timer: 1500,
+              showConfirmButton: false
+            });
+            return; 
+          }
 
+          if (!Paymethod) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please select a Payment Method',
+              timer: 11500,
+              showConfirmButton: false
+            });
+            return; 
+          }
+          const address = selectedAddress.value;
+          console.log(address);
+          const PayMethod = Paymethod.value
+          fetch('/placeOrder', {
+            method: 'post',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode,OriginalTotal,CatOffer,Quantity})
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                Swal.fire({
+                  title: 'Order Placed Successfully',
+                  text: 'Your order has been placed successfully.',
+                  icon: 'success',
+                  timer: 1500,
+                })
+                  .then(() => {
+                    window.location.href = '/orders'
+                  })
+              } else {
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Failed to place order',
+                  icon: 'error',
+                  timer: 1500,
+
+                })
+              }
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: "something went wrong!",
+                timer: 1500
+              })
+            })
+        })
+        }
+        //popuping the online payment
         const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
         paymentOptions.forEach(option => {
           option.addEventListener('change', function () {
-            document.getElementById('rzp-button1').style.display = this.value === 'online' ? 'block' : 'none';
+            document.getElementById('rzp-button1').style.display = this.value === 'ONLINE PAYMENT (RAZORPAY)' ? 'block' : 'none';
           });
         });
-
+        //appying coupon
         document.querySelector('#applyCouponBtn').addEventListener('click', function () {
           const couponCode = document.querySelector('#CouponCode').value.trim()
           const totalAmount = parseFloat(document.getElementById('TotalAmount').textContent.replace('₹', '').trim());
@@ -315,10 +398,8 @@
               timer: 1500,
               showConfirmButton: false
             });
-            return; // Exit the function early
+            return; 
           }
-
-
           if (couponCode) {
             fetch('/verifyCoupon', {
               method: 'post',
@@ -344,7 +425,6 @@
                     showConfirmButton: false
                   });
                   document.getElementById('removeCouponBtn').style.display = 'block';
-
                 } else {
                   document.getElementById('errorMessage').textContent = data.message;
                   document.getElementById('discountMessage').textContent = '';
@@ -367,11 +447,9 @@
                 });
               });
           } else {
-            // If no coupon is applied, display the total as usual
             document.getElementById('discountMessage').textContent = '';
             document.getElementById('errorMessage').textContent = '';
             document.getElementById('TotalAmount').textContent = `₹ ${totalAmount}`;
-
           }
         })
         window.addEventListener('beforeunload', () => {
@@ -380,32 +458,50 @@
 
 
 
-
+        //razorpay
         document.getElementById('rzp-button1').onclick = async function (e) {
           e.preventDefault();
-
+          
           const totalAmount = document.getElementById('TotalAmount').innerText.replace('₹', '');
-          // Call the backend to create a Razorpay order
           console.log("tooo: ", totalAmount);
-
+          
           const response = await fetch('/api/payment/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: parseFloat(totalAmount) * 100, currency: 'INR' })
+            body: JSON.stringify({ amount: parseFloat(totalAmount), currency: 'INR'})
           });
-
-          const orderId = await response.json();
+          console.log("returned")
+          const {orderId,amount,key} = await response.json();
+          console.log("back",key)
           console.log(response)
           var options = {
-            "key": "rzp_test_MwTWNrgjxNDf8T", // Replace with your actual Key ID
-            "amount": orderId.amount,
+            "key":'rzp_test_MwTWNrgjxNDf8T', 
+            "amount": amount * 100 ,
             "currency": "INR",
             "name": "Your Company Name",
             "description": "Test Transaction",
             "image": "/your_logo.png",
-            "order_id": orderId.id,
+            "order_id": orderId,
             "handler": function (response) {
+              console.log("res: ",response)
               alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+               fetch('/api/payment/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        orderId: orderId
+                    })
+                }).then(res => res.json()).then(data => {
+                    if (data.success) {
+                        alert('Payment Verified!');
+                        PlaceOrder();
+                    } else {
+                        alert('Verification Failed!');
+                    }
+                }) 
             },
             "prefill": {
               "name": "Your Name",
@@ -414,6 +510,7 @@
             },
             "theme": { "color": "#3399cc" }
           };
+          console.log("Razorpay Options: ", options);
           var rzp1 = new Razorpay(options);
           rzp1.open();
         }
