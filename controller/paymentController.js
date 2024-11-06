@@ -57,3 +57,35 @@ exports.verifyPayment = async(req, res) => {
   return res.status(400).json({success:false,message:"Payment Failed"})
 }
 };
+
+
+exports.retry = async (req, res) => {
+  try{
+    console.log("inside retry")
+  const { orderId } = req.body;
+  
+  // Retrieve original order from database
+  const order = await Order.findById(orderId);
+  console.log(order)
+  if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+  }
+
+  // Create a new Razorpay order ID for retrying payment
+  const razorpayOrder = await razorpay.orders.create({
+      amount: order.AmountPaid * 100, // in paise
+      currency: "INR",
+      receipt: `retry_order_${order._id}`
+  });
+  console.log("razorpayOrder : ",razorpayOrder)
+  res.json({
+      orderId: razorpayOrder.id,
+      amount: order.AmountPaid,
+      key: process.env.YOUR_KEY_ID
+  });
+  console.log("passed from retry");
+  
+}catch(error){
+  console.log(error)
+}
+};

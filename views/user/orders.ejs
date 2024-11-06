@@ -383,8 +383,108 @@ body {
   <% } %>
 </div>
 
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  
+async function retryPayment(orderId) {
+    try {
+        // Step 1: Fetch order details and create a new Razorpay order ID for retry
+        const response = await fetch(`/api/payment/retry-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId: orderId })
+        });
+        
+        const { orderId: newOrderId, amount, key } = await response.json();
+        
+        // Step 2: Configure and open Razorpay with new order ID and details
+        const options = {
+            key: key,
+            amount: amount * 100,
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Retry Payment",
+            order_id: newOrderId,
+            handler: async function (response) {
+                // Verify payment on success
+                const verifyResponse = await fetch('/api/payment/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        orderId: orderId // Original order ID for updating
+                    })
+                });
+
+                const result = await verifyResponse.json();
+                if (result.success) {
+                  fetch(`/payment/update/${orderId}`,{
+                          method:"post",
+                          headers:{
+                            "Content-Type":"application/json"
+                          }
+                        })
+                          .then(response => response.json())
+                          .then((data) => {
+                            if(data.success){
+                              Swal.fire({
+                                icon:"success",
+                                title:"Payment Completed",
+                                text:"Order Placed Succesfully!",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                              .then(() => {
+                                window.location.href='/orders'
+                              })
+                            }else{
+                              Swal.fire({
+                                icon:"error",
+                                title:"Error",
+                                text:"Cant Complete Payment",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                            }
+                          })
+                          .catch((error) => {
+                            console.log(error)
+                            Swal.fire({
+                                icon:"error",
+                                title:"Error",
+                                text:"Something went wrong!",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                          })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Verification Failed',
+                        text: "Please try again."
+                    });
+                }
+            },
+            theme: { color: "#3399cc" },
+            modal: {
+                ondismiss: function () {
+                    console.log("Retry payment was canceled by the user.");
+                    alert("Retry payment was canceled.");
+                }
+            }
+        };
+        
+        // Open Razorpay's checkout UI
+        const rzp = new Razorpay(options);
+        rzp.open();
+
+    } catch (error) {
+        console.error("Error in retrying payment:", error);
+    }
+}
+
   function cancelOrder(orderId,ProId){
     // const ProId = ProId
     Swal.fire({
