@@ -287,9 +287,90 @@
 
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <script>
+        let globalOrderId = null;
         const originalTotalAmount = parseInt('<%= total %>;')
         console.log("loooooL: ", originalTotalAmount);
+        //function initialise
+        async function initialise(){
+    const selectedAddress = document.querySelector('input[name="address"]:checked');
+    const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
+    const Paymethod = document.querySelector('input[name="paymentMethod"]:checked');
+    const Subtotal = document.getElementById('Subtotal').textContent;
+    const OriginalTotal = document.getElementById('OriginalTotal').textContent;
+    const Quantity = document.getElementById('quantity').textContent;
+    const CatOffer = document.getElementById('CatOffer').textContent;
+    const DiscountApplied = document.getElementById('discountMessageBox');
+    const CouponCode = document.querySelector('#CouponCode').value;
+    let DiscountAmount = 0;
+    if (DiscountApplied && DiscountApplied.textContent) {
+        const match = DiscountApplied.textContent.match(/(\d+)/);
+        if (match) {
+            DiscountAmount = parseInt(match[0], 10);
+        }
+    }
+    if (!selectedAddress) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please select an address',
+            timer: 1500,
+            showConfirmButton: false
+        });
+        return;
+    }
+    if (!Paymethod) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please select a Payment Method',
+            timer: 11500,
+            showConfirmButton: false
+        });
+        return;
+    }
+    const address = selectedAddress.value;
+    const PayMethod = Paymethod.value;
 
+    // Save order with payment status "Pending"
+    fetch('/placeOrder', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            address: address,
+            totalToPay: totalToPay,
+            PayMethod: PayMethod,
+            DiscountAmount: DiscountAmount,
+            Subtotal: Subtotal,
+            CouponCode: CouponCode,
+            OriginalTotal: OriginalTotal,
+            CatOffer: CatOffer,
+            Quantity: Quantity,
+            paymentStatus: "Pending" // Payment is pending at this stage
+        })
+    }).then(res => res.json())
+      .then(data => {
+        // Proceed to Razorpay payment if order is saved successfully
+        if (data.success) {
+          globalOrderId  = data.orderId;  // Get orderId from the response
+          console.log("Order ID:ywyyywywywywyywyw: ", globalOrderId,)
+        } else {
+            // Handle order creation failure
+            alert('Failed to create order. Please try again.');
+        }
+    });
+}
+
+//function Update payment on success 
+async function UpdatePayment(){
+  await fetch('/order/update',{
+    method: 'post',
+    headers:{
+      "Content-Type":"application/json"
+    }
+  })
+}
         //function for placing order
         async function PlaceOrder(){
           console.log("function triggered")
@@ -462,7 +543,7 @@
         //razorpay
         document.getElementById('rzp-button1').onclick = async function (e) {
           e.preventDefault();
-          
+          initialise();
           const totalAmount = document.getElementById('TotalAmount').innerText.replace('₹', '');
           console.log("tooo: ", totalAmount);
           
@@ -473,7 +554,8 @@
           });
           console.log("returned")
           const {orderId,amount,key} = await response.json();
-          console.log("back",key)
+
+          console.log("back",orderId)
           console.log(response)
           var options = {
             "key":'rzp_test_MwTWNrgjxNDf8T', 
@@ -485,7 +567,8 @@
             "order_id": orderId,
             "handler": function (response) {
               console.log("res: ",response)
-              alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+              // alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+              console.log("Payment successful! Payment ID: " + response.razorpay_payment_id)
                fetch('/api/payment/verify-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -496,10 +579,52 @@
                         orderId: orderId
                     })
                 }).then(res => res.json()).then(data => {
+                  console.log("second res: ",data)
                     if (data.success) {
-                        alert('Payment Verified!');
-                        PlaceOrder();
+                        // alert('Payment Verified!');
+                        // PlaceOrder();
+                        // UpdatePayment(globalOrderId);
+                        fetch(`/payment/update/${globalOrderId}`,{
+                          method:"post",
+                          headers:{
+                            "Content-Type":"application/json"
+                          }
+                        })
+                          .then(response => response.json())
+                          .then((data) => {
+                            if(data.success){
+                              Swal.fire({
+                                icon:"success",
+                                title:"Payment Completed",
+                                text:"Order Placed Succesfully!",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                              .then(() => {
+                                window.location.href='/orders'
+                              })
+                            }else{
+                              Swal.fire({
+                                icon:"error",
+                                title:"Error",
+                                text:"Cant Complete Payment",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                            }
+                          })
+                          .catch((error) => {
+                            console.log(error)
+                            Swal.fire({
+                                icon:"error",
+                                title:"Error",
+                                text:"Something went wrong!",
+                                timer:1500,
+                                showConfirmButton:false
+                              })
+                          })
                     } else {
+                      console.log("errorrr: payment failed")
                         alert('Verification Failed!');
                     }
                 }) 
@@ -509,7 +634,15 @@
               "email": "your_email@example.com",
               "contact": "1234567890"
             },
-            "theme": { "color": "#3399cc" }
+            "theme": { "color": "#3399cc" },
+            "modal": {
+      "ondismiss": function () {
+        console.log("Payment was canceled by the user.");
+        alert("Payment was canceled. Please try again.");
+        // Optional: redirect back to the checkout page or show a custom message.
+        window.location.href = "/checkout";
+      }
+    }    
           };
           console.log("Razorpay Options: ", options);
           var rzp1 = new Razorpay(options);
@@ -570,6 +703,7 @@
             body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode,OriginalTotal,CatOffer,Quantity})
           })
             .then((response) => response.json())
+
             .then((data) => {
               if (data.success) {
                 Swal.fire({

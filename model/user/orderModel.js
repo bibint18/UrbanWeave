@@ -54,7 +54,11 @@ const orderSchema = new mongoose.Schema({
     country: { type: String, required: false },
     addType: { type: String, enum: ["office", "home"], required: false },
   },
-
+  paymentStatus: {
+    type: String,
+    enum: ["Pending", "Paid", "Failed"],
+    default: "Pending",
+  },
   status: {
     type: String,
     enum: ["Processing", "Shipped", "Delivered", "Cancelled"],

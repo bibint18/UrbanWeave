@@ -72,6 +72,7 @@ router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)
 router.post('/orders/return/:id/:ProId',authMiddleware.protect,OrderRoute.ReturnProduct)
+router.post('/payment/update/:id',authMiddleware.protect,OrderRoute.UpdatePayStatus)
 //wishlist 
 router.get('/wishlist',authMiddleware.protect,WishRoute.getWishlist)
 router.post("/wishlist/add",authMiddleware.protect,WishRoute.addWishlist)

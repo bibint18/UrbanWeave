@@ -103,3 +103,17 @@ exports.ReturnProduct = async (req,res) => {
   }
 }
 
+exports.UpdatePayStatus = async(req,res) => {
+  try{
+    console.log("inside update")
+  const user = req.user._id
+  const id = req.params.id
+  console.log(id,"from the update")
+  const order = await Order.findByIdAndUpdate(id,{paymentStatus:"Paid"})
+  return res.status(200).json({success:true,message:"Payment succcessfull"})
+  }catch(error){
+    console.log(error)
+    return res.status(400).json({success:false,message:"error"})
+  }
+}
+

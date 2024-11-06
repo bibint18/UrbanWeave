@@ -368,7 +368,7 @@ exports.placeOrder = async (req, res) => {
       await product.save();
     }
     await Cart.deleteMany({ user: userId });
-    res.json({ success: true, message: 'Order placed successfully!' });
+    res.json({ success: true, message: 'Order placed successfully!',orderId : newOrder._id });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: 'Something went wrong!' });

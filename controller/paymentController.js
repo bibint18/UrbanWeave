@@ -35,6 +35,7 @@ exports.createOrder = async (req, res) => {
 };
 
 exports.verifyPayment = async(req, res) => {
+  try{
   console.log("inside verify")
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature ,orderId} = req.body;
   console.log(razorpay_order_id, razorpay_payment_id, razorpay_signature ,orderId)
@@ -51,4 +52,8 @@ exports.verifyPayment = async(req, res) => {
   } else {
     res.status(400).json({ success:false, message: "Payment verification failed" });
   }
+}catch(error){
+  console.log(error)
+  return res.status(400).json({success:false,message:"Payment Failed"})
+}
 };
