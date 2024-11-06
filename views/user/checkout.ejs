@@ -292,8 +292,9 @@
 
         //function for placing order
         async function PlaceOrder(){
-          document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
-          e.preventDefault();
+          console.log("function triggered")
+          // document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
+          // e.preventDefault();
           const selectedAddress = document.querySelector('input[name="address"]:checked');
           const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
           const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
@@ -371,7 +372,7 @@
                 timer: 1500
               })
             })
-        })
+        
         }
         //popuping the online payment
         const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
