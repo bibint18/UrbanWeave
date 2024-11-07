@@ -18,6 +18,7 @@ const orderSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
       },
+      categoryOffer: { type: Number, required: false },
       size: { type: String, required: true }, // Size chosen by user
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, // Price at the time of order,
@@ -27,6 +28,7 @@ const orderSchema = new mongoose.Schema({
         enum: ["Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
         default: "Processing",
       },
+
     },
   ],
   totalAmount: {

@@ -8,24 +8,19 @@ const razorpay = new Razorpay({
   
   key_secret: process.env.YOUR_KEY_SECRET ,
 });
-console.log("raz: ",razorpay)
 
 
 
 exports.createOrder = async (req, res) => {
   try {
     const { amount, currency } = req.body;
-    console.log("from",amount,currency)
     const options = {
       amount: amount * 100 , // 
       currency: currency || 'INR',
       receipt: `receipt_${Date.now()}`, 
       payment_capture: 1 
     };
-    
-    console.log("options",options)
     const order = await razorpay.orders.create(options);
-    console.log("order: ",order)
     res.json({ orderId: order.id ,amount:amount,key: process.env.YOUR_KEY_ID });
     console.log("passed")
   } catch (error) {
@@ -36,11 +31,9 @@ exports.createOrder = async (req, res) => {
 
 exports.verifyPayment = async(req, res) => {
   try{
-  console.log("inside verify")
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature ,orderId} = req.body;
   console.log(razorpay_order_id, razorpay_payment_id, razorpay_signature ,orderId)
   const crypto = require("crypto");
-
   const hmac = crypto.createHmac("sha256", process.env.YOUR_KEY_SECRET);
   hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
   const generatedSignature = hmac.digest("hex");
@@ -61,30 +54,22 @@ exports.verifyPayment = async(req, res) => {
 
 exports.retry = async (req, res) => {
   try{
-    console.log("inside retry")
   const { orderId } = req.body;
-  
-  // Retrieve original order from database
   const order = await Order.findById(orderId);
   console.log(order)
   if (!order) {
       return res.status(404).json({ error: "Order not found" });
   }
-
-  // Create a new Razorpay order ID for retrying payment
   const razorpayOrder = await razorpay.orders.create({
-      amount: order.AmountPaid * 100, // in paise
+      amount: order.AmountPaid * 100,
       currency: "INR",
       receipt: `retry_order_${order._id}`
   });
-  console.log("razorpayOrder : ",razorpayOrder)
   res.json({
       orderId: razorpayOrder.id,
       amount: order.AmountPaid,
       key: process.env.YOUR_KEY_ID
   });
-  console.log("passed from retry");
-  
 }catch(error){
   console.log(error)
 }

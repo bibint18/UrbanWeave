@@ -2,8 +2,8 @@ const Cart = require('../model/user/cartModel')
 const Product = require('../model/admin/prodectModel')
 const Order = require('../model/user/orderModel')
 const User = require('../model/user/userModel')
-
-
+const Coupon = require('../model/admin/CouponModel')
+const Wallet = require('../model/user/WalletModel')
 exports.getOrdersPage =async (req,res) => {
   try {
     const user = req.user
@@ -44,24 +44,62 @@ exports.getOrdersPage =async (req,res) => {
 
 exports.cancelOrder =async (req,res) => {
   try {
+    const user = req.user._id
     const {id,ProId} = req.params
-    // const {ProductId} = req.body
     console.log("idPro ",ProId);
-    
     console.log(id,"id");
     const orders = await Order.findById(id)
     console.log("can: ",orders);
     if(!orders){
       return res.json({success:false,message:"No order"})
     }
-    
+    const paid = orders.AmountPaid
+    const CouponOffer = orders.CouponDiscount
     const product = orders.products.find(p => p.product.toString() == ProId)
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found in the order" });
     }
-
+    console.log("products: ",product)
+    const quantity = product.quantity
+    const salePrice = product.price * quantity
+    const couponCode = orders.usedCoupons[0]
+    const coupon = await Coupon.findOne({code:couponCode})
+    const couponMinimum = coupon.minimum
+    console.log("Coooo: ",couponMinimum)
+    let reducedTotal = paid - salePrice
+    console.log("reduced: ",reducedTotal)
+    let wallet = await Wallet.findOne({user:user})
+    console.log("wallet: ",wallet)
+    if(!wallet){
+      wallet = new Wallet({
+        user: user,
+        balance: 0,
+        transactions:[]
+      })
+      await wallet.save();
+    }
+    
     if(product.ProductStatus =='Processing' || product.ProductStatus =='Shipped'){
-      product.ProductStatus =  'Cancelled'
+      // product.ProductStatus =  'Cancelled'
+      if(reducedTotal < couponMinimum){
+        let amountToWallet = salePrice - CouponOffer
+        console.log("amountTowallet",amountToWallet)
+        wallet.balance += amountToWallet
+        await wallet.save()
+        orders.totalQuantity -= quantity
+        orders.CouponDiscount =0;
+        orders.AmountPaid -= amountToWallet
+        await orders.save();
+    // log('')
+      }
+      
+      else{
+        console.log("can be cancelled")
+        
+    // log('')
+      }
+      
+    // log('')
       await orders.save()
       return res.json({success:true,message:"order cancelled succesfully",orderId:id})
     }else{

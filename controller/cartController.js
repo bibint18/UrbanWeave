@@ -161,14 +161,17 @@ exports.getCheckout = async (req, res) => {
       (acc, curr) => acc + curr.quantity * curr.product.salePrice,
       0
     );
-    let discountAmount =0;
+    
+    let totalOfferAmount =0
       let discountedTotalAmount =0
       let totalAmount=0
       let finalPrice=0
       let saved=0
     for(const items of cartItem){
       const product = items.product;
+      console.log("product: ",product)
       const salePrice =product.salePrice
+      console.log("salePrice: ",salePrice)
       const quantity = items.quantity
       const categoryOffer = await CategoryOffer.findOne({
         category:product.category._id,
@@ -176,20 +179,30 @@ exports.getCheckout = async (req, res) => {
         startDate:{$lte:new Date()},
         endDate:{$gte: new Date()}
       })
+      let discountAmount =0;
+      console.log("category offer: ",categoryOffer)
       if(categoryOffer){
         discountAmount = salePrice * (categoryOffer.discountPercentage / 100)
+        console.log("discountedAmpunt: ",discountAmount)
+        totalOfferAmount += discountAmount * quantity
+        console.log("totalOfferAmoiunt: ",totalOfferAmount)
       }
       finalPrice = salePrice - discountAmount;
-      totalAmount += salePrice * quantity;
+      console.log('finalPrice: ',finalPrice)
+      // totalAmount += salePrice * quantity;
+      // console.log('totalAmount: ',totalAmount)
       discountedTotalAmount += finalPrice * quantity
-      
+      console.log("discountedTotalAmouny: ",discountedTotalAmount)
     }
-    console.log("finalPrie: ",saved);
+    console.log('finalPrice: ',finalPrice)
+    console.log("discountedTotalAmount: ",totalOfferAmount)
+    console.log('totalAmount: ',totalAmount)
+    // console.log("finalPrie: ",saved);
     const OriginalTotal = cartItem.reduce((acc,curr) => acc + curr.quantity * curr.product.regularPrice,0)
     console.log(OriginalTotal)
     saved =(OriginalTotal - discountedTotalAmount).toFixed(2)
     console.log("saved: ",saved)
-    return res.render("user/checkout", { addresses, totalProduct,total:discountedTotalAmount ,user,coupons,OriginalTotal,OfferAmount:discountAmount,saved,RegularTotal});
+    return res.render("user/checkout", { addresses, totalProduct,total:discountedTotalAmount ,user,coupons,OriginalTotal,OfferAmount:totalOfferAmount,saved,RegularTotal});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
@@ -291,7 +304,7 @@ exports.editAddress =async (req,res) => {
 exports.placeOrder = async (req, res) => {
   try {
     const {address,totalToPay,PayMethod,DiscountAmount,Subtotal,CouponCode,OriginalTotal,CatOffer,Quantity} = req.body;
-    let CategoryOffer = Number(CatOffer)
+    let categoryOfferWhole = Number(CatOffer)
     let originalTotal = Number(OriginalTotal)
     let totalQuantity = Number(Quantity)
     console.log("from here",Quantity,typeof(Quantity))
@@ -308,7 +321,27 @@ exports.placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: "No items in cart" });
     }
     const products = [];
+    
     for (const item of cartItems) {
+      let categoryOfferAmount=0
+      const productz = item.product;
+      const salePrice =productz.salePrice
+      const quantity = item.quantity
+      // let categoryOffer = await CategoryOffer.findOne({
+      //   category:productz.category._id,
+      //   isActive:true,
+      //   startDate:{$lte:new Date()},
+      //   endDate:{$gte: new Date()}
+      // })
+      const categoryOffer = await CategoryOffer.findOne({
+        category:productz.category._id,
+        isActive:true,
+        startDate:{$lte:new Date()},
+        endDate:{$gte: new Date()}
+      })
+      if(categoryOffer){
+        categoryOfferAmount = salePrice * (categoryOffer.discountPercentage / 100)
+      }
       const product = await Product.findById(item.product._id);
       const sizeStock = product.sizes.find(s => s.size === item.size);
       if (!sizeStock || sizeStock.stock < item.quantity) {
@@ -321,7 +354,8 @@ exports.placeOrder = async (req, res) => {
         product: item.product._id,
         quantity: item.quantity,
         size: item.size,
-        price: product.salePrice
+        price: product.salePrice,
+        categoryOffer: categoryOfferAmount.toFixed(2)
       });
       console.log("till here");
       // totalPrice += product.salePrice * product.quantity;
@@ -345,7 +379,7 @@ exports.placeOrder = async (req, res) => {
       AmountPaid:totalToPay,
       OriginalTotal:originalTotal,
       usedCoupons:CouponCode,
-      CategoryOffer: CategoryOffer,
+      CategoryOffer: categoryOfferWhole,
       address: {
         fullName:selectedAddress.fullName,
         addressLine1:selectedAddress.addressLine1,
@@ -359,6 +393,18 @@ exports.placeOrder = async (req, res) => {
       }
     });
     await newOrder.save();
+    const coupon = await Coupon.findOne({code:CouponCode})
+    if(coupon){
+      const user = await User.findById(userId);
+  // Check if the coupon code is already used by the user
+  if (!user.usedCoupons.includes(CouponCode)) {
+    user.usedCoupons.push(CouponCode);
+    await user.save();
+    console.log(`Coupon ${CouponCode} added to user's usedCoupons array`);
+  } else {
+    console.log(`Coupon ${CouponCode} was already used by the user`);
+  }
+    }
     for (const item of products) {
       const product = await Product.findById(item.product);
       const sizeStock = product.sizes.find(s => s.size === item.size);
