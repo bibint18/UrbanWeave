@@ -65,8 +65,11 @@ exports.cancelOrder =async (req,res) => {
     let couponCode = orders.usedCoupons[0]
     let CatOffer = product.categoryOffer 
     let SaleAfterCat = salePrice - CatOffer
+    let couponMinimum =0
     const coupon = await Coupon.findOne({code:couponCode})
-    const couponMinimum = coupon.minimum
+    if(coupon){
+    couponMinimum = coupon.minimum
+    } 
     console.log("Coooo: ",couponMinimum)
     console.log("Catoffer: ",CatOffer)
     console.log("saleaftercat: ",SaleAfterCat)
@@ -85,13 +88,14 @@ exports.cancelOrder =async (req,res) => {
     // log('')
     if(product.ProductStatus =='Processing' || product.ProductStatus =='Shipped'){
       let amountToWallet;
+      
       if(reducedTotal < couponMinimum){
-        amountToWallet = SaleAfterCat + CouponOffer;
+        amountToWallet = SaleAfterCat - CouponOffer;
         orders.CouponDiscount = 0
       }else{
         amountToWallet = SaleAfterCat;
       }
-
+      if(orders.paymentStatus ==='Paid'){
       wallet.balance += amountToWallet;
       wallet.transactions.push({
         amount: amountToWallet,
@@ -99,9 +103,12 @@ exports.cancelOrder =async (req,res) => {
         description: `Wallet credited with ${amountToWallet} rupees for order cancellation.`
       });
       await wallet.save();
+    }
       orders.totalQuantity -= quantity;
       orders.AmountPaid -= amountToWallet;
       orders.totalAmount -= salePrice;
+      orders.CategoryOffer -=CatOffer
+      // product.categoryOffer =0
       product.ProductStatus = 'Cancelled'; 
       await orders.save();
       // await product.save()

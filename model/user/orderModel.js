@@ -18,7 +18,7 @@ const orderSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
       },
-      categoryOffer: { type: Number, required: false },
+      categoryOffer: { type: Number, default:0},
       size: { type: String, required: true }, // Size chosen by user
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, // Price at the time of order,
