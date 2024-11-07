@@ -60,13 +60,17 @@ exports.cancelOrder =async (req,res) => {
       return res.status(404).json({ success: false, message: "Product not found in the order" });
     }
     console.log("products: ",product)
-    const quantity = product.quantity
-    const salePrice = product.price * quantity
-    const couponCode = orders.usedCoupons[0]
+    let quantity = product.quantity
+    let salePrice = product.price * quantity 
+    let couponCode = orders.usedCoupons[0]
+    let CatOffer = product.categoryOffer 
+    let SaleAfterCat = salePrice - CatOffer
     const coupon = await Coupon.findOne({code:couponCode})
     const couponMinimum = coupon.minimum
     console.log("Coooo: ",couponMinimum)
-    let reducedTotal = paid - salePrice
+    console.log("Catoffer: ",CatOffer)
+    console.log("saleaftercat: ",SaleAfterCat)
+    let reducedTotal = paid - SaleAfterCat
     console.log("reduced: ",reducedTotal)
     let wallet = await Wallet.findOne({user:user})
     console.log("wallet: ",wallet)
@@ -78,29 +82,29 @@ exports.cancelOrder =async (req,res) => {
       })
       await wallet.save();
     }
-    
+    // log('')
     if(product.ProductStatus =='Processing' || product.ProductStatus =='Shipped'){
-      // product.ProductStatus =  'Cancelled'
+      let amountToWallet;
       if(reducedTotal < couponMinimum){
-        let amountToWallet = salePrice - CouponOffer
-        console.log("amountTowallet",amountToWallet)
-        wallet.balance += amountToWallet
-        await wallet.save()
-        orders.totalQuantity -= quantity
-        orders.CouponDiscount =0;
-        orders.AmountPaid -= amountToWallet
-        await orders.save();
-    // log('')
+        amountToWallet = SaleAfterCat + CouponOffer;
+        orders.CouponDiscount = 0
+      }else{
+        amountToWallet = SaleAfterCat;
       }
-      
-      else{
-        console.log("can be cancelled")
-        
-    // log('')
-      }
-      
-    // log('')
-      await orders.save()
+
+      wallet.balance += amountToWallet;
+      wallet.transactions.push({
+        amount: amountToWallet,
+        type: 'credit',
+        description: `Wallet credited with ${amountToWallet} rupees for order cancellation.`
+      });
+      await wallet.save();
+      orders.totalQuantity -= quantity;
+      orders.AmountPaid -= amountToWallet;
+      orders.totalAmount -= salePrice;
+      product.ProductStatus = 'Cancelled'; 
+      await orders.save();
+      // await product.save()
       return res.json({success:true,message:"order cancelled succesfully",orderId:id})
     }else{
       return res.json({success:false,message:"cant cancel  the order"})
