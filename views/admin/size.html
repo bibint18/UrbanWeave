@@ -3,71 +3,335 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Form</title>
+  <title>Sales Report Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-    }
-    
-    .product-form {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f2f5fa; /* Light background */
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
 
-    .product-form .d-flex {
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
-    .product-form div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .product-form label {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .product-form input.tiny-box {
-      width: 50px;
-      padding: 5px;
+    .dashboard-title {
       text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      font-size: 32px;
+      margin-bottom: 30px;
+      color: #2c3e50;
+      font-weight: 700;
     }
 
-    .product-form input.tiny-box:focus {
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    .button, .apply-button, .export-button {
+      background-color: #3498db;
+      color: #fff;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .button:hover, .apply-button:hover, .export-button:hover {
+      background-color: #2980b9;
+      transform: scale(1.03);
+    }
+
+    .button:active, .apply-button:active, .export-button:active {
+      transform: scale(0.97);
+    }
+
+    select, .date-input {
+      padding: 10px;
+      border: 1px solid #ccd1d9;
+      border-radius: 8px;
       outline: none;
-      border-color: #007bff;
+      transition: border 0.3s;
+      background-color: #ecf0f1;
+      font-weight: 500;
+      color: #2c3e50;
+      cursor: pointer;
+    }
+
+    select:focus, .date-input:focus {
+      border-color: #3498db;
+    }
+
+    .card-container {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: linear-gradient(135deg, #ffffff, #f8f9fa);
+      flex: 1;
+      min-width: 260px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      font-size: 20px;
+      color: #34495e;
+    }
+
+    .card p {
+      font-size: 26px;
+      color: #3498db;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .chart-container {
+      margin-top: 40px;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-select {
+      display: block;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      outline: none;
+      border: 1px solid #ccd1d9;
+      background-color: #ecf0f1;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .export-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .export-button.pdf {
+      background-color: #e74c3c;
+    }
+
+    .export-button.pdf:hover {
+      background-color: #c0392b;
+    }
+
+    .export-button.excel {
+      background-color: #27ae60;
+    }
+
+    .export-button.excel:hover {
+      background-color: #229954;
+    }
+
+    .export-button:active {
+      transform: scale(0.97);
     }
   </style>
 </head>
 <body>
-  
-  <div class="product-form  mb-3">
-    <div class="d-flex flex-row gap-4 align-item-center">
-      <div>
-        <label class="mr-5" for="size_s">S</label>
-        <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box">
+  <section class="content-main">
+    <div class="content-header">
+      <div class="dashboard-container">
+        <h1 class="dashboard-title">Sales Report Dashboard</h1>
+        <div class="button-group">
+          <button class="button" onclick="fetchReport('daily')">1 Day</button>
+          <button class="button" onclick="fetchReport('weekly')">1 Week</button>
+          <button class="button" onclick="fetchReport('monthly')">1 Month</button>
+          <button class="button" onclick="fetchReport('yearly')">1 Year</button>
+          <select id="reportType" class="select" onchange="handleReportTypeChange()">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+            <option value="custom">Custom Range</option>
+          </select>
+          <input type="date" id="startDate" class="date-input" placeholder="Start Date" disabled>
+          <input type="date" id="endDate" class="date-input" placeholder="End Date" disabled>
+          <button class="apply-button" onclick="fetchCustomReport()">Apply Custom Date</button>
+        </div>
+
+        <div class="card-container">
+          <div class="card">
+            <h3>Total Sales</h3>
+            <p id="totalRevenue">₹0.00</p>
+          </div>
+          <div class="card">
+            <h3>Total Discounts</h3>
+            <p id="totalDiscounts">₹0.00</p>
+          </div>
+          <div class="card">
+            <h3>Coupon Deductions</h3>
+            <p id="totalCouponDeductions">₹0.00</p>
+          </div>
+          <div class="card">
+            <h3>Total Orders</h3>
+            <p id="totalOrders">0</p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <h2>Sales Chart</h2>
+          <select id="chartType" class="chart-select">
+            <option value="bar">Bar Chart</option>
+            <option value="line">Line Chart</option>
+          </select>
+          <canvas id="salesChart"></canvas>
+        </div>
       </div>
-      <div>
-        <label class="mr-5" for="size_m">M</label>
-        <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box">
-      </div>
-      <div>
-        <label class="mr-5" for="size_l">L</label>
-        <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box">
-      </div>
-      <div>
-        <label class="mr-5" for="size_xl">XL</label>
-        <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box">
+      <div class="export-buttons">
+        <button class="export-button pdf">Export PDF</button>
+        <button class="export-button excel">Export Excel</button>
       </div>
     </div>
-  </div>
+  </section>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    async function fetchReport(type) {
+      try {
+        const response = await fetch(`/admin/sales-report?type=${type}`);
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('totalRevenue').textContent = `₹${data.report.totalRevenue.toFixed(2)}`;
+          document.getElementById('totalDiscounts').textContent = `₹${data.report.totalDiscounts.toFixed(2)}`;
+          document.getElementById('totalCouponDeductions').textContent = `₹${data.report.totalCouponDeductions.toFixed(2)}`;
+          document.getElementById('totalOrders').textContent = data.report.totalOrders;
+        } else {
+          alert('Failed to load sales report');
+        }
+      } catch (error) {
+        console.error('Error fetching sales report:', error);
+      }
+    }
+
+    function handleReportTypeChange() {
+      const reportType = document.getElementById('reportType').value;
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+
+      if (reportType === 'custom') {
+        startDateInput.disabled = false;
+        endDateInput.disabled = false;
+      } else {
+        startDateInput.disabled = true;
+        endDateInput.disabled = true;
+      }
+    }
+
+    async function fetchCustomReport() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+
+      if (!startDate || !endDate) {
+        alert('Please select both start and end dates');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/sales-report?type=custom&startDate=${startDate}&endDate=${endDate}`);
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('totalRevenue').textContent = `₹${data.report.totalRevenue.toFixed(2)}`;
+          document.getElementById('totalDiscounts').textContent = `₹${data.report.totalDiscounts.toFixed(2)}`;
+          document.getElementById('totalCouponDeductions').textContent = `₹${data.report.totalCouponDeductions.toFixed(2)}`;
+          document.getElementById('totalOrders').textContent = data.report.totalOrders;
+
+          // Update the chart with the new data
+          updateSalesChart(data.report.salesData);
+        } else {
+          alert('Failed to load custom report');
+        }
+      } catch (error) {
+        console.error('Error fetching custom report:', error);
+      }
+    }
+
+    function updateSalesChart(salesData) {
+      const chartType = document.getElementById('chartType').value;
+      const ctx = document.getElementById('salesChart').getContext('2d');
+
+      // Destroy existing chart if it exists
+      if (window.salesChart) {
+        window.salesChart.destroy();
+      }
+
+      // Create a new chart with the updated data
+      window.salesChart = new Chart(ctx, {
+        type: chartType, // Use either 'bar' or 'line'
+        data: {
+          labels: salesData.labels, // X-axis labels (e.g., days, weeks, months)
+          datasets: [{
+            label: 'Total Sales',
+            data: salesData.sales, // Sales data to plot
+            backgroundColor: chartType === 'bar' ? 'rgba(52, 152, 219, 0.6)' : 'rgba(52, 152, 219, 1)',
+            borderColor: 'rgba(52, 152, 219, 1)',
+            borderWidth: 1,
+            fill: chartType === 'line', // Only fill the line chart
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(tooltipItem) {
+                  return `₹${tooltipItem.raw.toFixed(2)}`; // Format tooltip values
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Time Period',
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Sales Amount (₹)',
+              },
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>
+       
