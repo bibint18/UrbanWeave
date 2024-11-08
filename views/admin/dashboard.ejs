@@ -197,14 +197,14 @@
             <button class="export-button pdf">Export PDF</button>
             <button class="export-button excel">Export Excel</button>
           </div>
-        <div class="chart-container">
-          <h2>Sales Chart</h2>
-          <select id="chartType" class="chart-select">
-            <option value="bar">Bar Chart</option>
-            <option value="line">Line Chart</option>
-          </select>
-          <canvas id="salesChart"></canvas>
-        </div>
+          <div class="chart-container">
+            <h2>Sales Chart</h2>
+            <select id="chartType" class="chart-select">
+              <option value="bar">Bar Chart</option>
+              <option value="line">Line Chart</option>
+            </select>
+            <canvas id="salesChart"></canvas>
+          </div>
       </div>
       
     </div>
@@ -212,6 +212,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    // let salesChart = null
     async function fetchReport(type) {
         
       try {
@@ -223,6 +224,7 @@
           document.getElementById('totalDiscounts').textContent = `₹${data.report.totalDiscounts.toFixed(2)}`;
           document.getElementById('totalCouponDeductions').textContent = `₹${data.report.totalCouponDeductions.toFixed(2)}`;
           document.getElementById('totalOrders').textContent = data.report.totalOrders;
+          updateSalesChart(data.report.salesData);
         } else {
           alert('Failed to load sales report');
         }
@@ -266,7 +268,7 @@
           document.getElementById('totalOrders').textContent = data.report.totalOrders;
 
           // Update the chart with the new data
-        //   updateSalesChart(data.report.salesData);
+          updateSalesChart(data.report.salesData);
         } else {
           alert('Failed to load custom report');
         }
@@ -274,6 +276,65 @@
         console.error('Error fetching custom report:', error);
       }
     }
+
+    function updateSalesChart(salesData) {
+        console.log("updte: ",salesData)
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  const chartType = document.getElementById('chartType').value;  // Get selected chart type
+  console.log('Current salesChart instance:', window.salesChart);
+  // Create or update the chart
+  if (window.salesChart && !(window.salesChart instanceof Chart)) {
+        console.warn('salesChart is not a Chart.js instance. Resetting.');
+        window.salesChart = null;
+    }
+
+    // Destroy the previous chart instance if it exists
+    if (window.salesChart && typeof window.salesChart.destroy === 'function') {
+        window.salesChart.destroy();
+    }
+//   if (window.salesChart) {
+//     window.salesChart.destroy();  // Destroy the previous chart instance if exists
+//   }
+
+  window.salesChart = new Chart(ctx, {
+    type: chartType,  // Line chart or bar chart
+    data: {
+      labels: salesData.labels,  // Dates
+      datasets: [
+        {
+        label: 'Sales Amount',
+        data: salesData.sales,  // Sales values
+        backgroundColor: chartType === 'bar' ? 'rgba(75, 192, 192, 0.2)' : 'transparent',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      },
+      {
+          label: 'Coupon Deductions',
+          data: salesData.couponDeductions,  // Coupon deductions
+          backgroundColor: chartType === 'bar' ? 'rgba(255, 99, 132, 0.2)' : 'transparent',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Offer Amounts',
+          data: salesData.offerAmounts,  // Offer amounts
+          backgroundColor: chartType === 'bar' ? 'rgba(235, 235, 0, 0.2)' : 'transparent',
+          borderColor: 'rgba(235, 0, 0, 1)',
+          borderWidth: 1
+        }
+    ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  console.log('New salesChart instance created:', window.salesChart);
+}
 
     // function updateSalesChart(salesData) {
     //   const chartType = document.getElementById('chartType').value;
