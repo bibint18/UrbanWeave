@@ -164,10 +164,10 @@
           <button class="button" onclick="fetchReport('monthly')">1 Month</button>
           <button class="button" onclick="fetchReport('yearly')">1 Year</button>
           <select id="reportType" class="select" onchange="handleReportTypeChange()">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
+            <option value="choose">Customise Here</option>
+            <!-- <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
+            <option value="yearly">Yearly</option> -->
             <option value="custom">Custom Range</option>
           </select>
           <input type="date" id="startDate" class="date-input" placeholder="Start Date" disabled>
@@ -213,10 +213,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     async function fetchReport(type) {
+        
       try {
         const response = await fetch(`/admin/sales-report?type=${type}`);
         const data = await response.json();
-
+        console.log("data: ",data)
         if (data.success) {
           document.getElementById('totalRevenue').textContent = `₹${data.report.totalRevenue.toFixed(2)}`;
           document.getElementById('totalDiscounts').textContent = `₹${data.report.totalDiscounts.toFixed(2)}`;
@@ -231,7 +232,9 @@
     }
 
     function handleReportTypeChange() {
+        console.log("inside: ")
       const reportType = document.getElementById('reportType').value;
+      console.log(reportType)
       const startDateInput = document.getElementById('startDate');
       const endDateInput = document.getElementById('endDate');
 
@@ -246,13 +249,13 @@
 
     async function fetchCustomReport() {
       const startDate = document.getElementById('startDate').value;
+      console.log(startDate)
       const endDate = document.getElementById('endDate').value;
-
+      console.log(endDate)
       if (!startDate || !endDate) {
         alert('Please select both start and end dates');
         return;
       }
-
       try {
         const response = await fetch(`/admin/sales-report?type=custom&startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
@@ -263,7 +266,7 @@
           document.getElementById('totalOrders').textContent = data.report.totalOrders;
 
           // Update the chart with the new data
-          updateSalesChart(data.report.salesData);
+        //   updateSalesChart(data.report.salesData);
         } else {
           alert('Failed to load custom report');
         }
@@ -272,61 +275,61 @@
       }
     }
 
-    function updateSalesChart(salesData) {
-      const chartType = document.getElementById('chartType').value;
-      const ctx = document.getElementById('salesChart').getContext('2d');
+    // function updateSalesChart(salesData) {
+    //   const chartType = document.getElementById('chartType').value;
+    //   const ctx = document.getElementById('salesChart').getContext('2d');
 
-      // Destroy existing chart if it exists
-      if (window.salesChart) {
-        window.salesChart.destroy();
-      }
+    //   // Destroy existing chart if it exists
+    //   if (window.salesChart) {
+    //     window.salesChart.destroy();
+    //   }
 
-      // Create a new chart with the updated data
-      window.salesChart = new Chart(ctx, {
-        type: chartType, // Use either 'bar' or 'line'
-        data: {
-          labels: salesData.labels, // X-axis labels (e.g., days, weeks, months)
-          datasets: [{
-            label: 'Total Sales',
-            data: salesData.sales, // Sales data to plot
-            backgroundColor: chartType === 'bar' ? 'rgba(52, 152, 219, 0.6)' : 'rgba(52, 152, 219, 1)',
-            borderColor: 'rgba(52, 152, 219, 1)',
-            borderWidth: 1,
-            fill: chartType === 'line', // Only fill the line chart
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            tooltip: {
-              callbacks: {
-                label: function(tooltipItem) {
-                  return `₹${tooltipItem.raw.toFixed(2)}`; // Format tooltip values
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Time Period',
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Sales Amount (₹)',
-              },
-              beginAtZero: true,
-            }
-          }
-        }
-      });
-    }
+    //   // Create a new chart with the updated data
+    //   window.salesChart = new Chart(ctx, {
+    //     type: chartType, // Use either 'bar' or 'line'
+    //     data: {
+    //       labels: salesData.labels, // X-axis labels (e.g., days, weeks, months)
+    //       datasets: [{
+    //         label: 'Total Sales',
+    //         data: salesData.sales, // Sales data to plot
+    //         backgroundColor: chartType === 'bar' ? 'rgba(52, 152, 219, 0.6)' : 'rgba(52, 152, 219, 1)',
+    //         borderColor: 'rgba(52, 152, 219, 1)',
+    //         borderWidth: 1,
+    //         fill: chartType === 'line', // Only fill the line chart
+    //       }]
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       plugins: {
+    //         legend: {
+    //           position: 'top',
+    //         },
+    //         tooltip: {
+    //           callbacks: {
+    //             label: function(tooltipItem) {
+    //               return `₹${tooltipItem.raw.toFixed(2)}`; // Format tooltip values
+    //             }
+    //           }
+    //         }
+    //       },
+    //       scales: {
+    //         x: {
+    //           title: {
+    //             display: true,
+    //             text: 'Time Period',
+    //           }
+    //         },
+    //         y: {
+    //           title: {
+    //             display: true,
+    //             text: 'Sales Amount (₹)',
+    //           },
+    //           beginAtZero: true,
+    //         }
+    //       }
+    //     }
+    //   });
+    // }
   </script>
 <%- include("../../views/partials/admin/footer") %>
 
