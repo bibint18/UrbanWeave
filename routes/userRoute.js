@@ -30,7 +30,10 @@ router.post('/otpSubmit',userRouter.otpSubmit)
 router.post('/resendOtp',userRouter.resend)
 router.post('/userLogin',userRouter.userLogin);
 router.post('/logout',userRouter.logout)
-
+router.get('/forgot-password',userRouter.getForgotpassword)
+router.get('/reset-password/:token',userRouter.getResetpassword)
+router.post('/forgot-password',userRouter.forgot)
+router.post('/reset-password/:token',userRouter.Reset)
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
 
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userSignup'}),(req,res) =>{
