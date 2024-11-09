@@ -131,13 +131,6 @@ let total = Order.find({"products.Productstatus":'Processing'}).count()
     console.log(error);
     return res.status(400).json({success:false,message:error})
   }
-  let TotalCancel = 0;
-  let TotalDelivered = 0;
-  let TotalReturned = 0;
-  let TotalShipped = 0;
-  let TotalProcessing = 0;
-  
-  
 }
 
 exports.ChangePayStatus = async(req,res) => {
@@ -155,6 +148,9 @@ exports.ChangePayStatus = async(req,res) => {
         success: false,
         message: "Cannot change the status from 'Paid' to 'Failed' or 'Pending'"
       });
+    }
+    if(order.paymentStatus ==="Refunded"){
+      return res.status(400).json({success:false,message:"Cannot change the status"})
     }
     order.paymentStatus = newPaymentStatus;
     await order.save();

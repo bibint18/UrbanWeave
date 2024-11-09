@@ -459,6 +459,21 @@ async function UpdatePayment(){
         const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
         paymentOptions.forEach(option => {
           option.addEventListener('change', function () {
+            const selectedAddress = document.querySelector('input[name="address"]:checked');
+            if (!selectedAddress) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Please select an address',
+              timer: 1500,
+              showConfirmButton: false
+            })
+            .then(() => {
+              location.reload()
+            })
+            
+            return; 
+          }
             document.getElementById('rzp-button1').style.display = this.value === 'ONLINE PAYMENT (RAZORPAY)' ? 'block' : 'none';
           });
         });
