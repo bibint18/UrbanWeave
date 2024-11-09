@@ -13,14 +13,20 @@ const razorpay = new Razorpay({
 
 exports.createOrder = async (req, res) => {
   try {
-    const { amount, currency } = req.body;
+    console.log("inside create");
+    
+    let { amount, currency } = req.body;
+    console.log(amount)
+    amount = Math.round(Number(amount)); // Convert and round to ensure integer value
+    
+    console.log(typeof amount);
     const options = {
       amount: amount * 100 , // 
       currency: currency || 'INR',
       receipt: `receipt_${Date.now()}`, 
       payment_capture: 1 
     };
-    const order = await razorpay.orders.create(options);
+    let order = await razorpay.orders.create(options);
     res.json({ orderId: order.id ,amount:amount,key: process.env.YOUR_KEY_ID });
     console.log("passed")
   } catch (error) {

@@ -59,6 +59,7 @@ router.get('/product/search',protectAdmin,ProduRoute.SearchProduct)
 router.get('/orders',protectAdmin,OrderRoute.getOrderPage)
 router.get('/orders/details/:id',protectAdmin,OrderRoute.getOrderDetails)
 router.post('/orders/productStatus',protectAdmin,OrderRoute.ChangeOrder)
+router.post('/orders/paymentStatus',protectAdmin,OrderRoute.ChangePayStatus)
 router.post('/orders/cancelProduct',protectAdmin,OrderRoute.CancelProduct)
 //coupons
 router.get('/coupons',protectAdmin,CouponRoute.getCoupons)

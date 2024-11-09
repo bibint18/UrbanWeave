@@ -3,7 +3,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
@@ -111,7 +111,7 @@
       <div class="row">
 
         <div class="col-lg-8">
-          
+
           <!-- <select class="custom-select me-sm-2 mb-3 mb-sm-0 ">
             <option>Change Status</option>
             <option value="processing">Processing</option>
@@ -119,13 +119,13 @@
             <option value="delivered">Delivered</option>
             <option value="returned">Returned</option>
           </select> -->
-          
+
 
           <!-- Product Items -->
           <% orders.products.forEach((productItem)=> { %>
             <div class="product-item d-flex justify-content-between align-items-center flex-column flex-sm-row">
               <div class="d-flex align-items-center flex-column flex-sm-row">
-                
+
                 <img src="/uploads/re-image/<%= productItem.product.productImage[0] %>" class="me-sm-3 mb-3 mb-sm-0"
                   alt="Product Image">
                 <div>
@@ -133,32 +133,52 @@
                   <p class="mb-0">
                     <%= productItem.product.ProductName %>
                   </p>
+                  <label>Payment: </label>
+                  <span style="color: green;">
+                    <%= orders.paymentStatus %>
+                  </span>
 
                 </div>
                 <div class="ms-2">
-               
 
-                <select class="custom-select me-sm-2 mb-3 mb-sm-0 status-dropdown" data-product-id="<%= productItem.product._id %>" data-order-id="<%= orders._id %>" data-size="<%=productItem.size%>">
-                  <option value="Processing" <%= productItem.ProductStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
-                  <option value="Shipped" <%= productItem.ProductStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                  <option value="Delivered" <%= productItem.ProductStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                  <option value="Cancelled" <%= productItem.ProductStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                  <option value="Returned" <%= productItem.ProductStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
-                </select>
-                
-              </div>
+
+                  <select class="custom-select me-sm-2 mb-3 mb-sm-0 status-dropdown"
+                    data-product-id="<%= productItem.product._id %>" data-order-id="<%= orders._id %>"
+                    data-size="<%=productItem.size%>">
+                    <option value="Processing" <%=productItem.ProductStatus==='Processing' ? 'selected' : '' %>
+                      >Processing</option>
+                    <option value="Shipped" <%=productItem.ProductStatus==='Shipped' ? 'selected' : '' %>>Shipped
+                    </option>
+                    <option value="Delivered" <%=productItem.ProductStatus==='Delivered' ? 'selected' : '' %>>Delivered
+                    </option>
+                    <option value="Cancelled" <%=productItem.ProductStatus==='Cancelled' ? 'selected' : '' %>>Cancelled
+                    </option>
+                    <option value="Returned" <%=productItem.ProductStatus==='Returned' ? 'selected' : '' %>>Returned
+                    </option>
+                  </select>
+
+                </div>
               </div>
               <div class="d-flex align-items-center flex-column flex-sm-row">
                 <div>
-                <p class="mb-0 me-sm-3"><strong>Quantity:</strong> <%=productItem.quantity%></p>
-                <p class="mb-0 me-sm-3"><strong>Price:</strong> $ <%=productItem.price%></p>
-                <p class="mb-0 me-sm-3"><strong>Size:</strong>  <%=productItem.size%></p>
+                  <p class="mb-0 me-sm-3"><strong>Quantity:</strong>
+                    <%=productItem.quantity%>
+                  </p>
+                  <p class="mb-0 me-sm-3"><strong>Price:</strong> $ <%=productItem.price%>
+                  </p>
+                  <p class="mb-0 me-sm-3"><strong>Size:</strong>
+                    <%=productItem.size%>
+                  </p>
                 </div>
-                <div style="background-color: rgb(197, 220, 240); color: black;" class="custom-select me-sm-2 mb-3 mb-sm-0">
-                  <label >Status:</label>
-                  <span ><%=productItem.ProductStatus%>%></span>
+                <div style="background-color: rgb(197, 220, 240); color: black;"
+                  class="custom-select me-sm-2 mb-3 mb-sm-0">
+                  <label>Status:</label>
+                  <span>
+                    <%=productItem.ProductStatus%>%>
+                  </span>
                 </div>
-                <button class="btn btn-cancel btn-sm" onclick="CancelOrder('<%=orders._id%>','<%=productItem.product._id%>','<%=productItem.size%>')">Cancel</button>
+                <button class="btn btn-cancel btn-sm"
+                  onclick="CancelOrder('<%=orders._id%>','<%=productItem.product._id%>','<%=productItem.size%>')">Cancel</button>
               </div>
             </div>
             <% }) %>
@@ -169,10 +189,12 @@
               <!-- Summary -->
               <div class="summary-item mt-4">
                 <h5>Cart Totals</h5>
-                <p><strong>Subtotal:</strong> $ <%=orders.totalAmount%></p>
+                <p><strong>Subtotal:</strong> $ <%=orders.totalAmount%>
+                </p>
                 <p><strong>Shipping:</strong> Free</p>
                 <!-- <p><strong>Tax (GST):</strong> $5.00</p> -->
-                <p><strong>Grand Total:</strong>$ <%=orders.totalAmount%></p>
+                <p><strong>Grand Total:</strong>$ <%=orders.totalAmount%>
+                </p>
               </div>
         </div>
 
@@ -180,9 +202,14 @@
         <div class="col-lg-4">
           <div class="summary-item">
             <h5>Summary</h5>
-            <p><strong>Order ID:</strong> <%= orders.oid%></p>
-            <p><strong>Date:</strong><%= new Date(orders.orderDate).toLocaleDateString('en-GB')%></p>
-            <p class="total-price">Total: $<%= orders.totalAmount%></p>
+            <p><strong>Order ID:</strong>
+              <%= orders.oid%>
+            </p>
+            <p><strong>Date:</strong>
+              <%= new Date(orders.orderDate).toLocaleDateString('en-GB')%>
+            </p>
+            <p class="total-price">Total: $<%= orders.totalAmount%>
+            </p>
           </div>
 
           <!-- <div class="summary-item mt-4">
@@ -192,13 +219,26 @@
 
           <div class="summary-item mt-4">
             <h5>Payment Method</h5>
-            <p><%=  orders.paymentMethod%></p>
-
+            <p>
+              <%= orders.PaymentMethod%>
+            </p>
+            <label>Payment status: </label>
+            <span style="color: green;">
+              <%= orders.paymentStatus %>
+            </span>
+            <select class="custom-select payment-status-dropdown mt-2" data-order-id="<%= orders._id %>">
+              <option value="Pending" <%=orders.paymentStatus==='Pending' ? 'selected' : '' %>>Pending</option>
+              <option value="Paid" <%=orders.paymentStatus==='Paid' ? 'selected' : '' %>>Paid</option>
+              <option value="Failed" <%=orders.paymentStatus==='Failed' ? 'selected' : '' %>>Failed</option>
+              <option value="Refunded" <%=orders.paymentStatus==='Refunded' ? 'selected' : '' %>>Refunded</option>
+            </select>
           </div>
 
           <div class="summary-item mt-4">
             <h5>Expected Date Of Delivery</h5>
-            <p><strong><%= new Date().toLocaleDateString('en-GB')%></strong></p>
+            <p><strong>
+                <%= new Date().toLocaleDateString('en-GB')%>
+              </strong></p>
             <button class="btn btn-dark btn-sm">Track Order</button>
           </div>
         </div>
@@ -208,130 +248,179 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-  console.log('inside');
-
-  dropdown.addEventListener('change', function () {
-    console.log('again');
-
-    const productId = this.getAttribute('data-product-id');
-    const orderId = this.getAttribute('data-order-id');
-    const size = this.getAttribute('data-size')
-    const newStatus = this.value;
-    
-    console.log("from the admin: ", productId, orderId, newStatus,size);
-
-    fetch(`/admin/orders/productStatus`, {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ productId: productId, newStatus: newStatus ,orderId:orderId,size:size}),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+      document.querySelectorAll('.payment-status-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('change', function () {
+          const orderId = this.getAttribute('data-order-id');
+          const newPaymentStatus = this.value;
+          fetch(`/admin/orders/paymentStatus`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId: orderId, newPaymentStatus: newPaymentStatus }),
+          })
+            .then(response => {
+             
+              return response.json();
+            })
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Payment status changed',
+                  text: 'Payment status updated successfully',
+                  timer: 1000,
+                  showConfirmButton: false
+                })
+                  .then(() => {
+                    location.reload();
+                  });
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: data.message,
+                  timer: 1000,
+                  showConfirmButton: false
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error changing the payment status',
+                timer: 1000,
+                showConfirmButton: false
+              });
+            });
+        })
       })
-      .then(data => {
-        if (data.success) {
-          Swal.fire({
-            icon:'success',
-            title:'status changed',
-            text: 'status changed successfully',
-            timer:1000,
-            showConfirmButton:false
+
+      document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+        console.log('inside');
+
+        dropdown.addEventListener('change', function () {
+          console.log('again');
+
+          const productId = this.getAttribute('data-product-id');
+          const orderId = this.getAttribute('data-order-id');
+          const size = this.getAttribute('data-size')
+          const newStatus = this.value;
+
+          console.log("from the admin: ", productId, orderId, newStatus, size);
+
+          fetch(`/admin/orders/productStatus`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: productId, newStatus: newStatus, orderId: orderId, size: size }),
           })
-          .then(() => {
-            location.reload()
-          })
-        } else {
-          Swal.fire({
-            icon:'error',
-            title:'Errorrr',
-            text: data.message,
-            timer:1000,
-            showConfirmButton:false
-          })
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon:'success',
-            title:'status changed',
-            text: 'Error changing the status',
-            timer:1000,
-            showConfirmButton:false
-          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.success) {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'status changed',
+                  text: data.message,
+                  timer: 1000,
+                  showConfirmButton: false
+                })
+                  .then(() => {
+                    location.reload()
+                  })
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Errorrr',
+                  text: data.message,
+                  timer: 1000,
+                  showConfirmButton: false
+                })
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something Went Wrong!',
+                timer: 1000,
+                showConfirmButton: false
+              })
+            });
+        });
       });
-  });
-});
 
-</script>
-
-<script>
-function CancelOrder(orderId,productId,Size){
-  const OrderID  = orderId;
-  const ProductID = productId
-  const ProductSize = Size
-  Swal.fire({
-  title: 'Are you sure?',
-  text: "You won't be able to revert this!",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Yes, delete it!'
-})
-.then((result) => {
-  if(result.isConfirmed){
-   console.log("van: ",OrderID,ProductID,ProductSize);
-    fetch('/admin/orders/cancelProduct',{
-      method:"post",
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify({OrderID:OrderID,ProductID:ProductID,ProductSize:ProductSize})
-    })
-    .then(response => response.json())
-    .then((data) => {
-      if(data.success){
-        Swal.fire({
-          icon:'success',
-          title:'product cancelled',
-          text:'Product cancelled succesfully',
-          timer:1500,
-          showConfirmButton:false
-        })
-        .then(() => {
-          location.reload()
-        })
-      }else{
-        Swal.fire({
-          icon:'error',
-          title:"can't cancel ",
-          text:data.message,
-          timer:1500,
-          showConfirmButton:false
-        })
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-      Swal.fire({
-          icon:'error',
-          title:"can't cancel ",
-          text:"something went wrong!",
-          timer:1500,
-          showConfirmButton:false
-        })
-    })
-  }
-})
-}
     </script>
-  
+
+    <script>
+      function CancelOrder(orderId, productId, Size) {
+        const OrderID = orderId;
+        const ProductID = productId
+        const ProductSize = Size
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        })
+          .then((result) => {
+            if (result.isConfirmed) {
+              console.log("van: ", OrderID, ProductID, ProductSize);
+              fetch('/admin/orders/cancelProduct', {
+                method: "post",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ OrderID: OrderID, ProductID: ProductID, ProductSize: ProductSize })
+              })
+                .then(response => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    Swal.fire({
+                      icon: 'success',
+                      title: 'product cancelled',
+                      text: 'Product cancelled succesfully',
+                      timer: 1500,
+                      showConfirmButton: false
+                    })
+                      .then(() => {
+                        location.reload()
+                      })
+                  } else {
+                    Swal.fire({
+                      icon: 'error',
+                      title: "can't cancel ",
+                      text: data.message,
+                      timer: 1500,
+                      showConfirmButton: false
+                    })
+                  }
+                })
+                .catch((error) => {
+                  console.log(error)
+                  Swal.fire({
+                    icon: 'error',
+                    title: "can't cancel ",
+                    text: "something went wrong!",
+                    timer: 1500,
+                    showConfirmButton: false
+                  })
+                })
+            }
+          })
+      }
+    </script>
+
     <%-include('../../views/partials/admin/footer')%>

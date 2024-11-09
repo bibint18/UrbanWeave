@@ -130,3 +130,28 @@ let total = Order.find({"products.Productstatus":'Processing'}).count()
   
   
 }
+
+exports.ChangePayStatus = async(req,res) => {
+  try {
+    console.log("inside pay");
+    const { orderId, newPaymentStatus } = req.body;
+    const order = await Order.findById(orderId);
+    console.log(order)
+    if(!order){
+      return res.status(404).json({ success: false, message: 'Order not found'})
+    }
+   
+    if (order.paymentStatus === "Paid" && (newPaymentStatus === "Failed" || newPaymentStatus === "Pending")) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot change the status from 'Paid' to 'Failed' or 'Pending'"
+      });
+    }
+    order.paymentStatus = newPaymentStatus;
+    await order.save();
+    res.status(200).json({ success: true, message: "Payment status updated successfully"})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({success:false,message:"Something went wrong!"})
+  }
+}

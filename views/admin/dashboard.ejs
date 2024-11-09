@@ -211,6 +211,9 @@
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
   <script>
     // let salesChart = null
     async function fetchReport(type) {
@@ -336,61 +339,48 @@
   console.log('New salesChart instance created:', window.salesChart);
 }
 
-    // function updateSalesChart(salesData) {
-    //   const chartType = document.getElementById('chartType').value;
-    //   const ctx = document.getElementById('salesChart').getContext('2d');
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
-    //   // Destroy existing chart if it exists
-    //   if (window.salesChart) {
-    //     window.salesChart.destroy();
-    //   }
+  // Add title
+  doc.setFontSize(18);
+  doc.text('Sales Report', 14, 20);
 
-    //   // Create a new chart with the updated data
-    //   window.salesChart = new Chart(ctx, {
-    //     type: chartType, // Use either 'bar' or 'line'
-    //     data: {
-    //       labels: salesData.labels, // X-axis labels (e.g., days, weeks, months)
-    //       datasets: [{
-    //         label: 'Total Sales',
-    //         data: salesData.sales, // Sales data to plot
-    //         backgroundColor: chartType === 'bar' ? 'rgba(52, 152, 219, 0.6)' : 'rgba(52, 152, 219, 1)',
-    //         borderColor: 'rgba(52, 152, 219, 1)',
-    //         borderWidth: 1,
-    //         fill: chartType === 'line', // Only fill the line chart
-    //       }]
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       plugins: {
-    //         legend: {
-    //           position: 'top',
-    //         },
-    //         tooltip: {
-    //           callbacks: {
-    //             label: function(tooltipItem) {
-    //               return `₹${tooltipItem.raw.toFixed(2)}`; // Format tooltip values
-    //             }
-    //           }
-    //         }
-    //       },
-    //       scales: {
-    //         x: {
-    //           title: {
-    //             display: true,
-    //             text: 'Time Period',
-    //           }
-    //         },
-    //         y: {
-    //           title: {
-    //             display: true,
-    //             text: 'Sales Amount (₹)',
-    //           },
-    //           beginAtZero: true,
-    //         }
-    //       }
-    //     }
-    //   });
-    // }
+  // Add content
+  doc.setFontSize(12);
+  doc.text(`Total Revenue: ₹${document.getElementById('totalRevenue').textContent}`, 14, 40);
+  doc.text(`Total Discounts: ₹${document.getElementById('totalDiscounts').textContent}`, 14, 50);
+  doc.text(`Coupon Deductions: ₹${document.getElementById('totalCouponDeductions').textContent}`, 14, 60);
+  doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent}`, 14, 70);
+
+  // Save the PDF
+  doc.save('sales_report.pdf');
+}
+
+// Add this function call to your "Export PDF" button's click event.
+document.querySelector('.export-button.pdf').addEventListener('click', exportPDF);
+
+function exportExcel() {
+  const data = [
+    ['Metric', 'Value'],
+    ['Total Revenue', document.getElementById('totalRevenue').textContent],
+    ['Total Discounts', document.getElementById('totalDiscounts').textContent],
+    ['Coupon Deductions', document.getElementById('totalCouponDeductions').textContent],
+    ['Total Orders', document.getElementById('totalOrders').textContent]
+  ];
+
+  // Convert the data to a worksheet
+  const worksheet = XLSX.utils.aoa_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
+
+  // Export the Excel file
+  XLSX.writeFile(workbook, 'sales_report.xlsx');
+}
+
+// Add this function call to your "Export Excel" button's click event.
+document.querySelector('.export-button.excel').addEventListener('click', exportExcel);
   </script>
 <%- include("../../views/partials/admin/footer") %>
 
