@@ -70,6 +70,15 @@ exports.ChangeOrder = async (req,res) => {
   }
   const product = order.products.find(p => p.product.toString() === productId && p.size ===size);
   if (product) {
+    if(product.ProductStatus ==='Cancelled' ||  product.ProductStatus ==='Returned'){
+      return res.status(400).json({success:false,message:"Cant Change status of this product!"})
+    }
+    if(product.ProductStatus ==='Delivered' && (newStatus ==='Processing' || newStatus ==='Shipped')){
+      return res.status(400).json({success:false,message:"Cant Change status of this product"})
+    }
+    if(product.ProductStatus ==='Shipped' && (newStatus ==='Processing')){
+      return res.status(400).json({success:false,message:"Cannot change back to processing!"})
+    }
     product.ProductStatus = newStatus;
 
     // If all products are cancelled, cancel the whole order
