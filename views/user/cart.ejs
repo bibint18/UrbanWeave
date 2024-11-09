@@ -45,7 +45,7 @@
                 <td><a href="#" class="cp_title"><%= item.product.ProductName%></a></td>
                 <td>										
                   <div class="cp_quntty">																			
-                    <input name="quantity" value="<%= item.quantity%>" size="2" type="number" min="1" max="5">	
+                    <input name="quantity" class="quantity-input" value="<%= item.quantity%>" size="2" type="number" min="1" max="5" data-cart-id="<%= item._id%>" data-product-id="<%= item.product._id%>" data-size="<%= item.size%>">	
                     <% if (item.quantity > item.product.sizes.find(s => s.size === item.size).stock) { %>
                       <p style="color:red;">Out of Stock</p>
                     <% } %>											
@@ -137,6 +137,55 @@
   </div>
 </div>
 <script>
+  
+  document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('change',function(){
+      const newQuantity = parseInt(this.value,10);
+      const cartId = this.dataset.cartId
+      const productId = this.dataset.productId
+      const size = this.dataset.size
+      if (newQuantity <= 0 || isNaN(newQuantity)) {
+        Swal.fire({
+          icon:'error',
+          title:'Invalid quantity',
+          text:'Please enter a valid quantity',
+          timer:1500,
+          showConfirmButton:false
+        })
+      return;
+    }
+    console.log(newQuantity,cartId,productId,size)
+    fetch(`/cart/update-quantity`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cartId, productId, size, newQuantity }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload(); // Reload to update totals and other values
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: data.message,
+          timer:1500,
+          showConfirmButton:false
+        })
+        .then(() => {
+          location.reload();
+        })
+      }
+    })
+    .catch(err => {
+      console.error('Error:', err);
+      alert('Error updating quantity');
+    });
+    })
+  })
+
   function removeItem(cartItemId){
     Swal.fire({
   title: 'Are you sure?',

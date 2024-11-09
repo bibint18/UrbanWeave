@@ -6,12 +6,6 @@ const Coupon = require('../model/admin/CouponModel')
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
 const{getNextOrderId} = require('../utils/orderUtils')
 
-// Function to get the next unique order ID
-
-
-
-
-
 exports.getCart = async (req, res) => {
   try {
     const user = req.user
@@ -122,6 +116,38 @@ exports.AddCart = async (req, res) => {
     return res.status(400).json({ success: false, message: "error" });
   }
 };
+
+
+exports.UpdateQuantity = async(req,res) => {
+  try {
+    const { cartId, productId, size, newQuantity } = req.body;
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const sizeStock = product.sizes.find(s => s.size === size);
+    if (!sizeStock || newQuantity > sizeStock.stock) {
+      return res.status(400).json({ success: false, message: 'Not enough stock available' });
+    }
+    if (newQuantity > 5) {
+      return res.status(400).json({ success: false, message: 'Maximum quantity is 5' });
+    }
+
+    let cartItem = await Cart.findById(cartId);
+    if (!cartItem) {
+      return res.status(404).json({ success: false, message: 'Cart item not found' });
+    }
+
+    cartItem.quantity = newQuantity;
+    await cartItem.save();
+
+    res.status(200).json({ success: true, message: 'Quantity updated' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+}
 
 exports.deleteCart = async (req, res) => {
   try {
