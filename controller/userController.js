@@ -302,6 +302,13 @@ exports.Reset = async (req, res) => {
   if(!newPassword || newPassword.trim()===''){
     return res.status(400).json({success:false,message:'Password should not be empty'});
   }
+  if(!newPassword.length>=8){
+    return res.status(400).json({success:false,message:'Password should be at least 8'})
+  }
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
+  if(!passwordRegex.test(newPassword)){
+    return res.status(400).json({success:false,message:"Password should contain An uppercase ,a lowercase,a number and special characchter"})
+  }
   if (!user) {
     return res.status(400).json({success:false,message:'Invalid or expired token.'});
   }
