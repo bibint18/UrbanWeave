@@ -279,6 +279,7 @@ exports.getResetpassword = async (req, res) => {
     passwordResetToken: token,
     passwordResetExpiry: { $gt: Date.now() } 
   });
+  console.log("backuser: ",user)
   if (!user) {
     return res.status(400).json({success:false,message:'Invalid or expired token.'});
   }
@@ -292,15 +293,12 @@ exports.getResetpassword = async (req, res) => {
 
 exports.Reset = async (req, res) => {
   try{
-  console.log("inside reset")
-  const { token } = req.params;
+  let  token  = decodeURIComponent(req.params.token.trim());
   const { newPassword } = req.body;
-  console.log("token: ",token,newPassword)
   const user = await User.findOne({
     passwordResetToken: token,
-    passwordResetExpiry: { $gt: Date.now() }
+    passwordResetExpiry: { $gt: Date.now() } 
   });
-  console.log(user)
   if(!newPassword || newPassword.trim()===''){
     return res.status(400).json({success:false,message:'Password should not be empty'});
   }

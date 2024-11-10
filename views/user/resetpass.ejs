@@ -128,7 +128,7 @@ label > input:focus + span {
     document.getElementById('reset').addEventListener('submit',function(event){
         event.preventDefault();
         let newPassword = document.getElementById('newPassword').value
-        fetch(`/reset-password/:${token}`,{
+        fetch(`/reset-password/${token}`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
