@@ -1,4 +1,5 @@
 const Order = require("../model/user/orderModel");
+const User =require('../model/user/userModel')
 const moment = require("moment");
 
 exports.fetchReport = async (req, res) => {
@@ -40,6 +41,7 @@ exports.fetchReport = async (req, res) => {
     let totalDiscounts = 0;
     let totalCouponDeductions = 0;
     let totalOrders = orders.length;
+    let detailedOrders =[];
     console.log(totalOrders);
     const salesData = {
       labels: [],
@@ -51,7 +53,15 @@ exports.fetchReport = async (req, res) => {
       totalRevenue += order.AmountPaid;
       totalDiscounts += order.CategoryOffer;
       totalCouponDeductions += order.CouponDiscount;
-
+      detailedOrders.push({
+        orderId: order._id,
+        user: order.user.email ,
+        amountPaid: order.AmountPaid,
+        couponDeduction: order.CouponDiscount || 0,
+        categoryOffer: order.CategoryOffer || 0,
+        createdAt: moment(order.createdAt).format("YYYY-MM-DD"),
+      });
+      console.log("detailedOrders: ",detailedOrders)
       const period = moment(order.createdAt).format("YYYY-MM-DD");
       if (!salesData.labels.includes(period)) {
         salesData.labels.push(period);
@@ -74,6 +84,7 @@ exports.fetchReport = async (req, res) => {
         totalOrders,
         salesData,
       },
+      detailedOrders
     });
   } catch (error) {
     console.log(error);

@@ -8,7 +8,12 @@
       padding: 0;
       color: #333;
     }
-
+    .detailed-order {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
     .dashboard-container {
       max-width: 1200px;
       margin: 40px auto;
@@ -205,6 +210,21 @@
             </select>
             <canvas id="salesChart"></canvas>
           </div>
+
+          <div class="detailed-orders-container" style="display: none;"></div>
+
+          <!-- <div class="detailed-orders-container">
+            <% detailedOrders.forEach((order) => { %>
+              <div class="detailed-order">
+                <p class="order-id"><%= order.orderId %></p>
+                <p class="order-user"><%= order.user %></p>
+                <p class="order-amountPaid">₹<%= order.amountPaid %></p>
+                <p class="order-couponDeduction">₹<%= order.couponDeduction %></p>
+                <p class="order-categoryOffer">₹<%= order.categoryOffer %></p>
+                <p class="order-createdAt"><%= order.createdAt %></p>
+              </div>
+            <% }); %>
+          </div> -->
       </div>
       
     </div>
@@ -227,6 +247,28 @@
           document.getElementById('totalDiscounts').textContent = `₹${data.report.totalDiscounts.toFixed(2)}`;
           document.getElementById('totalCouponDeductions').textContent = `₹${data.report.totalCouponDeductions.toFixed(2)}`;
           document.getElementById('totalOrders').textContent = data.report.totalOrders;
+
+          const detailedOrdersContainer = document.querySelector('.detailed-orders-container');
+      detailedOrdersContainer.innerHTML = ''; // Clear previous content
+
+      data.detailedOrders.forEach((order) => {
+        const orderDiv = document.createElement('div');
+        orderDiv.classList.add('detailed-order');
+
+        orderDiv.innerHTML = `
+          <p class="order-id">Order ID: ${order.orderId}</p>
+          <p class="order-user">User: ${order.user}</p>
+          <p class="order-amountPaid">Amount Paid: ₹${order.amountPaid}</p>
+          <p class="order-couponDeduction">Coupon Deduction: ₹${order.couponDeduction}</p>
+          <p class="order-categoryOffer">Category Offer: ₹${order.categoryOffer}</p>
+          <p class="order-createdAt">Created At: ${new Date(order.createdAt).toLocaleDateString()}</p>
+        `;
+
+        detailedOrdersContainer.appendChild(orderDiv);
+      });
+
+      // Make the detailed orders container visible (optional)
+      detailedOrdersContainer.style.display = 'block';
           updateSalesChart(data.report.salesData);
         } else {
           alert('Failed to load sales report');
@@ -342,7 +384,7 @@
 function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
+  const pageHeight = doc.internal.pageSize.height;
   // Add title
   doc.setFontSize(18);
   doc.text('Sales Report', 14, 20);
@@ -353,7 +395,39 @@ function exportPDF() {
   doc.text(`Total Discounts: ₹${document.getElementById('totalDiscounts').textContent}`, 14, 50);
   doc.text(`Coupon Deductions: ₹${document.getElementById('totalCouponDeductions').textContent}`, 14, 60);
   doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent}`, 14, 70);
+  doc.text('Detailed Orders:', 14, 90);
+  let yPosition = 100; // Start position for detailed orders
 
+  // Retrieve and include each detailed order
+  const detailedOrders = document.querySelectorAll('.detailed-order'); // Use a class or container to hold each order's data
+  detailedOrders.forEach((order, index) => {
+    if (yPosition > pageHeight - 30) { // Check if the current yPosition exceeds page height - margin
+      doc.addPage(); // Add a new page
+      yPosition = 20; // Reset yPosition for new page
+    }
+    const orderId = order.querySelector('.order-id').textContent;
+    const user = order.querySelector('.order-user').textContent;
+    const amountPaid = order.querySelector('.order-amountPaid').textContent;
+    const couponDeduction = order.querySelector('.order-couponDeduction').textContent;
+    const categoryOffer = order.querySelector('.order-categoryOffer').textContent;
+    const createdAt = order.querySelector('.order-createdAt').textContent;
+
+    // Print the detailed order information
+    doc.text(`Order ${index + 1}:`, 14, yPosition);
+    yPosition += 10;
+    doc.text(`- Order ID: ${orderId}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`- User: ${user}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`- Amount Paid: ₹${amountPaid}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`- Coupon Deduction: ₹${couponDeduction}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`- Category Offer: ₹${categoryOffer}`, 20, yPosition);
+    yPosition += 10;
+    doc.text(`- Created At: ${createdAt}`, 20, yPosition);
+    yPosition += 20; // Add space between orders
+  });
   // Save the PDF
   doc.save('sales_report.pdf');
 }
@@ -369,6 +443,18 @@ function exportExcel() {
     ['Coupon Deductions', document.getElementById('totalCouponDeductions').textContent],
     ['Total Orders', document.getElementById('totalOrders').textContent]
   ];
+  const detailedOrders = document.querySelectorAll('.detailed-order');
+  console.log("detailedOrders: ",detailedOrders)
+  detailedOrders.forEach(order => {
+    const orderId = order.querySelector('.order-id').textContent;
+    const user = order.querySelector('.order-user').textContent;
+    const amountPaid = order.querySelector('.order-amountPaid').textContent;
+    const couponDeduction = order.querySelector('.order-couponDeduction').textContent;
+    const categoryOffer = order.querySelector('.order-categoryOffer').textContent;
+    const createdAt = order.querySelector('.order-createdAt').textContent;
+
+    data.push([orderId, user, amountPaid, couponDeduction, categoryOffer, createdAt]);
+  });
 
   // Convert the data to a worksheet
   const worksheet = XLSX.utils.aoa_to_sheet(data);
