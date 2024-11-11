@@ -123,6 +123,9 @@
     form label {
       color: black;
     }
+    label{
+      color:black
+    }
 
     /* Responsive styling */
     @media (max-width: 768px) {
@@ -207,10 +210,53 @@
             <td><span class="status-active"><%= coupon.status %></span></td>
             <td class="actions">
               <i class="fas fa-eye view"></i>
-              <i class="fas fa-edit edit"></i>
+              <i class="fas fa-edit edit" data-bs-toggle="modal" data-bs-target="#editCouponModal<%= coupon._id %>"></i>
               <i class="fas fa-trash-alt delete" onclick="DeleteCoupon('<%=coupon._id%>')"> </i>
             </td>
           </tr>
+          <div class="modal fade" id="editCouponModal<%= coupon._id %>" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form method="" action="">
+                    <div class="mb-3">
+                      <label for="couponCode<%= coupon._id %>" class="form-label">Coupon Code</label>
+                      <input type="text" class="form-control" id="couponCode<%= coupon._id %>" name="couponCode" value="<%= coupon.code %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="couponDiscount<%= coupon._id %>" class="form-label">Discount</label>
+                      <input type="number" class="form-control" id="couponDiscount<%= coupon._id %>" name="couponDiscount" value="<%= coupon.discount %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="startDate<%= coupon._id %>" class="form-label">Start Date</label>
+                      <input type="date" class="form-control" id="startDate<%= coupon._id %>" name="startDate" value="<%= new Date(coupon.startDate).toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="endDate<%= coupon._id %>" class="form-label">End Date</label>
+                      <input type="date" class="form-control" id="endDate<%= coupon._id %>" name="endDate" value="<%= new Date(coupon.endDate).toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="minimum<%= coupon._id %>" class="form-label">Minimum Purchase</label>
+                      <input type="text" class="form-control" id="minimum<%= coupon._id %>" name="minimum" value="<%= coupon.minimum %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="maximum<%= coupon._id %>" class="form-label">Maximum Purchase</label>
+                      <input type="text" class="form-control" id="maximum<%= coupon._id %>" name="maximum" value="<%= coupon.maximum %>">
+                    </div>
+                    <div class="mb-3">
+                      <label for="Maxdiscount<%= coupon._id %>" class="form-label">Maximum Discount</label>
+                      <input type="text" class="form-control" id="Maxdiscount<%= coupon._id %>" name="Maxdiscount" value="<%= coupon.maximumDiscount %>">
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="submitCouponForm('<%= coupon._id %>',event)">Save Changes</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
           <% }) %>
           <!-- Repeat similar <tr> for other products -->
         </tbody>
@@ -275,11 +321,54 @@
         </div>
       </div>
     </div>
+    <!--edit-->
+    
+
 
     <script>
-
-
-
+      function submitCouponForm(CouponID,event){
+        event.preventDefault();
+        let code = document.getElementById(`couponCode${CouponID}`).value;
+        let startDate = document.getElementById(`startDate${CouponID}`).value
+        let endDate = document.getElementById(`endDate${CouponID}`).value
+        let minimum = parseInt(document.getElementById(`minimum${CouponID}`).value)
+        let maximum = parseInt(document.getElementById(`maximum${CouponID}`).value)
+        let discount = parseInt(document.getElementById(`couponDiscount${CouponID}`).value)
+        let Maxdiscount = parseInt(document.getElementById(`Maxdiscount${CouponID}`).value)
+        console.log("INnside function: ",code,startDate,endDate,minimum
+          ,maximum,discount,Maxdiscount
+        )
+        fetch(`/admin/coupon/edit/${CouponID}`,{
+          method:'post',
+          headers:{
+            'Content-Type':'application/json',
+          },
+          body:JSON.stringify({code:code,startDate:startDate,endDate:endDate,minimum:minimum,maximum:maximum,discount:discount,Maxdiscount:Maxdiscount})
+        })
+        .then(response => response.json())
+        .then((data) => {
+          if(data.success){
+            Swal.fire({
+              icon:'success',
+              title:"Coupon Updated",
+              text:"Coupon Updated Succefully!",
+              timer:1500,
+              showConfirmButton:false
+            })
+            .then(() => {
+              window.location.reload()
+            })
+          }else{
+            Swal.fire({
+              icon:'error',
+              title:"ERROR",
+              text:data.message,
+              timer:1500,
+              showConfirmButton:false
+            })
+          }
+        })
+      }
 
       document.addEventListener('DOMContentLoaded', function () {
         const addCouponForm = document.getElementById('addCouponForm');
@@ -356,10 +445,7 @@
             document.getElementById('maximumError').textContent = 'Maximum purchase must be greater than minimum purchase.';
             isValid = false;
           }
-
           if (isValid) {
-
-
             fetch("/admin/coupons/add", {
               method: 'post',
               headers: {

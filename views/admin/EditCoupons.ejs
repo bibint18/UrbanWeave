@@ -1,0 +1,213 @@
+<!-- Modal HTML for editing a coupon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* Basic reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+
+    color: #fff;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  .header .icons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .header .icons i {
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  .search-bar {
+    max-width: 250px;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+  }
+
+  /* Table styling */
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #040407;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .product-table th,
+  .product-table td {
+    padding: 30px;
+    text-align: left;
+  }
+
+  .product-table th {
+    background-color: #3a3a55;
+    font-size: 0.9em;
+    color: white;
+  }
+
+  .product-table td {
+    border-bottom: 1px solid #3a3a55;
+    font-size: 0.85em;
+    color: white;
+  }
+
+  .product-table .status-active {
+    color: #28a745;
+    font-weight: bold;
+  }
+
+  .product-table .status-expired {
+    color: #dc3545;
+    font-weight: bold;
+  }
+
+  .actions i {
+    font-size: 1.2em;
+    margin: 0 8px;
+    cursor: pointer;
+  }
+
+  .actions .edit {
+    color: #f0ad4e;
+  }
+
+  .actions .view {
+    color: #17a2b8;
+  }
+
+  .actions .delete {
+    color: #dc3545;
+  }
+
+  .btn {
+    background-color: #3a3a55;
+    color: white;
+  }
+
+  .btn:hover {
+    background-color: rgb(167, 152, 152);
+  }
+
+  form label {
+    color: black;
+  }
+
+  /* Responsive styling */
+  @media (max-width: 768px) {
+
+    .header,
+    .product-table th,
+    .product-table td {
+      font-size: 0.8em;
+    }
+
+    .header h1 {
+      font-size: 1.2em;
+    }
+
+    .search-bar {
+      max-width: 180px;
+    }
+
+    .actions i {
+      margin: 0 4px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .header {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .product-table {
+      font-size: 0.7em;
+    }
+
+    .product-table th,
+    .product-table td {
+      padding: 10px;
+    }
+  }
+</style>
+<div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCouponModalLabel">Edit Coupon</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editCouponForm" action="/admin/coupons/edit/<%= coupon._id %>" method="POST">
+          <div class="mb-3">
+            <label for="couponCode" class="form-label">Coupon Code</label>
+            <input type="text" class="form-control" id="couponCode" name="code" value="<%= coupon.code %>" placeholder="Enter coupon code">
+          </div>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="startDate" name="start_date" value="<%= coupon.startDate %>">
+          </div>
+          <div class="mb-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="endDate" name="end_date" value="<%= coupon.endDate %>">
+          </div>
+          <div class="mb-3">
+            <label for="minimum" class="form-label">Minimum Purchase</label>
+            <input type="text" class="form-control" id="minimum" name="minimum" value="<%= coupon.minimum %>">
+          </div>
+          <div class="mb-3">
+            <label for="maximum" class="form-label">Maximum Purchase</label>
+            <input type="text" class="form-control" id="maximum" name="maximum" value="<%= coupon.maximum %>">
+          </div>
+          <div class="mb-3">
+            <label for="discount" class="form-label">Coupon Offer Percentage</label>
+            <input type="number" class="form-control" id="discount" name="discount" min="1" max="100" value="<%= coupon.discount %>">
+          </div>
+          <div class="mb-3">
+            <label for="Maxdiscount" class="form-label">Maximum Discount Amount</label>
+            <input type="number" class="form-control" id="Maxdiscount" name="Maxdiscount" min="1" value="<%= coupon.Maxdiscount %>">
+          </div>
+          <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="active" <%= coupon.status === 'active' ? 'selected' : '' %>>Active</option>
+              <option value="inactive" <%= coupon.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Coupon</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

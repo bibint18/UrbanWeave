@@ -63,6 +63,8 @@ router.post('/orders/paymentStatus',protectAdmin,OrderRoute.ChangePayStatus)
 router.post('/orders/cancelProduct',protectAdmin,OrderRoute.CancelProduct)
 //coupons
 router.get('/coupons',protectAdmin,CouponRoute.getCoupons)
+router.post('/coupon/edit/:id',protectAdmin,CouponRoute.editCoupon)
+router.get('/coupons/edit/:id',protectAdmin,CouponRoute.getEditCoupon)
 router.post('/coupons/add',protectAdmin,CouponRoute.AddCoupon)
 router.post('/coupon/delete/:id',protectAdmin,CouponRoute.CouponDelete)
 //offers
