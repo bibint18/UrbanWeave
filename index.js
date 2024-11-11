@@ -44,11 +44,11 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session());
-
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');
 const { initializeCounter } = require('./utils/orderUtils');
 const paymentRoutes = require('./routes/paymentRoutes');
+require('./jobs/couponStatusUpdater')
 app.use('/api/payment', paymentRoutes);
 app.use('/admin',adminRoute);
 app.use('/',userRoute);

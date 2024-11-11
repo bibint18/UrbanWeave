@@ -241,7 +241,7 @@
                 <div class="coupon-entry p-3 mb-3 border border-secondary rounded bg-light">
 
                   <div class="d-flex justify-content-between mb-2">
-                    <div><strong>Code:</strong> <span class="text-uppercase">
+                    <div><strong>Code:</strong> <span >
                         <%= coupon.code%>
                       </span></div>
                     <div><strong>Discount:</strong> <span>
@@ -262,7 +262,11 @@
                         <%= coupon.endDate%>
                       </span></div>
                     <div><strong>Status:</strong> <span class="text-success">
-                        <%= coupon.status%>
+                      <% if (new Date(coupon.endDate) < Date.now()) { %>
+                        <span class="status-inactive" style="color: red;">Inactive</span>
+                      <% } else { %>
+                        <span class="status-active"><%= coupon.status %></span>
+                      <% } %>
                       </span></div>
                   </div>
                   <div><strong>Maximum Discount:</strong> <span class="text-success">
