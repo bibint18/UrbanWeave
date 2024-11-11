@@ -1,0 +1,220 @@
+<%-include('../../views/partials/admin/header')%>
+  <title>Manage Category Offers</title>
+  
+  <style>
+    body {
+      background-color: #f8f9fa;
+      /* Light background for contrast */
+      font-family: 'Arial', sans-serif;
+      /* Modern, clean font */
+      line-height: 1.8;
+      /* Increased line height for better readability */
+    }
+
+    .container {
+      margin: 50px auto;
+      /* Center the container */
+      padding: 40px;
+      /* Ample padding */
+      background-color: #ffffff;
+      /* White background for the form */
+      border-radius: 10px;
+      /* Rounded corners */
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      /* Subtle shadow */
+      max-width: 800px;
+      /* Limit width for better focus */
+    }
+
+    h1,
+    h2 {
+      color: #343a40;
+      /* Dark color for headings */
+      margin-bottom: 40px;
+      /* Increased space below headings */
+      text-align: center;
+      /* Center headings */
+    }
+
+    label {
+      font-weight: bold;
+      /* Make labels stand out */
+      margin-bottom: 15px;
+      /* Increased space below labels */
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+      /* Space between form groups */
+    }
+
+    .form-control {
+      border-radius: 5px;
+      /* Rounded input fields */
+      border: 1px solid #ced4da;
+      /* Light border */
+    }
+
+    .form-control:focus {
+      border-color: #007bff;
+      /* Highlight border on focus */
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+      /* Subtle glow effect */
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      /* Bootstrap primary color */
+      border: none;
+      padding: 12px;
+      /* Increased padding for buttons */
+      font-size: 16px;
+      /* Larger font size */
+      border-radius: 5px;
+      /* Rounded button */
+      transition: background-color 0.3s ease;
+      /* Smooth transition */
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      /* Darker on hover */
+    }
+
+    .list-group-item {
+      border: none;
+      /* Remove borders from list items */
+      background-color: #f8f9fa;
+      /* Match list background with body */
+      padding: 15px;
+      /* Added padding for list items */
+      margin-bottom: 15px;
+      /* Increased space between list items */
+      border-radius: 5px;
+      /* Rounded corners for list items */
+    }
+  </style>
+  </head>
+
+  <body>
+    <div class="d-flex ">
+      <div class="container ms-0 justify-content-center" style="max-width: 450px;">
+        <h1>Edit Category Offers</h1>
+        <form id="offerForm" action="" method="">
+          <div class="form-group">
+            <label for="category">Select Category</label>
+            <select id="category" name="category" class="form-control" required>
+              <% categories.forEach(category=> { %>
+                <option value="<%= category._id %>" <%=offers.category._id.toString()===category._id.toString()
+                  ? 'selected' : '' %>>
+                  <%= category.categoryName %>
+                </option>
+                <% }) %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="discountPercentage">Discount Percentage (%)</label>
+            <input type="number" id="discountPercentage" name="discountPercentage" class="form-control"
+              value="<%= offers.discountPercentage %>" min="0" max="100" required>
+          </div>
+          <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" name="startDate" class="form-control"
+              value="<%= new Date(offers.startDate).toISOString().split('T')[0] %>" required>
+          </div>
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" name="endDate" class="form-control"
+              value="<%= new Date(offers.endDate).toISOString().split('T')[0] %>" required>
+          </div>
+          <input type="hidden" name="OfferID" id="hideId" value="<%= offers._id%>">
+          <button type="submit" id="createOfferBtn" class="btn btn-primary btn-block">Save Changes</button>
+        </form>
+      </div>
+    </div>
+    
+    <script>
+
+const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').setAttribute('min', today);
+    document.getElementById('endDate').setAttribute('min', today);
+
+
+      document.getElementById('offerForm').addEventListener('submit', function (event) {
+        
+        event.preventDefault();
+        let OfferId = document.getElementById('hideId').value;
+        console.log(OfferId)
+        const category = document.getElementById('category').value;
+        console.log(category);
+
+        const discountPercentage = document.getElementById('discountPercentage').value;
+        console.log(discountPercentage);
+
+        const startDate = document.getElementById('startDate').value;
+        console.log(startDate);
+
+        const endDate = document.getElementById('endDate').value;
+        console.log(endDate);
+        if (startDate < today) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid Start Date',
+          text: 'The start date cannot be less than today.',
+        });
+        return;
+      }
+
+      if (endDate < today) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid End Date',
+          text: 'The end date cannot be less than today.',
+        });
+        return;
+      }
+
+        fetch(`/admin/offers/edit/${OfferId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ category, discountPercentage, startDate, endDate })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Offer updated',
+                text: "Offer applied succesully!",
+                timer: 1500,
+                showConfirmbutton: false
+              })
+                .then(() => {
+                  window.location.href='/admin/offers'
+                })
+
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: "ERROR",
+                text: data.message,
+                timer:1500,
+                showConfirmbutton:false
+              })
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "something went wrong!"
+            })
+
+          })
+      });
+    </script>
+    <%-include('../../views/partials/admin/footer')%>

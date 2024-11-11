@@ -71,6 +71,8 @@ router.post('/coupon/delete/:id',protectAdmin,CouponRoute.CouponDelete)
 router.get('/offers',protectAdmin,OfferRoute.ListCategoryOffer)
 router.post('/offers/add',protectAdmin,OfferRoute.AddCategoryOffer)
 router.post('/offer/delete/:id',protectAdmin,OfferRoute.deleteCatOffer)
+router.get('/offers/edit/:id',protectAdmin,OfferRoute.getEditCatOffer)
+router.post('/offers/edit/:id',protectAdmin,OfferRoute.EditOffer)
 //sales
 router.get('/sales-report',protectAdmin,SalesRoute.fetchReport)
 module.exports = router;

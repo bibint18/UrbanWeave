@@ -118,7 +118,7 @@
             <td><%= offer.isActive %></td>
               
             <td>
-              <i class="fas fa-edit edit"></i>
+              <a href="/admin/offers/edit/<%=offer._id%>"><i class="fas fa-edit edit"></i></a>
               <i class="fas fa-trash-alt delete" onclick="DeleteCategoryOffer('<%= offer._id %>')"> </i>
             </td>
           </tr>

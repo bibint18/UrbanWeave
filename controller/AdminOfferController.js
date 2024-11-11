@@ -46,3 +46,37 @@ exports.deleteCatOffer = async (req,res) => {
     return res.status(400).json({success:false,message:"Something went wrong!"})
   }
 }
+
+exports.getEditCatOffer = async(req,res) => {
+  const id = req.params.id
+  console.log(id)
+  const categories = await Category.find() 
+    const offers = await CategoryOffer.findById(id).populate('category')
+    console.log("offers: ",offers)
+    return res.render('admin/EditCategoryOffer',{categories,offers})
+}
+
+exports.EditOffer = async (req,res) => {
+  try {
+    console.log("inside edit")
+    const id = req.params.id
+    const {category, discountPercentage, startDate, endDate } = req.body
+    const cat = await CategoryOffer.findById(id)
+    if(!cat){
+      return res.status(400).json({success:false,message:"categoty offer doesnot exist"})
+    }
+    if(discountPercentage>90){
+      return res.status(400).json({success:false,message:"Discount percentage cannot be more than 90%"})
+    }
+    const offer = await CategoryOffer.findByIdAndUpdate(id,{
+      category:category,
+      discountPercentage:discountPercentage,
+      startDate:startDate,
+      endDate:endDate
+    })
+    return res.status(200).json({success:true,message:"Offer updated succesfully!"})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({success:false,message:"Something went wrong!"})
+  }
+}
