@@ -34,18 +34,22 @@ router.get('/forgot-password',userRouter.getForgotpassword)
 router.get('/reset-password/:token',userRouter.getResetpassword)
 router.post('/forgot-password',userRouter.forgot)
 router.post('/reset-password/:token',userRouter.Reset)
-router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
-
+// router.get('/auth/google',passport.authenticate('google',{scope:['profile','email'],prompt:"select_account"}))
+router.get('/auth/google', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/home');
+  }
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account'
+  })(req, res, next);
+});
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userSignup'}),(req,res) =>{
   res.redirect('/home')
 })
-
-// router.post('/forgotPassword',userRouter.forgotPassword)
-// router.get('/ResetPassword',userRouter.getPasswordReset)
 router.get("/products/details/:id",userRouter.getProductDetails)
 
 //inside home
-
 router.get('/shop',HomeRoute.ShopPage)
 
 //userProfile

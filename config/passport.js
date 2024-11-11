@@ -21,8 +21,6 @@ passport.use(new GoogleStrategy( {
        let user = await User.findOne({googleId:profile.id});
        console.log("profile: ",profile)
        console.log("after user: ",user)
-       
-
        if(user){
         return  done(null,user) 
        }

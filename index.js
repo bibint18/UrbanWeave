@@ -4,6 +4,7 @@ const app =express();
 const redis = require('redis')
 const mongoose = require('mongoose')
 const passport = require('./config/passport')
+// const passport = require('passport-google-oauth20').Strategy
 const methodOverride = require('method-override');
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
@@ -42,7 +43,7 @@ app.use(session({
 
 
 app.use(passport.initialize())
-app.use(passport.session(false));
+app.use(passport.session());
 
 const adminRoute = require('./routes/adminRoute');
 const userRoute = require('./routes/userRoute');

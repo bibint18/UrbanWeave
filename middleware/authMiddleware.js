@@ -5,6 +5,10 @@ const jwtService = require('../services/jwtService')
 const { logout } = require('../controller/userController')
 exports.protect = async (req,res,next) => {
   const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1]; 
+  if (req.user) {
+    console.log("User authenticated via session:", req.user);
+    return next(); // User is authenticated by session, allow access
+  }
   if(!token){
     console.log("NO TOKEN USER NEED TO LOGIN")
     return res.redirect('/userLogin')
@@ -27,10 +31,10 @@ exports.protect = async (req,res,next) => {
   }catch(err){
     if (err.name === 'TokenExpiredError') {
       console.log("Token expired: Redirecting to login.");
-      res.clearCookie('jwt'); // Clear expired token
-      return res.redirect('/userLogin'); // Redirect to login page
+      res.clearCookie('jwt'); 
+      return res.redirect('/userLogin'); 
     }
-    return res.send(err); // Handle other errors if needed
+    return res.send(err); 
   }
   
   

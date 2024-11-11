@@ -44,10 +44,14 @@ exports.getUserLogin = (req, res) => {
 };
 exports.getHome = async (req, res) => {
   try {
+    const products = await Products.find({ isDeleted: false });
+    if(req.isAuthenticated()){
+    console.log("isauth")
+    console.log("uswr; ",req.user)
+      return res.render('home',{user:req.user,products})
+    }
     const user = req.cookies.jwt;
     console.log("user: ", user);
-
-    const products = await Products.find({ isDeleted: false });
     return res.render("home", { products, user });
   } catch (err) {
     console.log(err);
@@ -234,10 +238,13 @@ exports.userLogin = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  console.log("cookie", req.cookies);
+  req.logout(() => {
+    console.log("cookie", req.cookies);
   res.cookie("jwt", "", { maxAge: 1 });
   console.log("Session after destroying:", req.session);
   return res.redirect("/userLogin");
+  })
+  
 };
 
 exports.getForgotpassword = async (req, res) => {

@@ -93,18 +93,6 @@
         })
       
 
-        
-        
-        // document.querySelectorAll('input').forEach((input) => {
-        //     input.disabled = false;
-        // });
-        // document.querySelectorAll('textarea').forEach((textarea) => {
-        //     textarea.disabled = false;
-        // });
-      
-        // document.querySelectorAll('select').forEach((select) => {
-        //     select.disabled = false;
-        // });
         document.querySelector('.profile-form').addEventListener('submit', function(event) {
         event.preventDefault();
         const fullName = document.getElementById('firstName').value 
@@ -287,50 +275,6 @@
       }
       
         </style>
-      
-      
-      <script>
 
-        // const fullName = document.getElementById('firstName').value 
-        // const email = document.getElementById('email').value
-        // const mobilePh = document.getElementById('mobile').value
-        // const current = document.getElementById('current').value
-        // const newPsw =  document.getElementById('neww').value
-        // const  confirmPsw = document.getElementById('confirm').value
-
-
-        // fetch('/userProfile',{
-        //   method:"post",
-        //   headers:{
-        //     "Content-Type":"application/json"
-        //   },
-        //   body:JSON.stringify({fullName,gender,email,mobilePh,current,newPsw,confirmPsw})
-        // })
-        // .then(response => response.json())
-        // .then((data) => {
-        //   if(data.success){
-        //     Swal.fire({
-        //       title: 'Success',
-        //       text: data.message,
-        //       icon: 'success',
-        //       timer:1500,
-        //       showConfirmButton:false
-        //     })
-        //   }else{
-        //     Swal.fire({
-        //       icon:'error',
-        //       title:'Error',
-        //       text:data.message,
-        //     })
-        //   }
-        // })
-        // .catch((err)  => {
-        //   Swal.fire({
-        //     icon:'error',
-        //     title:'Error',
-        //     text:'Something Went wrong!',
-        //   })
-        // })
-      </script>
 
 <%-include('../../views/partials/user/footer') %>
