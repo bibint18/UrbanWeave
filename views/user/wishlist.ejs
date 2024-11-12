@@ -1,125 +1,247 @@
 <%-include('../../views/partials/user/header')%>
-
-<div id="page_item_area">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6 text-left">
-        <h3>Wishlist</h3>
-      </div>		
-
-      <div class="col-sm-6 text-right">
-        <ul class="p_items">
-          <li><a href="/home">home</a></li>
-          <li><a href="/shop">Shop</a></li>
-          <li><span>Wishlist</span></li>
-        </ul>					
-      </div>	
+  <div id="sizeSelectionModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select Size</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="sizeForm">
+            <input type="hidden" id="productId" name="productId">
+            <div id="sizesContainer"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="submitSize()">Confirm</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Wishlist Page -->
-<div class="wishlist-page">
-  <div class="container">
-    <div class="table-responsive">
-      <table class="table cart-table cart_prdct_table text-center">
-       
-        <thead>
-          <tr>
-            <th class="cpt_no">#</th>
-            <th class="cpt_img">image</th>
-            <th class="cpt_pn">product name</th>
-            <th class="cpt_pr">Size</th>
-            <th class="stock">stock status</th>
-            <th class="cpt_p">price</th>
-            <th class="add-cart">add to cart</th>
-            <th class="cpt_r">remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if(products.length >0)  { %>
 
-          <% products.forEach((product,index) => { %> 
-          <tr>
-            <td><span class="cart-number"><%= index +1 %></span></td>
-            <td><a href="#" class="cp_img"><img src="/uploads/re-image/<%= product.Product.productImage[0] %>" alt="" /></a></td>
-            <td><a href="#" class="cart-pro-title"><%= product.Product.ProductName%></a></td>
-            <td><p class="stock in-stock"><%=product.size %></p></td>
-            <td><p class="stock in-stock">
+  <div id="page_item_area">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 text-left">
+          <h3>Wishlist</h3>
+        </div>
+
+        <div class="col-sm-6 text-right">
+          <ul class="p_items">
+            <li><a href="/home">home</a></li>
+            <li><a href="/shop">Shop</a></li>
+            <li><span>Wishlist</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wishlist Page -->
+  <div class="wishlist-page">
+    <div class="container">
+      <div class="table-responsive">
+        <table class="table cart-table cart_prdct_table text-center">
+
+          <thead>
+            <tr>
+              <th class="cpt_no">#</th>
+              <th class="cpt_img">image</th>
+              <th class="cpt_pn">product name</th>
+              <!-- <th class="cpt_pr">Size</th> -->
+              <!-- <th class="stock">stock status</th> -->
+              <th class="cpt_p">price</th>
+              <th class="add-cart">add to cart</th>
+              <th class="cpt_r">remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(products.length>0) { %>
+
+              <% products.forEach((product,index)=> { %>
+                <tr>
+                  <td><span class="cart-number">
+                      <%= index +1 %>
+                    </span></td>
+                  <td><a href="#" class="cp_img"><img src="/uploads/re-image/<%= product.Product.productImage[0] %>"
+                        alt="" /></a></td>
+                  <td><a href="#" class="cart-pro-title">
+                      <%= product.Product.ProductName%>
+                    </a></td>
+                  <!-- <td><p class="stock in-stock"><%=product.size %></p></td> -->
+                  <!-- <td><p class="stock in-stock">
               <% let selectedSize = product.Product.sizes.find(s => s.size == product.size)
                 let availableStock = selectedSize  ? selectedSize.stock : 0
               %>
               <%=  availableStock %>
 
-            </p></td>
-            <td><p class="cart-pro-price">$<%= product.Product.salePrice %></p></td>
-            <td><a href="#" class="btn border-btn">add to cart</a></td>
-            <td><a class="cp_remove"><i class="fa fa-trash" onclick="RemoveFromWish('<%= product._id %>')"></i></a></td>          
-          </tr>
-          <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="8">No products in your wishlist</td>
-            </tr>
-            <% } %>
-        </tbody>
-        
-      </table>
+            </p></td> -->
+                  <td>
+                    <p class="cart-pro-price">$<%= product.Product.salePrice %>
+                    </p>
+                  </td>
+
+                  <td><button type="submit" class="btn border-btn"
+                      onclick="showSizeModal('<%= product.Product._id %>', '<%= JSON.stringify(product.Product.sizes) %>')">add
+                      to cart</button></td>
+
+                  <td><a class="cp_remove"><i class="fa fa-trash"
+                        onclick="RemoveFromWish('<%= product._id %>')"></i></a></td>
+                </tr>
+                <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="8">No products in your wishlist</td>
+                    </tr>
+                    <% } %>
+          </tbody>
+
+        </table>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  function RemoveFromWish(WishId){
-    Swal.fire({
-      icon:"warning",
-      title:"Are You sure",
-      text:"Want to remove product from  wishlist",
+  <script>
+    function showSizeModal(productId, sizes) {
+      console.log(productId)
+      console.log("sizes: ", sizes)
+      let sizesArray = JSON.parse(sizes)
+      console.log("", typeof sizesArray)
+      // Populate modal with product sizes and stocks
+      document.getElementById('productId').value = productId;
+      let sizesContainer = document.getElementById('sizesContainer');
+      sizesContainer.innerHTML = ''; // Clear previous options
 
-    })
-    .then((result) => {
-    if(result.isConfirmed){
-    fetch(`/wishlist/remove/${WishId}`,{
-      method: 'POST',
-      headers: {
-        "Content-Type":"application/json"
-      },
-    })
-    .then(response => response.json())
-    .then((data) => {
-      if(data.success){
-        Swal.fire({
-          icon:'success',
-          title: 'Product removed from wishlist',
-          text: 'You have successfully removed the product from your wishlist',
-          timer:1500,
-          showConfirmButton:false
+      if (sizesArray.length > 0) {
+        sizesArray.forEach(size => {
+          let stockInfo = `<label>
+        <input type="radio" name="size" value="${size.size}" ${size.stock <= 0 ? 'disabled' : ''}>
+        ${size.size} - ${size.stock > 0 ? `Stock: ${size.stock}` : 'Out of Stock'}
+      </label><br>`;
+          sizesContainer.innerHTML += stockInfo;
+        });
+        $('#sizeSelectionModal').modal('show');
+      } else {
+        alert('No sizes available for this product.');
+      }
+    }
+
+    function submitSize() {
+      // console.log(productID)
+      let selectedSize = document.querySelector('input[name="size"]:checked');
+      if (selectedSize) {
+        let productId = document.getElementById('productId').value;
+        console.log("ID: ", productId)
+        // Post size and product data to add to cart route
+        fetch('/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            productId: productId,
+            size: selectedSize.value,
+            quantity: 1
+          })
+        }).then(response => response.json())
+        .then((data) => {
+          if (data.success) {
+            Swal.fire({
+              icon: 'success',
+              title: "Product added to cart",
+              tect: "Scuccefully added to cart",
+              timer: 1500,
+              showConfirmButton: false
+            })
+            
+              .then(() => {
+                window.location.href = '/cart'
+              })
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: "Oops",
+              text: data.message,
+              timer: 1500,
+              showConfirmButton: false
+            })
+          }
         })
-        .then(() => {
-          window.location.reload();
-        })
-      }else{
+          .catch((error) => {
+            console.log(error)
+            Swal.fire({
+              icon: 'error',
+              title: "Oops",
+              text: "Something went wrong!",
+              timer: 1500,
+              showConfirmButton: false
+            })
+          })
+      } else {
         Swal.fire({
           icon:'error',
-          title: 'Error',
-          text:"Error removing Product",
+          title:"Oops",
+          text:"Please select a size to procced",
           timer:1500,
           showConfirmButton:false
         })
       }
-    })
-    .catch((error) => {
-      Swal.fire({
-        icon:'error',
-        text:'Something went wrong!',
-        title:'error',
-        timer:1500,
-        showConfirmButton:false
-      })
-    })
-  }
-  })
-  }
-</script>
+    }
 
-<%-include('../../views/partials/user/footer')%>
+    function RemoveFromWish(WishId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Are You sure",
+        text: "Want to remove product from  wishlist",
+
+      })
+        .then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/wishlist/remove/${WishId}`, {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json"
+              },
+            })
+              .then(response => response.json())
+              .then((data) => {
+                if (data.success) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Product removed from wishlist',
+                    text: 'You have successfully removed the product from your wishlist',
+                    timer: 1500,
+                    showConfirmButton: false
+                  })
+                    .then(() => {
+                      window.location.reload();
+                    })
+                } else {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Error removing Product",
+                    timer: 1500,
+                    showConfirmButton: false
+                  })
+                }
+              })
+              .catch((error) => {
+                Swal.fire({
+                  icon: 'error',
+                  text: 'Something went wrong!',
+                  title: 'error',
+                  timer: 1500,
+                  showConfirmButton: false
+                })
+              })
+          }
+        })
+    }
+  </script>
+
+  <%-include('../../views/partials/user/footer')%>

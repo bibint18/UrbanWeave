@@ -25,7 +25,6 @@ exports.getCart = async (req, res) => {
         
       };
     });
-
     const items = await Cart.find({ user: userId }).populate("product");
     let GrandTotal =0;
     let MFtotal =0
@@ -43,7 +42,6 @@ exports.getCart = async (req, res) => {
       GrandTotal,user,MFtotal
     });
   }
-    console.log("grand", GrandTotal);
     return res.render("user/cart", { cartItems: itemsWithTotal, GrandTotal,user ,MFtotal});
   } catch (error) {
     console.log(error);
@@ -54,11 +52,13 @@ exports.getCart = async (req, res) => {
 exports.AddCart = async (req, res) => {
   try {
     // console.log("req,",req.user)
+    console.log("inside add cart: ")
     const userId = req.user.id;
     const { size, productId, quantity } = req.body;
     const requestedQuantity = parseInt(quantity, 10);
-
+    console.log("proId : ",productId)
     const product = await Product.findById(productId);
+    console.log(product)
     if (!product) {
       return res
         .status(400)

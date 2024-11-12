@@ -13,7 +13,7 @@ const WishlistSchema = mongoose.Schema({
   },
   size:{
     type:String,
-    required:true
+    required:false
   }
 })
 

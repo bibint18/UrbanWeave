@@ -29,6 +29,7 @@
                 <th class="cpt_no">No.</th>
                 <th class="cpt_img">image</th>
                 <th class="cpt_pn">product name</th>
+                <th class="cpt_p">Size</th>
                 <th class="cpt_q">quantity</th>
                 <th class="cpt_p">price</th>
                 <th class="cpt_t">total</th>
@@ -43,6 +44,7 @@
                 <td><span class="cp_no"><%= index + 1 %></span></td>
                 <td><a href="#" class="cp_img"><img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="" /></a></td>
                 <td><a href="#" class="cp_title"><%= item.product.ProductName%></a></td>
+                <td><a href="#" class="cp_title"><%= item.size%></a></td>
                 <td>										
                   <div class="cp_quntty">																			
                     <input name="quantity" class="quantity-input" value="<%= item.quantity%>" size="2" type="number" min="1" max="5" data-cart-id="<%= item._id%>" data-product-id="<%= item.product._id%>" data-size="<%= item.size%>">	

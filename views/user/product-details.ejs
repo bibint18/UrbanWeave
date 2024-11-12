@@ -142,7 +142,7 @@
             <!-- Product Action -->
             <div class="pd_btn fix">
               <a id="addToBagBtn" class="btn btn-default acc_btn" onclick="addToCart()" disabled>add to bag</a>
-              <a id="addWish" class="btn btn-default acc_btn btn_icn" onclick="AddToWishlist()" disabled><i class="fa fa-heart" ></i>Add To Wishlist</a>
+              <a id="addWish" class="btn btn-default acc_btn btn_icn" onclick="AddToWishlist()"><i class="fa fa-heart" ></i>Add To Wishlist</a>
               <a class="btn btn-default acc_btn btn_icn"><i class="fa fa-refresh"></i></a>
             </div>
             <div class="pd_share_area fix">
@@ -253,18 +253,18 @@
     function AddToWishlist(){
       console.log("works");
       
-      document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
-        sizeInput.addEventListener('change',function(){
-          document.getElementById('addWish').disabled=false;
-          document.getElementById('sizeError').style.display='none';
-        })
-      })
-      const selectedSize = document.querySelector('input[name="size"]:checked')
-      console.log(selectedSize,"sele");
+      // document.querySelectorAll('input[name="size"]').forEach((sizeInput) => {
+      //   sizeInput.addEventListener('change',function(){
+      //     document.getElementById('addWish').disabled=false;
+      //     document.getElementById('sizeError').style.display='none';
+      //   })
+      // })
+      // const selectedSize = document.querySelector('input[name="size"]:checked')
+      // console.log(selectedSize,"sele");
       
-      if(!selectedSize){
-        document.getElementById('sizeError').style.display='block';
-      }
+      // if(!selectedSize){
+      //   document.getElementById('sizeError').style.display='block';
+      // }
       const Quantity=1;
       const ProductID = '<%= products._id %>'
       fetch('/wishlist/add',{
@@ -272,7 +272,7 @@
         headers:{
           "Content-Type":"application/json"
         },
-        body: JSON.stringify({ProductID:ProductID,Quantity:Quantity, selectedSize:selectedSize.value})
+        body: JSON.stringify({ProductID:ProductID,Quantity:Quantity})
       })
       .then(response => response.json())
       .then((data) => {
@@ -283,13 +283,12 @@
             text:"You can view your wishlist by clicking on wishlist tab",
             timer:1500,
             showConfirmButton:false,
-
           })
         }else{
           Swal.fire({
             icon:"error",
             title:"Error",
-            text:"Error adding Product to Wishlist",
+            text:data.message,
             timer:1500,
             showConfirmButton:false,
           })
