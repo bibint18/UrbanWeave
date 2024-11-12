@@ -114,8 +114,7 @@ exports.RemoveProductOffer =async (req,res) => {
     console.log("nooooooooooooooo")
   }
   const percentage = FindProduct.productOffer
-  FindProduct.salePrice= FindProduct.salePrice + Math.floor(FindProduct.regularPrice *(percentage/100))
-  FindProduct.productOffer = 0
+  FindProduct.productOffer= 0
   await FindProduct.save()
   return res.status(200).json({success:true})
   }catch(err){

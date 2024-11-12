@@ -41,12 +41,12 @@ exports.VerifyCoupon = async (req, res) => {
   const discountAmount = Math.min(
     totalAmount * (coupon.discount / 100),
     coupon.maximumDiscount
-  );
+  ).toFixed(2)
   console.log(discountAmount, "disco ");
 
-  const newTotal = totalAmount - discountAmount;
+  const newTotal = (totalAmount - discountAmount).toFixed(2);
   console.log("newtotal: ", newTotal);
-  const AmountSaved = Saved + discountAmount
+  const AmountSaved = (Saved + parseFloat( discountAmount)).toFixed(2)
   console.log("final savig: ",AmountSaved);
   
   console.log(req.user)

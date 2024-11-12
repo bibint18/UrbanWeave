@@ -205,14 +205,27 @@ exports.getCheckout = async (req, res) => {
         startDate:{$lte:new Date()},
         endDate:{$gte: new Date()}
       })
-      let discountAmount =0;
+      // let discountAmount =0;
+      let categoryDiscountAmount=0;
+      let productDiscountAmount =0
       console.log("category offer: ",categoryOffer)
+      // if(categoryOffer){
+      //   discountAmount = salePrice * (categoryOffer.discountPercentage / 100)
+      //   console.log("discountedAmpunt: ",discountAmount)
+      //   totalOfferAmount += discountAmount * quantity
+      //   console.log("totalOfferAmoiunt: ",totalOfferAmount)
+      // }
       if(categoryOffer){
-        discountAmount = salePrice * (categoryOffer.discountPercentage / 100)
-        console.log("discountedAmpunt: ",discountAmount)
-        totalOfferAmount += discountAmount * quantity
-        console.log("totalOfferAmoiunt: ",totalOfferAmount)
+        categoryDiscountAmount = salePrice *(categoryOffer.discountPercentage / 100)
+        console.log("categoryDiscountAmount: ", categoryDiscountAmount);
       }
+      if(product.productOffer){
+        productDiscountAmount = salePrice * (product.productOffer / 100)
+        console.log("productDiscountAmount: ", productDiscountAmount);
+      }
+      let discountAmount = Math.max(categoryDiscountAmount, productDiscountAmount);
+      console.log("Chosen discountAmount: ", discountAmount);
+      totalOfferAmount += discountAmount * quantity;
       finalPrice = salePrice - discountAmount;
       console.log('finalPrice: ',finalPrice)
       // totalAmount += salePrice * quantity;
