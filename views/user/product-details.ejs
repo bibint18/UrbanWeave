@@ -78,12 +78,14 @@
             <a class="pd_title" href="">
               <%=products.ProductName%>
             </a>
+            
             <div class="pd_price_dtls fix">
               <!-- Product Price -->
               <div class="pd_price">
                 <span class="new">$<%=products.salePrice%></span>
                 <span class="old">$<%= products.regularPrice %></span>
               </div>
+              
               <!-- Product Rating -->
               <div class="pd_ratng">
                 <div class="rtngs">
@@ -94,7 +96,25 @@
                   <i class="fa fa-star-half-o"></i>
                 </div>
               </div>
+              
             </div>
+            <div class="">
+              <% if (CatOfferPercentage && CatOfferPercentage > 0) { %>
+                <div class="category-offer" style="margin-top: 10px; color: #28a745; font-weight: bold;">
+                  Category Offer: <%= CatOfferPercentage %>% OFF
+                </div>
+              <% } %>
+            </div>
+            <div class="">
+              <% if (products.
+              productOffer && products.
+              productOffer > 0) { %>
+                <div class="category-offer" style="margin-top: 10px; color: #e47f13; font-weight: bold;">
+                  Product Offer: <%= products.productOffer %>% OFF
+                </div>
+              <% } %>
+            </div>
+            
             <div class="pd_text">
               <h4>overview:</h4>
               <p>
@@ -158,6 +178,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <hr>

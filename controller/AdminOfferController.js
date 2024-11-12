@@ -1,14 +1,15 @@
 
 const Category = require('../model/admin/categoryModel')
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
-
+const Products = require('../model/admin/prodectModel')
 
 exports.ListCategoryOffer = async(req,res) => {
   try {
     const categories = await Category.find() 
     console.log(categories);
     const offers = await CategoryOffer.find().populate('category')
-    return res.render('admin/CategoryOffer',{categories,offers})
+    const products = await Products.find().populate('category')
+    return res.render('admin/CategoryOffer',{categories,offers,products})
   } catch (error) {
     console.log(error);
     return res.send(error)

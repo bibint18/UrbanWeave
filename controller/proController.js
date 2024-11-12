@@ -93,7 +93,7 @@ exports.AddProductOffer =async (req,res) => {
   try{
   const {productId,percentage} =req.body
   const FindProduct = await Product.findOne({_id:productId})
-  FindProduct.salePrice = FindProduct.salePrice - Math.floor(FindProduct.regularPrice * (percentage/100))
+  // FindProduct.salePrice = FindProduct.salePrice - Math.floor(FindProduct.regularPrice * (percentage/100))
   FindProduct.productOffer = parseInt(percentage)
   await FindProduct.save();
   return res.status(200).json({success:true})

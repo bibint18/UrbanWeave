@@ -7,7 +7,7 @@ const jwtService = require("../services/jwtService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Products = require("../model/admin/prodectModel");
-
+const CategoryOffer = require('../model/admin/CategoryOfferModel')
 function sendResetEmail(email, resetLink) {
   console.log("triggered")
   const transporter = nodemailer.createTransport({
@@ -336,12 +336,19 @@ exports.getProductDetails = async (req, res) => {
   console.log(id);
   const user = req.cookies.jwt;
   const products = await Products.findById(id);
+  console.log("products: ",products)
+  const CatOffer = await CategoryOffer.findOne({category:products.category})
+  let CatOfferPercentage=0;
+  if(CatOffer){
+     CatOfferPercentage = CatOffer.discountPercentage
+  console.log(CatOfferPercentage)
+  }
+  
   if (products.isDeleted == true) {
     return res.redirect("/home");
   }
-  console.log(products);
   const prod = await Products.find({ isDeleted: false });
-  res.render("user/product-details", { products, prod, user });
+  res.render("user/product-details", { products, prod, user ,CatOfferPercentage});
 };
 
 exports.getPayment = (req, res) => {
