@@ -19,6 +19,9 @@ exports.AddCategoryOffer = async (req,res) => {
   try {
     const {category, discountPercentage, startDate, endDate } = req.body 
     console.log("from backend",category, discountPercentage, startDate, endDate )
+    if(discountPercentage>90){
+      return res.status(400).json({success:false,message:"Discounnt should not be more than 90%"})
+    }
     const newOffer = new CategoryOffer ({
       category:category,
       discountPercentage:discountPercentage,

@@ -206,7 +206,7 @@
             <h2>Sales Chart</h2>
             <select id="chartType" class="chart-select">
               <option value="bar">Bar Chart</option>
-              <option value="line">Line Chart</option>
+              <!-- <option value="line">Line Chart</option> -->
             </select>
             <canvas id="salesChart"></canvas>
           </div>
@@ -388,7 +388,6 @@ function exportPDF() {
   // Add title
   doc.setFontSize(18);
   doc.text('Sales Report', 14, 20);
-
   // Add content
   doc.setFontSize(12);
   doc.text(`Total Revenue: ₹${document.getElementById('totalRevenue').textContent}`, 14, 40);

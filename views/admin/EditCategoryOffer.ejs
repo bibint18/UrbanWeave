@@ -1,6 +1,6 @@
-<%-include('../../views/partials/admin/header')%>
+<%-include('.. /../views/partials/admin/header')%>
   <title>Manage Category Offers</title>
-  
+
   <style>
     body {
       background-color: #f8f9fa;
@@ -133,23 +133,23 @@
         </form>
       </div>
     </div>
-    
+
     <script>
 
-const today = new Date().toISOString().split('T')[0];
-    document.getElementById('startDate').setAttribute('min', today);
-    document.getElementById('endDate').setAttribute('min', today);
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('startDate').setAttribute('min', today);
+      document.getElementById('endDate').setAttribute('min', today);
 
 
       document.getElementById('offerForm').addEventListener('submit', function (event) {
-        
+
         event.preventDefault();
         let OfferId = document.getElementById('hideId').value;
         console.log(OfferId)
         const category = document.getElementById('category').value;
         console.log(category);
 
-        const discountPercentage = document.getElementById('discountPercentage').value;
+        const discountPercentage =parseInt(document.getElementById('discountPercentage').value)
         console.log(discountPercentage);
 
         const startDate = document.getElementById('startDate').value;
@@ -158,22 +158,22 @@ const today = new Date().toISOString().split('T')[0];
         const endDate = document.getElementById('endDate').value;
         console.log(endDate);
         if (startDate < today) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Invalid Start Date',
-          text: 'The start date cannot be less than today.',
-        });
-        return;
-      }
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Start Date',
+            text: 'The start date cannot be less than today.',
+          });
+          return;
+        }
 
-      if (endDate < today) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Invalid End Date',
-          text: 'The end date cannot be less than today.',
-        });
-        return;
-      }
+        if (endDate < today) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid End Date',
+            text: 'The end date cannot be less than today.',
+          });
+          return;
+        }
 
         fetch(`/admin/offers/edit/${OfferId}`, {
           method: 'POST',
@@ -193,7 +193,7 @@ const today = new Date().toISOString().split('T')[0];
                 showConfirmbutton: false
               })
                 .then(() => {
-                  window.location.href='/admin/offers'
+                  window.location.href = '/admin/offers'
                 })
 
             } else {
@@ -201,8 +201,8 @@ const today = new Date().toISOString().split('T')[0];
                 icon: 'error',
                 title: "ERROR",
                 text: data.message,
-                timer:1500,
-                showConfirmbutton:false
+                timer: 1500,
+                showConfirmbutton: false
               })
             }
           })
@@ -217,4 +217,4 @@ const today = new Date().toISOString().split('T')[0];
           })
       });
     </script>
-    <%-include('../../views/partials/admin/footer')%>
+    <%-include('.. /../views/partials/admin/footer')%>

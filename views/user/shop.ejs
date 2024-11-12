@@ -51,6 +51,7 @@
 							<div class="short_by_inner">
 								<label>Sort by Products:</label>
 								<form id="sortForm" method="GET" action="/shop">
+									<input type="hidden" name="categoryQuery" value="<%= categoryQuery %>">
 									<select class="sort-select" name="sort" onchange="document.getElementById('sortForm').submit()">
 										<option value="">Select Sorting</option>
 										<option value="priceLowHigh" <% if (sort === 'priceLowHigh') { %> selected <% } %> >Price: Low to High</option>
@@ -66,6 +67,7 @@
 							<div class="short_by_inner">
 								<label>Sort by category:</label>
 								<form id="CategoryForm" method="GET" action="/shop">
+									<input type="hidden" name="sort" value="<%= sort %>">
 									<select class="sort-select" name="categoryQuery" onchange="document.getElementById('CategoryForm').submit()">
 										<option value="">Select Sorting</option>
 										<% categories.forEach((category) => { %>
