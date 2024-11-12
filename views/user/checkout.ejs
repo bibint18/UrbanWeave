@@ -348,7 +348,7 @@
             PayMethod: PayMethod,
             DiscountAmount: DiscountAmount,
             Subtotal: Subtotal,
-            CouponCode: CouponCode,
+            CouponCode: '',
             OriginalTotal: OriginalTotal,
             CatOffer: CatOffer,
             Quantity: Quantity,
@@ -632,11 +632,14 @@ async function UpdatePayment(){
                         // alert('Payment Verified!');
                         // PlaceOrder();
                         // UpdatePayment(globalOrderId);
+                        const couponCode = document.querySelector('#CouponCode').value;
+                        console.log("CCCCCCCC: ",couponCode)
                         fetch(`/payment/update/${globalOrderId}`,{
                           method:"post",
                           headers:{
                             "Content-Type":"application/json"
-                          }
+                          },
+                          body:JSON.stringify({couponCode:couponCode})
                         })
                           .then(response => response.json())
                           .then((data) => {
