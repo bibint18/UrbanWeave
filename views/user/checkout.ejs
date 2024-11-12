@@ -241,7 +241,7 @@
                 <div class="coupon-entry p-3 mb-3 border border-secondary rounded bg-light">
 
                   <div class="d-flex justify-content-between mb-2">
-                    <div><strong>Code:</strong> <span >
+                    <div><strong>Code:</strong> <span id="couponCode-<%= coupon._id %>" >
                         <%= coupon.code%>
                       </span></div>
                     <div><strong>Discount:</strong> <span>
@@ -272,6 +272,7 @@
                   <div><strong>Maximum Discount:</strong> <span class="text-success">
                       <%= coupon.maximumDiscount%>
                     </span></div>
+                    <button class="btn btn-secondary btn-sm mt-2" onclick="copyCouponCode('<%= coupon._id %>')">Copy Code</button>
                 </div>
               </div>
               <% }) %>
@@ -364,6 +365,34 @@
             alert('Failed to create order. Please try again.');
         }
     });
+}
+
+
+function copyCouponCode(couponId) {
+    // Get the coupon code from the span element by couponId
+    const couponCode = document.getElementById(`couponCode-${couponId}`).innerText.trim();
+    console.log('coied',couponCode)
+    navigator.clipboard.writeText(couponCode).then(() => {
+        // alert('Coupon code copied to clipboard!');
+        Swal.fire({
+          icon:'success',
+          title:"Coupon Copied",
+          text: "Coupon code copied to clipboard!",
+          timer:1500,
+          showConfirmButton:false
+        })
+    }).catch((err) => {
+        console.error('Error copying coupon code: ', err);
+        Swal.fire({
+          icon:'error',
+          title:"ERROR",
+          text: "Something went wrong!",
+          timer:1500,
+          showConfirmButton:false
+        })
+    });
+    // Optionally, show a message to the user
+    // alert('Coupon code copied to clipboard!');
 }
 
 //function Update payment on success 
