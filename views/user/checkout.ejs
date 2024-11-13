@@ -471,7 +471,7 @@ async function UpdatePayment(){
               } else {
                 Swal.fire({
                   title: 'Error',
-                  text: 'Failed to place order',
+                  text: data.message,
                   icon: 'error',
                   timer: 1500,
 
@@ -769,7 +769,7 @@ async function UpdatePayment(){
               } else {
                 Swal.fire({
                   title: 'Error',
-                  text: 'Failed to place order',
+                  text: data.message,
                   icon: 'error',
                   timer: 1500,
 

@@ -353,6 +353,9 @@ exports.placeOrder = async (req, res) => {
     const user=await User.findById(userId).lean()
     const selectedIndex = user.address.findIndex(addr => addr._id.toString() ===address)
     const  selectedAddress = user.address[selectedIndex];
+    if(totalToPay >100){
+      return res.status(400).json({success:false,message:"COD not Available for orders above rs 1000"})
+    }
     if(!selectedAddress){
       return res.status(400).json({ success: false, message: 'Invalid address selected' });
     }
