@@ -88,6 +88,10 @@ const orderSchema = new mongoose.Schema({
   OriginalTotal: {
     type: Number,
   },
+  deliveryFee:{
+    type:Number,
+    default:40
+  },
   usedCoupons: {
     type: [String],
     default: [],

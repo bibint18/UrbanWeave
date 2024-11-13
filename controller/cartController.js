@@ -176,6 +176,7 @@ exports.getCheckout = async (req, res) => {
     const addresses = users.address;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
+    let deliveryFee = 40
     cartItem.forEach((item) => {
       totalProduct += item.quantity;
     });
@@ -233,6 +234,7 @@ exports.getCheckout = async (req, res) => {
       discountedTotalAmount += finalPrice * quantity
       console.log("discountedTotalAmouny: ",discountedTotalAmount)
     }
+    discountedTotalAmount += deliveryFee
     console.log('finalPrice: ',finalPrice)
     console.log("discountedTotalAmount: ",totalOfferAmount)
     console.log('totalAmount: ',totalAmount)
@@ -241,7 +243,7 @@ exports.getCheckout = async (req, res) => {
     console.log(OriginalTotal)
     saved =(OriginalTotal - discountedTotalAmount).toFixed(2)
     console.log("saved: ",saved)
-    return res.render("user/checkout", { addresses, totalProduct,total:discountedTotalAmount ,user,coupons,OriginalTotal,OfferAmount:totalOfferAmount,saved,RegularTotal});
+    return res.render("user/checkout", { addresses, totalProduct,total:discountedTotalAmount ,user,coupons,OriginalTotal,OfferAmount:totalOfferAmount,saved,RegularTotal,deliveryFee});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
