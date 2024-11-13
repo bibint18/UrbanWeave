@@ -335,7 +335,6 @@ body {
                         <%= ProductItem.product.ProductName %> - Size: <%= ProductItem.size %>, Quantity: <%= ProductItem.quantity %> 
                         - ₹<%= ProductItem.price %>
                         <P>Payment Status: <%=  order.paymentStatus %></P>
-
                       </ul>
                     
                     </ol>
@@ -343,7 +342,7 @@ body {
                   <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= ProductItem.ProductStatus %></span></p>
                   <p><span >OrderID: <%= order.oid %></span></p>
                 </div>
-
+                
                 <div class="">
 
                   <% if (ProductItem.ProductStatus === 'Processing' || ProductItem.ProductStatus === 'Shipped') { %>
@@ -357,13 +356,14 @@ body {
                     <button class="retry-btn" onclick="retryPayment('<%= order._id %>')">Retry Payment</button>
                   <% } %>
                 </div>
-
+                <a href="/order/<%= order._id %>/invoice" class="btn btn-primary">Download Invoice</a>
               </div>
               <% }) %>
             <% }) %>
           <% } else { %>
             <p>No orders found.</p>
           <% } %>
+          
         </div>
       </section>
     </div>
