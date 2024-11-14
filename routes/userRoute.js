@@ -76,6 +76,7 @@ router.post('/checkout/address',authMiddleware.protect,CartRoute.checkoutAddAddr
 router.get('/checkout/address/edit',authMiddleware.protect,CartRoute.getEditAddress)
 router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddress)
 router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
+router.post('/placeOrderCOD',authMiddleware.protect,CartRoute.placeOrderCOD)
 //orders
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)

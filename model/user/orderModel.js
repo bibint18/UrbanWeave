@@ -45,6 +45,7 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  tempCouponAmount:{type:Number},
   address: {
     fullName: { type: String, required: false },
     phone: { type: String, required: false },

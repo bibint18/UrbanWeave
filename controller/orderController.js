@@ -165,7 +165,9 @@ exports.UpdatePayStatus = async(req,res) => {
   const {couponCode}=req.body 
   console.log("CoCo: ",couponCode)
   console.log(id,"from the update")
-  const order = await Order.findByIdAndUpdate(id,{paymentStatus:"Paid", $push: { usedCoupons: couponCode } })
+  const ThatOrder = await Order.findById(id)
+  const AmountToPay = ThatOrder.AmountPaid - ThatOrder.tempCouponAmount
+  const order = await Order.findByIdAndUpdate(id,{paymentStatus:"Paid", $push: { usedCoupons: couponCode },AmountPaid:AmountToPay,CouponDiscount:ThatOrder.tempCouponAmount,tempCouponAmount:0})
   const UserCoupon = await User.findByIdAndUpdate(user,{$push: { usedCoupons: couponCode }},{new:true})
   return res.status(200).json({success:true,message:"Payment succcessfull"})
   }catch(error){
@@ -258,10 +260,11 @@ exports.Invoice = async(req,res) => {
     // Summary section with styled text
     doc.moveDown();
     doc.fontSize(14).text('Summary:', { underline: true });
-    doc.fontSize(12).text(`Subtotal: $${subtotal.toFixed(2)}`);
-    doc.text(`Offer Amount: $${order.CategoryOffer.toFixed(2)}`);
-    doc.text(`Coupon Discount: $${order.CouponDiscount.toFixed(2)}`);
-    doc.fontSize(14).fillColor('red').text(`Total Amount: $${order.AmountPaid.toFixed(2)}`, { bold: true });
+    doc.fontSize(12).text(`Subtotal: ₹${subtotal.toFixed(2)}`);
+    doc.text(`Offer Amount: ₹${order.CategoryOffer.toFixed(2)}`);
+    doc.text(`Coupon Discount: ₹${order.CouponDiscount.toFixed(2)}`);
+    doc.text(`Delivery Fee: ₹40`);
+    doc.fontSize(14).fillColor('red').text(`Total Amount: ₹${order.AmountPaid.toFixed(2)}`, { bold: true });
 
     // Finalize the PDF and end the stream
     doc.end();

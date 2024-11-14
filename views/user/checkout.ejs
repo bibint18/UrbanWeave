@@ -298,14 +298,15 @@
         //function initialise
         async function initialise(){
     const selectedAddress = document.querySelector('input[name="address"]:checked');
-    const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
+    let totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
     const Paymethod = document.querySelector('input[name="paymentMethod"]:checked');
     const Subtotal = document.getElementById('Subtotal').textContent;
     const OriginalTotal = document.getElementById('OriginalTotal').textContent;
     const Quantity = document.getElementById('quantity').textContent;
     const CatOffer = document.getElementById('CatOffer').textContent;
-    const DiscountApplied = document.getElementById('discountMessageBox');
+    const DiscountApplied = document.getElementById('discountMessageBox')
     const CouponCode = document.querySelector('#CouponCode').value;
+    console.log(typeof totalToPay)
     let DiscountAmount = 0;
     if (DiscountApplied && DiscountApplied.textContent) {
         const match = DiscountApplied.textContent.match(/(\d+)/);
@@ -313,6 +314,7 @@
             DiscountAmount = parseInt(match[0], 10);
         }
     }
+    // totalToPay+=DiscountAmount
     if (!selectedAddress) {
         Swal.fire({
             icon: 'error',
@@ -348,7 +350,7 @@
             PayMethod: PayMethod,
             DiscountAmount: DiscountAmount,
             Subtotal: Subtotal,
-            CouponCode: '',
+            CouponCode: [],
             OriginalTotal: OriginalTotal,
             CatOffer: CatOffer,
             Quantity: Quantity,
@@ -405,89 +407,89 @@ async function UpdatePayment(){
   })
 }
         //function for placing order
-        async function PlaceOrder(){
-          console.log("function triggered")
-          // document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
-          // e.preventDefault();
-          const selectedAddress = document.querySelector('input[name="address"]:checked');
-          const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
-          const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
-          const Subtotal = document.getElementById('Subtotal').textContent
-          const OriginalTotal = document.getElementById('OriginalTotal').textContent
-          const Quantity = document.getElementById('quantity').textContent
-          const CatOffer = document.getElementById('CatOffer').textContent
-          const DiscountApplied = document.getElementById('discountMessageBox');
-          const CouponCode = document.querySelector('#CouponCode').value
-          let DiscountAmount = 0; 
-          if (DiscountApplied && DiscountApplied.textContent) {
-            const match = DiscountApplied.textContent.match(/(\d+)/); 
-            if (match) {
-              DiscountAmount = parseInt(match[0], 10);
-            }
-          }
-          if (!selectedAddress) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Please select an address',
-              timer: 1500,
-              showConfirmButton: false
-            });
-            return; 
-          }
+        // async function PlaceOrder(){
+        //   console.log("function triggered")
+        //   // document.querySelector('#checkoutForm').addEventListener('submit', function (e) {
+        //   // e.preventDefault();
+        //   const selectedAddress = document.querySelector('input[name="address"]:checked');
+        //   const totalToPay = document.getElementById('TotalAmount').innerText.replace('₹', '');
+        //   const Paymethod = document.querySelector('input[name="paymentMethod"]:checked')
+        //   const Subtotal = document.getElementById('Subtotal').textContent
+        //   const OriginalTotal = document.getElementById('OriginalTotal').textContent
+        //   const Quantity = document.getElementById('quantity').textContent
+        //   const CatOffer = document.getElementById('CatOffer').textContent
+        //   const DiscountApplied = document.getElementById('discountMessageBox');
+        //   const CouponCode = document.querySelector('#CouponCode').value
+        //   let DiscountAmount = 0; 
+        //   if (DiscountApplied && DiscountApplied.textContent) {
+        //     const match = DiscountApplied.textContent.match(/(\d+)/); 
+        //     if (match) {
+        //       DiscountAmount = parseInt(match[0], 10);
+        //     }
+        //   }
+        //   if (!selectedAddress) {
+        //     Swal.fire({
+        //       icon: 'error',
+        //       title: 'Oops...',
+        //       text: 'Please select an address',
+        //       timer: 1500,
+        //       showConfirmButton: false
+        //     });
+        //     return; 
+        //   }
 
-          if (!Paymethod) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Please select a Payment Method',
-              timer: 11500,
-              showConfirmButton: false
-            });
-            return; 
-          }
-          const address = selectedAddress.value;
-          console.log(address);
-          const PayMethod = Paymethod.value
-          fetch('/placeOrder', {
-            method: 'post',
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode,OriginalTotal,CatOffer,Quantity})
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.success) {
-                Swal.fire({
-                  title: 'Order Placed Successfully',
-                  text: 'Your order has been placed successfully.',
-                  icon: 'success',
-                  timer: 1500,
-                })
-                  .then(() => {
-                    window.location.href = '/orders'
-                  })
-              } else {
-                Swal.fire({
-                  title: 'Error',
-                  text: data.message,
-                  icon: 'error',
-                  timer: 1500,
+        //   if (!Paymethod) {
+        //     Swal.fire({
+        //       icon: 'error',
+        //       title: 'Oops...',
+        //       text: 'Please select a Payment Method',
+        //       timer: 11500,
+        //       showConfirmButton: false
+        //     });
+        //     return; 
+        //   }
+        //   const address = selectedAddress.value;
+        //   console.log(address);
+        //   const PayMethod = Paymethod.value
+        //   fetch('/placeOrderCOD', {
+        //     method: 'post',
+        //     headers: {
+        //       "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify({ address: address, totalToPay: totalToPay, PayMethod: PayMethod, DiscountAmount: DiscountAmount,Subtotal:Subtotal ,CouponCode:CouponCode,OriginalTotal,CatOffer,Quantity})
+        //   })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //       if (data.success) {
+        //         Swal.fire({
+        //           title: 'Order Placed Successfully',
+        //           text: 'Your order has been placed successfully.',
+        //           icon: 'success',
+        //           timer: 1500,
+        //         })
+        //           .then(() => {
+        //             window.location.href = '/orders'
+        //           })
+        //       } else {
+        //         Swal.fire({
+        //           title: 'Error',
+        //           text: data.message,
+        //           icon: 'error',
+        //           timer: 1500,
 
-                })
-              }
-            })
-            .catch((error) => {
-              Swal.fire({
-                icon: "error",
-                title: 'Error',
-                text: "something went wrong!",
-                timer: 1500
-              })
-            })
+        //         })
+        //       }
+        //     })
+        //     .catch((error) => {
+        //       Swal.fire({
+        //         icon: "error",
+        //         title: 'Error',
+        //         text: "something went wrong!",
+        //         timer: 1500
+        //       })
+        //     })
         
-        }
+        // }
         //popuping the online payment
         const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
         paymentOptions.forEach(option => {
@@ -633,6 +635,7 @@ async function UpdatePayment(){
                         // PlaceOrder();
                         // UpdatePayment(globalOrderId);
                         const couponCode = document.querySelector('#CouponCode').value;
+
                         console.log("CCCCCCCC: ",couponCode)
                         fetch(`/payment/update/${globalOrderId}`,{
                           method:"post",
@@ -746,7 +749,7 @@ async function UpdatePayment(){
           const address = selectedAddress.value;
           console.log(address);
           const PayMethod = Paymethod.value
-          fetch('/placeOrder', {
+          fetch('/placeOrderCOD', {
             method: 'post',
             headers: {
               "Content-Type": "application/json"

@@ -352,7 +352,7 @@ body {
                   <% if (ProductItem.ProductStatus === 'Delivered') { %>
                     <button class="return-btn " onclick="returnOrder('<%= order._id %>','<%=ProductItem.product._id%>')">Return Product</button>
                   <% } %>
-                  <% if (order.paymentStatus === 'Pending' || order.paymentStatus === 'Failed') { %>
+                  <% if ((order.paymentStatus === 'Pending' || order.paymentStatus === 'Failed')  && !order.products.some(product => product.ProductStatus==='Cancelled')) { %>
                     <button class="retry-btn" onclick="retryPayment('<%= order._id %>')">Retry Payment</button>
                   <% } %>
                 </div>
