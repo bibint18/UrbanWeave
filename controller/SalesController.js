@@ -54,7 +54,7 @@ exports.fetchReport = async (req, res) => {
       totalDiscounts += order.CategoryOffer;
       totalCouponDeductions += order.CouponDiscount;
       detailedOrders.push({
-        orderId: order._id,
+        orderId: order.oid,
         user: order.user.email ,
         amountPaid: order.AmountPaid,
         couponDeduction: order.CouponDiscount || 0,

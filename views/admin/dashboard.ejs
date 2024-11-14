@@ -232,6 +232,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
   <script>
@@ -256,12 +257,12 @@
         orderDiv.classList.add('detailed-order');
 
         orderDiv.innerHTML = `
-          <p class="order-id">Order ID: ${order.orderId}</p>
-          <p class="order-user">User: ${order.user}</p>
-          <p class="order-amountPaid">Amount Paid: ₹${order.amountPaid}</p>
-          <p class="order-couponDeduction">Coupon Deduction: ₹${order.couponDeduction}</p>
-          <p class="order-categoryOffer">Category Offer: ₹${order.categoryOffer}</p>
-          <p class="order-createdAt">Created At: ${new Date(order.createdAt).toLocaleDateString()}</p>
+          <p class="order-id"> ${order.orderId}</p>
+          <p class="order-user"> ${order.user}</p>
+          <p class="order-amountPaid"> ₹${order.amountPaid}</p>
+          <p class="order-couponDeduction"> ₹${order.couponDeduction}</p>
+          <p class="order-categoryOffer">₹${order.categoryOffer}</p>
+          <p class="order-createdAt">${new Date(order.createdAt).toLocaleDateString()}</p>
         `;
 
         detailedOrdersContainer.appendChild(orderDiv);
@@ -381,55 +382,117 @@
   console.log('New salesChart instance created:', window.salesChart);
 }
 
+// function exportPDF() {
+//   const { jsPDF } = window.jspdf;
+//   const doc = new jsPDF();
+//   const pageHeight = doc.internal.pageSize.height;
+//   // Add title
+//   doc.setFontSize(18);
+//   doc.text('Sales Report', 14, 20);
+//   // Add content
+//   doc.setFontSize(12);
+//   doc.text(`Total Revenue: ₹${document.getElementById('totalRevenue').textContent}`, 14, 40);
+//   doc.text(`Total Discounts: ₹${document.getElementById('totalDiscounts').textContent}`, 14, 50);
+//   doc.text(`Coupon Deductions: ₹${document.getElementById('totalCouponDeductions').textContent}`, 14, 60);
+//   doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent}`, 14, 70);
+//   doc.text('Detailed Orders:', 14, 90);
+//   let yPosition = 100; // Start position for detailed orders
+
+//   // Retrieve and include each detailed order
+//   const detailedOrders = document.querySelectorAll('.detailed-order'); // Use a class or container to hold each order's data
+//   detailedOrders.forEach((order, index) => {
+//     if (yPosition > pageHeight - 30) { // Check if the current yPosition exceeds page height - margin
+//       doc.addPage(); // Add a new page
+//       yPosition = 20; // Reset yPosition for new page
+//     }
+//     const orderId = order.querySelector('.order-id').textContent;
+//     const user = order.querySelector('.order-user').textContent;
+//     const amountPaid = order.querySelector('.order-amountPaid').textContent;
+//     const couponDeduction = order.querySelector('.order-couponDeduction').textContent;
+//     const categoryOffer = order.querySelector('.order-categoryOffer').textContent;
+//     const createdAt = order.querySelector('.order-createdAt').textContent;
+
+//     // Print the detailed order information
+//     doc.text(`Order ${index + 1}:`, 14, yPosition);
+//     yPosition += 10;
+//     doc.text(`- Order ID: ${orderId}`, 20, yPosition);
+//     yPosition += 10;
+//     doc.text(`- User: ${user}`, 20, yPosition);
+//     yPosition += 10;
+//     doc.text(`- Amount Paid: ₹${amountPaid}`, 20, yPosition);
+//     yPosition += 10;
+//     doc.text(`- Coupon Deduction: ₹${couponDeduction}`, 20, yPosition);
+//     yPosition += 10;
+//     doc.text(`- Category Offer: ₹${categoryOffer}`, 20, yPosition);
+//     yPosition += 10;
+//     doc.text(`- Created At: ${createdAt}`, 20, yPosition);
+//     yPosition += 20; // Add space between orders
+//   });
+//   // Save the PDF
+//   doc.save('sales_report.pdf');
+// }
+
+
 function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  const pageHeight = doc.internal.pageSize.height;
+  
   // Add title
   doc.setFontSize(18);
+  doc.setFont("helvetica", "normal");
   doc.text('Sales Report', 14, 20);
-  // Add content
-  doc.setFontSize(12);
-  doc.text(`Total Revenue: ₹${document.getElementById('totalRevenue').textContent}`, 14, 40);
-  doc.text(`Total Discounts: ₹${document.getElementById('totalDiscounts').textContent}`, 14, 50);
-  doc.text(`Coupon Deductions: ₹${document.getElementById('totalCouponDeductions').textContent}`, 14, 60);
-  doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent}`, 14, 70);
-  doc.text('Detailed Orders:', 14, 90);
-  let yPosition = 100; // Start position for detailed orders
 
-  // Retrieve and include each detailed order
-  const detailedOrders = document.querySelectorAll('.detailed-order'); // Use a class or container to hold each order's data
+  // Add summary information
+  doc.setFontSize(12);
+  doc.text(`Total Revenue: ${document.getElementById('totalRevenue').textContent.trim().replace(/₹/g, '')}`, 14, 40)
+  console.log(document.getElementById('totalRevenue').textContent.trim())
+  doc.text(`Total Discounts: ${document.getElementById('totalDiscounts').textContent.trim().replace(/₹/g, '')}`, 14, 50)
+  doc.text(`Coupon Deductions: ${document.getElementById('totalCouponDeductions').textContent.trim().replace(/₹/g, '')}`, 14, 60)
+  doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent.trim()}`, 14, 70)
+
+  // Prepare table data
+  const tableData = [];
+  const detailedOrders = document.querySelectorAll('.detailed-order');
+
   detailedOrders.forEach((order, index) => {
-    if (yPosition > pageHeight - 30) { // Check if the current yPosition exceeds page height - margin
-      doc.addPage(); // Add a new page
-      yPosition = 20; // Reset yPosition for new page
-    }
     const orderId = order.querySelector('.order-id').textContent;
     const user = order.querySelector('.order-user').textContent;
-    const amountPaid = order.querySelector('.order-amountPaid').textContent;
-    const couponDeduction = order.querySelector('.order-couponDeduction').textContent;
-    const categoryOffer = order.querySelector('.order-categoryOffer').textContent;
+    const amountPaid = order.querySelector('.order-amountPaid').textContent.trim().replace(/₹/g, '');
+    const couponDeduction = order.querySelector('.order-couponDeduction').textContent.trim().replace(/₹/g, '');
+    const categoryOffer = order.querySelector('.order-categoryOffer').textContent.trim().replace(/₹/g, '');
     const createdAt = order.querySelector('.order-createdAt').textContent;
 
-    // Print the detailed order information
-    doc.text(`Order ${index + 1}:`, 14, yPosition);
-    yPosition += 10;
-    doc.text(`- Order ID: ${orderId}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`- User: ${user}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`- Amount Paid: ₹${amountPaid}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`- Coupon Deduction: ₹${couponDeduction}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`- Category Offer: ₹${categoryOffer}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`- Created At: ${createdAt}`, 20, yPosition);
-    yPosition += 20; // Add space between orders
+    // Push each order as a row to tableData
+    tableData.push([
+      index + 1,
+      orderId,
+      user,
+      `${amountPaid}`,
+      `${couponDeduction}`,
+      `${categoryOffer}`,
+      createdAt,
+    ]);
   });
+
+  // Add table using autoTable plugin
+  doc.autoTable({
+    startY: 80, // Adjusts the position of the table
+    head: [['#', 'Order ID', 'User', 'Amount Paid', 'Coupon Deduction', 'Category Offer', 'Created At']],
+    body: tableData,
+    theme: 'grid', // Optional: use 'striped', 'grid', or 'plain'
+    styles: {
+      fontSize: 10,
+      cellPadding: 3,
+    },
+    headStyles: {
+      fillColor: [220, 220, 220], // Light gray header color
+    },
+  });
+
   // Save the PDF
   doc.save('sales_report.pdf');
 }
+
 
 // Add this function call to your "Export PDF" button's click event.
 document.querySelector('.export-button.pdf').addEventListener('click', exportPDF);
