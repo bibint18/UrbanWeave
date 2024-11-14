@@ -606,6 +606,15 @@ async function UpdatePayment(){
           const {orderId,amount,key} = await response.json();
 
           console.log("back",orderId)
+          fetch(`/orders/razorpay/${globalOrderId}`,{
+                method:"post",
+                headers:{
+                  "Content-Type": "application/json"
+                },
+                body:JSON.stringify({RazorpayOrderId:orderId})
+              })
+              .then(response => response.json())
+              .then(data => console.log(data))
           console.log(response)
           var options = {
             "key":'rzp_test_MwTWNrgjxNDf8T', 
@@ -617,8 +626,10 @@ async function UpdatePayment(){
             "order_id": orderId,
             "handler": function (response) {
               console.log("res: ",response)
+              let RazorPayOrderId = response.razorpay_order_id;
               // alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
               console.log("Payment successful! Payment ID: " + response.razorpay_payment_id)
+              
                fetch('/api/payment/verify-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

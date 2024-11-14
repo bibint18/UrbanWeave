@@ -63,16 +63,20 @@ exports.retry = async (req, res) => {
   const { orderId } = req.body;
   const order = await Order.findById(orderId);
   console.log(order)
+  console.log("order from retry: ",order)
   if (!order) {
       return res.status(404).json({ error: "Order not found" });
   }
-  const razorpayOrder = await razorpay.orders.create({
-      amount: order.AmountPaid * 100,
-      currency: "INR",
-      receipt: `retry_order_${order._id}`
-  });
+  // const razorpayOrder = await razorpay.orders.create({
+  //     amount: order.AmountPaid * 100,
+  //     currency: "INR",
+  //     receipt: `retry_order_${order._id}`
+  // });
+  console.log("reached till here")
+  let razorpayOrderId = order.razorpayOrderId
+  await order.save()
   res.json({
-      orderId: razorpayOrder.id,
+      orderId:razorpayOrderId,
       amount: order.AmountPaid,
       key: process.env.YOUR_KEY_ID
   });

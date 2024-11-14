@@ -186,6 +186,26 @@ exports.UpdatePayStatus = async(req,res) => {
   }
 }
 
+exports.UpdateRazOrderId = async(req,res) => {
+  try {
+    console.log("inside updae razorpy id")
+    const id = req.params.id
+    console.log(id)
+    const{RazorpayOrderId} = req.body
+    console.log(RazorpayOrderId)
+    const order = await Order.findById(id)
+    if(!order){
+      return res.status(400).json({success:false,message:"No order"})
+    }
+    await Order.findByIdAndUpdate(id,{razorpayOrderId:RazorpayOrderId},{new:true})
+    order.razorpayOrderId=RazorpayOrderId
+    return res.status(200).json({success:true,message:"changed "})
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({success:false})
+  }
+}
+
 exports.Invoice = async(req,res) => {
   try {
     const orderId = req.params.id;

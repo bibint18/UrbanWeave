@@ -83,6 +83,7 @@ router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelO
 router.post('/orders/return/:id/:ProId',authMiddleware.protect,OrderRoute.ReturnProduct)
 router.post('/payment/update/:id',authMiddleware.protect,OrderRoute.UpdatePayStatus)
 router.get('/order/:id/invoice',authMiddleware.protect,OrderRoute.Invoice)
+router.post('/orders/razorpay/:id',authMiddleware.protect,OrderRoute.UpdateRazOrderId)
 //wishlist 
 router.get('/wishlist',authMiddleware.protect,WishRoute.getWishlist)
 router.post("/wishlist/add",authMiddleware.protect,WishRoute.addWishlist)

@@ -497,6 +497,7 @@ exports.placeOrder = async (req, res) => {
       usedCoupons: CouponCode,
       tempCouponAmount: DiscountAmount,
       CategoryOffer: categoryOfferWhole,
+      razorpayOrderId:0,
       address: {
         fullName: selectedAddress.fullName,
         addressLine1: selectedAddress.addressLine1,

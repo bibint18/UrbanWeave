@@ -45,6 +45,7 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  razorpayOrderId: { type: String },
   tempCouponAmount:{type:Number},
   address: {
     fullName: { type: String, required: false },
