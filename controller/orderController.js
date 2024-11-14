@@ -168,6 +168,16 @@ exports.UpdatePayStatus = async(req,res) => {
   const ThatOrder = await Order.findById(id)
   const AmountToPay = ThatOrder.AmountPaid - ThatOrder.tempCouponAmount
   const order = await Order.findByIdAndUpdate(id,{paymentStatus:"Paid", $push: { usedCoupons: couponCode },AmountPaid:AmountToPay,CouponDiscount:ThatOrder.tempCouponAmount,tempCouponAmount:0})
+  let products = ThatOrder.products
+  for (const item of products) {
+      const product = await Product.findById(item.product);
+      const sizeStock = product.sizes.find((s) => s.size === item.size);
+      if (sizeStock) {
+        sizeStock.stock -= item.quantity;
+      }
+      await product.save();
+    }
+    await Cart.deleteMany({ user: user })
   const UserCoupon = await User.findByIdAndUpdate(user,{$push: { usedCoupons: couponCode }},{new:true})
   return res.status(200).json({success:true,message:"Payment succcessfull"})
   }catch(error){
