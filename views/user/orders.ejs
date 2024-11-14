@@ -177,7 +177,35 @@ body {
   outline: none; /* Remove focus outline */
   box-shadow: 0 0 4px rgba(231, 76, 60, 0.7); /* Subtle shadow on focus */
 }
-
+.buttons-area{
+  display: flex;
+  flex-direction: column;
+  gap:3%;
+  justify-content:space-around;
+  
+}
+.retry-btn{
+  background-color: rgb(129, 77, 77);
+    height: 12%;
+    border: none;
+    border-radius: 3px;
+    padding: 3px;
+    color: white;
+}
+.invoice-btn{
+  border-radius: 7px;
+  height: 145;
+  border:none;
+  background-color:rgb(177, 177, 177) ;
+}
+.invoice-btn:hover{
+  background-color: dimgray;
+  color: white;
+}
+.retry-btn:hover{
+  background-color:rgb(174, 50, 50);
+  color:white;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -335,15 +363,17 @@ body {
                         <%= ProductItem.product.ProductName %> - Size: <%= ProductItem.size %>, Quantity: <%= ProductItem.quantity %> 
                         - ₹<%= ProductItem.price %>
                         <P>Payment Status: <%=  order.paymentStatus %></P>
+                        <P>Payment Method: <%=  order.PaymentMethod %></P>
                       </ul>
                     
                     </ol>
 
                   <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= ProductItem.ProductStatus %></span></p>
                   <p><span >OrderID: <%= order.oid %></span></p>
+                  <button class="invoice-btn"><a href="/order/<%= order._id %>/invoice" class="btn anchor-class">Download Invoice</a></button> 
                 </div>
                 
-                <div class="">
+                <div class="buttons-area">
 
                   <% if (ProductItem.ProductStatus === 'Processing' || ProductItem.ProductStatus === 'Shipped') { %>
                     <button class="cancel-btn" onclick="cancelOrder('<%= order._id %>','<%=ProductItem.product._id %>')">Cancel Order</button>
@@ -352,11 +382,12 @@ body {
                   <% if (ProductItem.ProductStatus === 'Delivered') { %>
                     <button class="return-btn " onclick="returnOrder('<%= order._id %>','<%=ProductItem.product._id%>')">Return Product</button>
                   <% } %>
-                  <% if ((order.paymentStatus === 'Pending' || order.paymentStatus === 'Failed')  && !order.products.some(product => product.ProductStatus==='Cancelled')) { %>
+                  <% if ((order.paymentStatus === 'Pending' || order.paymentStatus === 'Failed' )  && !order.products.some(product => product.ProductStatus==='Cancelled') && (order.PaymentMethod !='CASH ON DELIVERY')) { %>
                     <button class="retry-btn" onclick="retryPayment('<%= order._id %>')">Retry Payment</button>
                   <% } %>
+                  
                 </div>
-                <a href="/order/<%= order._id %>/invoice" class="btn btn-primary">Download Invoice</a>
+                
               </div>
               <% }) %>
             <% }) %>
