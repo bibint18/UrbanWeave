@@ -297,13 +297,22 @@
 
     <div class="">
     <div class="links-container">
-      <a href="/admin/topProduct" class="left-link">Top Products</a>
-      <a href="/admin/topCategory" class="right-link">Top Categories</a>
+      <a href="" class="left-link" onclick="fetchData('topProduct'); return false;">Top Products</a>
+      <a href="" class="right-link" onclick="fetchData('topCategory'); return false;">Top Categories</a>
     </div>
 
     <!-- Rendered data section -->
     <div class="rendered-data-container">
-      <div class="TopProducts">
+      
+    
+    </div>
+  </div>   <!-- here-->
+  </div>
+</div>
+
+
+   
+<!-- <div class="TopProducts">
         <% if(topProducts.length>0){ %> 
       <h1>Top 10 Best Selling Products</h1>
       <% } %>
@@ -314,24 +323,21 @@
           </li>
         <% }); %>
       </ul>
-    </div>
-    <div class="topCategory"> 
-    <% if(topCategory.length>0) { %> 
-      <h1>Top 10 Best Selling Categories</h1>
-      <% } %>
-      <ul>
-        <% topCategory.forEach(category => { %>
-          <li>
-            <%= category.categoryDetails.categoryName %> - Total Sold: <%= category.sold %>
-          </li>
-        <% }); %>
-      </ul>
-    </div>
-    </div>
-  </div>   <!-- here-->
-  </div>
-</div>
-    
+      </div> 
+      
+      <div class="topCategory"> 
+          <% if(topCategory.length>0) { %> 
+            <h1>Top 10 Best Selling Categories</h1>
+            <% } %>
+            <ul>
+              <% topCategory.forEach(category => { %>
+                <li>
+                  <%= category.categoryDetails.categoryName %> - Total Sold: <%= category.sold %>
+                </li>
+              <% }); %>
+            </ul>
+          </div> -->
+
   </section>
   <!-- <a href="/admin/topProduct">Top Products</a>
   <a href="/admin/topCategory">Top Categories</a>
@@ -360,6 +366,45 @@
 
   <script>
     // let salesChart = null
+    function fetchData(type) {
+  fetch(`/admin/${type}`)  // Sends the request to the corresponding route
+    .then(response => response.json())  // Parse the response as JSON
+    .then(data => {
+      let html = '';
+console.log(data)
+console.log(type)
+      if (type === 'topProduct') {
+        console.log('insid type product')
+        if (data.topProducts.length > 0) {
+          html += '<h1>Top Selling Products</h1><ul>';
+          data.topProducts.forEach(product => {
+            html += `<li>${product.productDetails.ProductName} - Sold: ${product.Sold}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          html = '<p>No products found.</p>';
+        }
+      } else if (type === 'topCategory') {
+        console.log("inside type category")
+        if (data.topCategory.length > 0) {
+          html += '<h1>Top Selling Categories</h1><ul>';
+          data.topCategory.forEach(category => {
+            html += `<li>${category.categoryDetails.categoryName} - Total Sold: ${category.sold}</li>`;
+          });
+          html += '</ul>';
+        } else {
+          html = '<p>No categories found.</p>';
+        }
+      }
+
+      // Replace the content in the rendered-data-container
+      document.querySelector('.rendered-data-container').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      document.querySelector('.rendered-data-container').innerHTML = '<p>Error loading data.</p>';
+    });
+}
   
     async function fetchReport(type) {
         

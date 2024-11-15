@@ -97,6 +97,7 @@ exports.fetchReport = async (req, res) => {
 
 exports.getTopProducts = async (req,res) => {
   try {
+    console.log("reavhed")
     const topProducts=await Order.aggregate([
       {$unwind:'$products'},
       {$group:{
@@ -116,7 +117,8 @@ exports.getTopProducts = async (req,res) => {
     },
     {$unwind:'$productDetails'}
     ])
-    return res.render('admin/dashboard',{topProducts,detailedOrders:[],topCategory:[]})
+    return res.json({ topProducts});
+    // return res.render('admin/dashboard',{topProducts,detailedOrders:[],topCategory:[]})
   } catch (error) {
     console.log(error)
     return res.send(error)
@@ -156,8 +158,10 @@ exports.getTopCategory = async (req,res) => {
     {$sort:{sold:-1}}
     ])
     console.log(topCategory)
-    return res.render('admin/dashboard',{topCategory,detailedOrders:[],topProducts:[]})
+    return res.json({ topCategory });
+    // return res.render('admin/dashboard',{topCategory,detailedOrders:[],topProducts:[]})
   } catch (error) {
-    
+    console.log(error)
+    res.send(error)
   }
 }
