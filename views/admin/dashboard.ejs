@@ -156,6 +156,55 @@
     .export-button:active {
       transform: scale(0.97);
     }
+
+    .links-container {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 15px;
+  }
+
+  .links-container a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #3498db;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+
+  .links-container a:hover {
+    color: #2980b9;
+  }
+
+  .rendered-data-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f7f9fc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .rendered-data-container h1 {
+    font-size: 24px;
+    color: #34495e;
+    margin-bottom: 15px;
+  }
+
+  .rendered-data-container ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .rendered-data-container li {
+    font-size: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .rendered-data-container li:last-child {
+    border-bottom: none;
+  }
   </style>
 </head>
 <body>
@@ -206,8 +255,24 @@
             <h2>Sales Chart</h2>
             <select id="chartType" class="chart-select">
               <option value="bar">Bar Chart</option>
-              <!-- <option value="line">Line Chart</option> -->
+              <option value="line">Line Chart</option>
             </select>
+            <div class="button-group">
+              <button class="button" onclick="fetchReport('daily')">1 Day</button>
+              <button class="button" onclick="fetchReport('weekly')">1 Week</button>
+              <button class="button" onclick="fetchReport('monthly')">1 Month</button>
+              <button class="button" onclick="fetchReport('yearly')">1 Year</button>
+              <select id="reportType" class="select" onchange="handleReportTypeChange()">
+                <option value="choose">Customise Here</option>
+                <!-- <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option> -->
+                <option value="custom">Custom Range</option>
+              </select>
+              <input type="date" id="startDate" class="date-input" placeholder="Start Date" disabled>
+              <input type="date" id="endDate" class="date-input" placeholder="End Date" disabled>
+              <button class="apply-button" onclick="fetchCustomReport()">Apply Custom Date</button>
+            </div>
             <canvas id="salesChart"></canvas>
           </div>
 
@@ -226,9 +291,67 @@
             <% }); %>
           </div> -->
       </div>
-      
     </div>
+
+
+
+    <div class="">
+    <div class="links-container">
+      <a href="/admin/topProduct" class="left-link">Top Products</a>
+      <a href="/admin/topCategory" class="right-link">Top Categories</a>
+    </div>
+
+    <!-- Rendered data section -->
+    <div class="rendered-data-container">
+      <div class="TopProducts">
+        <% if(topProducts.length>0){ %> 
+      <h1>Top 10 Best Selling Products</h1>
+      <% } %>
+      <ul>
+        <% topProducts.forEach(product => { %>
+          <li>
+            <%= product.productDetails.ProductName %> - Sold: <%= product.Sold %>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    <div class="topCategory"> 
+    <% if(topCategory.length>0) { %> 
+      <h1>Top 10 Best Selling Categories</h1>
+      <% } %>
+      <ul>
+        <% topCategory.forEach(category => { %>
+          <li>
+            <%= category.categoryDetails.categoryName %> - Total Sold: <%= category.sold %>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    </div>
+  </div>   <!-- here-->
+  </div>
+</div>
+    
   </section>
+  <!-- <a href="/admin/topProduct">Top Products</a>
+  <a href="/admin/topCategory">Top Categories</a>
+  <h1>Top 10 Best Selling Products</h1>
+<ul>
+  <% topProducts.forEach(product => { %>
+    <li>
+      <%= product.productDetails.ProductName %> - Sold: <%= product.Sold %>
+    </li>
+  <% }); %>
+</ul>
+
+<h1>Top 10 Best Selling Categories</h1>
+<ul>
+  <% topCategory.forEach(category => { %>
+    <li>
+      <%= category.categoryDetails.categoryName %> - Total Sold: <%= category.sold %>
+    </li>
+  <% }); %>
+</ul> -->
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -237,6 +360,7 @@
 
   <script>
     // let salesChart = null
+  
     async function fetchReport(type) {
         
       try {
@@ -326,7 +450,9 @@
     function updateSalesChart(salesData) {
         console.log("updte: ",salesData)
   const ctx = document.getElementById('salesChart').getContext('2d');
-  const chartType = document.getElementById('chartType').value;  // Get selected chart type
+  const chartType = document.getElementById('chartType').value;
+  console.log("chartType: ",chartType)
+  // Get selected chart type
   console.log('Current salesChart instance:', window.salesChart);
   // Create or update the chart
   if (window.salesChart && !(window.salesChart instanceof Chart)) {
@@ -381,57 +507,6 @@
   });
   console.log('New salesChart instance created:', window.salesChart);
 }
-
-// function exportPDF() {
-//   const { jsPDF } = window.jspdf;
-//   const doc = new jsPDF();
-//   const pageHeight = doc.internal.pageSize.height;
-//   // Add title
-//   doc.setFontSize(18);
-//   doc.text('Sales Report', 14, 20);
-//   // Add content
-//   doc.setFontSize(12);
-//   doc.text(`Total Revenue: ₹${document.getElementById('totalRevenue').textContent}`, 14, 40);
-//   doc.text(`Total Discounts: ₹${document.getElementById('totalDiscounts').textContent}`, 14, 50);
-//   doc.text(`Coupon Deductions: ₹${document.getElementById('totalCouponDeductions').textContent}`, 14, 60);
-//   doc.text(`Total Orders: ${document.getElementById('totalOrders').textContent}`, 14, 70);
-//   doc.text('Detailed Orders:', 14, 90);
-//   let yPosition = 100; // Start position for detailed orders
-
-//   // Retrieve and include each detailed order
-//   const detailedOrders = document.querySelectorAll('.detailed-order'); // Use a class or container to hold each order's data
-//   detailedOrders.forEach((order, index) => {
-//     if (yPosition > pageHeight - 30) { // Check if the current yPosition exceeds page height - margin
-//       doc.addPage(); // Add a new page
-//       yPosition = 20; // Reset yPosition for new page
-//     }
-//     const orderId = order.querySelector('.order-id').textContent;
-//     const user = order.querySelector('.order-user').textContent;
-//     const amountPaid = order.querySelector('.order-amountPaid').textContent;
-//     const couponDeduction = order.querySelector('.order-couponDeduction').textContent;
-//     const categoryOffer = order.querySelector('.order-categoryOffer').textContent;
-//     const createdAt = order.querySelector('.order-createdAt').textContent;
-
-//     // Print the detailed order information
-//     doc.text(`Order ${index + 1}:`, 14, yPosition);
-//     yPosition += 10;
-//     doc.text(`- Order ID: ${orderId}`, 20, yPosition);
-//     yPosition += 10;
-//     doc.text(`- User: ${user}`, 20, yPosition);
-//     yPosition += 10;
-//     doc.text(`- Amount Paid: ₹${amountPaid}`, 20, yPosition);
-//     yPosition += 10;
-//     doc.text(`- Coupon Deduction: ₹${couponDeduction}`, 20, yPosition);
-//     yPosition += 10;
-//     doc.text(`- Category Offer: ₹${categoryOffer}`, 20, yPosition);
-//     yPosition += 10;
-//     doc.text(`- Created At: ${createdAt}`, 20, yPosition);
-//     yPosition += 20; // Add space between orders
-//   });
-//   // Save the PDF
-//   doc.save('sales_report.pdf');
-// }
-
 
 function exportPDF() {
   const { jsPDF } = window.jspdf;

@@ -28,7 +28,7 @@ exports.loginSubmit = async (req, res) => {
   }
 };
 exports.getDashboard = (req, res) => {
-  res.render("admin/dashboard",{detailedOrders:[]});
+  res.render("admin/dashboard",{detailedOrders:[],topProducts:[],topCategory:[]});
 };
 exports.ListUsers = async (req, res) => {
   try {

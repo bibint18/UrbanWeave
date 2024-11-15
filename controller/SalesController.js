@@ -93,3 +93,71 @@ exports.fetchReport = async (req, res) => {
       .json({ success: false, message: "something went wrong!" });
   }
 };
+
+
+exports.getTopProducts = async (req,res) => {
+  try {
+    const topProducts=await Order.aggregate([
+      {$unwind:'$products'},
+      {$group:{
+        _id:'$products.product',
+        Sold:{$sum:'$products.quantity'}
+      },
+    },
+    {$sort:{Sold:-1}},
+    {$limit:10},
+    {
+      $lookup:{
+        from:'products',
+        localField:'_id',
+        foreignField:'_id', 
+        as:"productDetails"
+      }
+    },
+    {$unwind:'$productDetails'}
+    ])
+    return res.render('admin/dashboard',{topProducts,detailedOrders:[],topCategory:[]})
+  } catch (error) {
+    console.log(error)
+    return res.send(error)
+  }
+}
+
+exports.getTopCategory = async (req,res) => {
+  try {
+    const topCategory=await Order.aggregate([
+      {$unwind:'$products'},
+      {
+        $lookup:{
+          from:'products',
+          localField:'products.product',
+          foreignField:'_id',
+          as:"productDetails"
+        }
+      },
+      {$unwind:'$productDetails'},
+      {
+        $group:{
+          _id:"$productDetails.category",
+          sold:{$sum:'$products.quantity'}
+      }
+    },
+    {$sort:{Sold:-1}},
+    {$limit:10},
+    {
+      $lookup:{
+        from:'categories',
+        localField:'_id',
+        foreignField:'_id',
+        as:"categoryDetails"
+      }
+    },
+    {$unwind:"$categoryDetails"},
+    {$sort:{sold:-1}}
+    ])
+    console.log(topCategory)
+    return res.render('admin/dashboard',{topCategory,detailedOrders:[],topProducts:[]})
+  } catch (error) {
+    
+  }
+}

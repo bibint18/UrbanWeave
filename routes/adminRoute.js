@@ -75,4 +75,6 @@ router.get('/offers/edit/:id',protectAdmin,OfferRoute.getEditCatOffer)
 router.post('/offers/edit/:id',protectAdmin,OfferRoute.EditOffer)
 //sales
 router.get('/sales-report',protectAdmin,SalesRoute.fetchReport)
+router.get('/topProduct',protectAdmin,SalesRoute.getTopProducts)
+router.get('/topCategory',protectAdmin,SalesRoute.getTopCategory)
 module.exports = router;
