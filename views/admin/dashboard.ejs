@@ -405,6 +405,16 @@ console.log(type)
       document.querySelector('.rendered-data-container').innerHTML = '<p>Error loading data.</p>';
     });
 }
+
+
+
+document.getElementById('chartType').addEventListener('change',function(){
+  const chartType = this.value;
+  if(window.salesChart){
+    window.salesChart.config.type = chartType
+    window.salesChart.update()
+  }
+})
   
     async function fetchReport(type) {
         
@@ -436,9 +446,6 @@ console.log(type)
 
         detailedOrdersContainer.appendChild(orderDiv);
       });
-
-      // Make the detailed orders container visible (optional)
-      detailedOrdersContainer.style.display = 'block';
           updateSalesChart(data.report.salesData);
         } else {
           alert('Failed to load sales report');
@@ -497,44 +504,36 @@ console.log(type)
   const ctx = document.getElementById('salesChart').getContext('2d');
   const chartType = document.getElementById('chartType').value;
   console.log("chartType: ",chartType)
-  // Get selected chart type
   console.log('Current salesChart instance:', window.salesChart);
-  // Create or update the chart
   if (window.salesChart && !(window.salesChart instanceof Chart)) {
         console.warn('salesChart is not a Chart.js instance. Resetting.');
         window.salesChart = null;
     }
-
-    // Destroy the previous chart instance if it exists
     if (window.salesChart && typeof window.salesChart.destroy === 'function') {
         window.salesChart.destroy();
     }
-//   if (window.salesChart) {
-//     window.salesChart.destroy();  // Destroy the previous chart instance if exists
-//   }
-
   window.salesChart = new Chart(ctx, {
-    type: chartType,  // Line chart or bar chart
+    type: chartType,  
     data: {
-      labels: salesData.labels,  // Dates
+      labels: salesData.labels,  
       datasets: [
         {
         label: 'Sales Amount',
-        data: salesData.sales,  // Sales values
+        data: salesData.sales,  
         backgroundColor: chartType === 'bar' ? 'rgba(75, 192, 192, 0.2)' : 'transparent',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1
       },
       {
           label: 'Coupon Deductions',
-          data: salesData.couponDeductions,  // Coupon deductions
+          data: salesData.couponDeductions,  
           backgroundColor: chartType === 'bar' ? 'rgba(255, 99, 132, 0.2)' : 'transparent',
           borderColor: 'rgba(255, 99, 132, 1)',
           borderWidth: 1
         },
         {
           label: 'Offer Amounts',
-          data: salesData.offerAmounts,  // Offer amounts
+          data: salesData.offerAmounts,  
           backgroundColor: chartType === 'bar' ? 'rgba(235, 235, 0, 0.2)' : 'transparent',
           borderColor: 'rgba(235, 0, 0, 1)',
           borderWidth: 1
@@ -550,7 +549,7 @@ console.log(type)
       }
     }
   });
-  console.log('New salesChart instance created:', window.salesChart);
+  
 }
 
 function exportPDF() {
@@ -581,8 +580,6 @@ function exportPDF() {
     const couponDeduction = order.querySelector('.order-couponDeduction').textContent.trim().replace(/₹/g, '');
     const categoryOffer = order.querySelector('.order-categoryOffer').textContent.trim().replace(/₹/g, '');
     const createdAt = order.querySelector('.order-createdAt').textContent;
-
-    // Push each order as a row to tableData
     tableData.push([
       index + 1,
       orderId,
@@ -593,8 +590,6 @@ function exportPDF() {
       createdAt,
     ]);
   });
-
-  // Add table using autoTable plugin
   doc.autoTable({
     startY: 80, // Adjusts the position of the table
     head: [['#', 'Order ID', 'User', 'Amount Paid', 'Coupon Deduction', 'Category Offer', 'Created At']],
@@ -614,7 +609,6 @@ function exportPDF() {
 }
 
 
-// Add this function call to your "Export PDF" button's click event.
 document.querySelector('.export-button.pdf').addEventListener('click', exportPDF);
 
 function exportExcel() {
