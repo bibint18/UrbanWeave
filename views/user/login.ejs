@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
   * {
     box-sizing: border-box;
@@ -104,6 +106,28 @@ label > input:focus + span {
     color: #394867;
     text-decoration: none;
 }
+.psw-container{
+  position: relative;
+
+}
+#togglePassword {
+  position: absolute;
+  right: 20px;
+  top: 43%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.google{
+  text-decoration: none;
+  color: #4577da;
+  font-weight: bold;
+}
+.google:hover{
+  color: #051028;
+}
+.goggleIcon{
+  width: 12%;
+}
 </style>
 </head>
 
@@ -120,7 +144,8 @@ label > input:focus + span {
     </label>
     
     <label for="">
-      <input type="password" name="password" id="password">
+      <input type="password" name="password" id="password" class="psw-container">
+      <i id="togglePassword" class="fa fa-eye"></i>
       <span>PASSWORD</span>
     </label>
     <div class="termofuse">
@@ -131,6 +156,8 @@ label > input:focus + span {
       </span>
       </b></p>
     </div>
+    
+    <a href="/auth/google" class="google"> <img src="/stylesheet/google.svg" class="goggleIcon" alt=""></a>
     <div class="termofuse"></div>
     <p>
       <span>
@@ -146,6 +173,19 @@ label > input:focus + span {
   </form>
 </body>
 <script>
+  document.getElementById('togglePassword').addEventListener('click',function(){
+    const PassValue = document.getElementById('password')
+    const icon=this
+    if(PassValue.type ==='password'){
+      PassValue.type='text'
+      icon.classList.remove('fa-eye')
+      icon.classList.add('fa-eye-slash')
+    }else{
+      PassValue.type ='password'
+      icon.classList.remove('fa-eye-slash')
+      icon.classList.add('fa-eye')
+    }
+  })
   setTimeout(function() {
             const messageElement = document.getElementById('error');
             if (messageElement) {

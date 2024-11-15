@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
   * {
     box-sizing: border-box;
@@ -82,7 +83,7 @@ label > input:focus + span {
 .termofuse {
     display: flex;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -96,6 +97,27 @@ label > input:focus + span {
 .termofuse a {
     color: #394867;
     text-decoration: none;
+}
+.googleIcon{
+  width: 12%;
+}
+.currentPass{
+  position: relative;
+}
+.confirmPass{
+  position: relative
+}
+#togglePassword{
+  position: absolute;
+  top:30%;
+  right: 5%;
+  cursor: pointer;
+}
+#toggleConfirmPsw{
+  position: absolute;
+  top:30%;
+  right: 5%;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -119,12 +141,14 @@ label > input:focus + span {
     </label>
     
     <label for="">
-      <input type="password" name="password" id="pass">
+      <input type="password" name="password" id="pass" class="currentPass">
+      <i id="togglePassword" class="fa fa-eye"></i>
       <span>PASSWORD</span>
     </label>
     
     <label for="">
-      <input type="password" name="rpassword" id="cpass">
+      <input type="password" name="rpassword" id="cpass" class="confirmPass">
+      <i id="toggleConfirmPsw" class="fa fa-eye"></i>
       <span>CONFIRM PASSWORD</span>
     </label>
     
@@ -136,21 +160,40 @@ label > input:focus + span {
       </span>
       </b></p>
     </div>
-
-    <div class="termofuse"></div>
-      <p><b>
-      <span>
-        Already User 
-        <a href="/auth/google">Sign-in with Google</a>
-      </span>
-      </b></p>
-    </div>
-    
+        <a href="/auth/google"><img src="/stylesheet/google.svg" class="googleIcon" alt=""> </a>
    <input type="submit" value="Submit" >
     
   </form>
 </body>
 <script>
+  document.getElementById('togglePassword').addEventListener('click',function(){
+    const val = document.getElementById('pass')
+    const icon = this
+    if(val.type ==='password'){
+      val.type='text'
+      icon.classList.remove('fa-eye')
+      icon.classList.add('fa-eye-slash')
+    }else{
+      val.type='password',
+      icon.classList.remove('fa-eye-slash')
+      icon.classList.add('fa fa-eye')
+    }
+  })
+
+  document.getElementById('toggleConfirmPsw').addEventListener('click',function(){
+    let value = document.getElementById('cpass')
+    let icon = this
+    if(value.type === 'password'){
+      value.type = 'text'
+      icon.classList.remove('fa-eye')
+      icon.classList.add('fa-eye-slash')
+    }else{
+      value.type = 'password'
+      icon.classList.remove('fa-eye-slash')
+      icon.classList.add('fa-eye')
+    }
+
+  })
   setTimeout(function() {
             const messageElement = document.getElementById('error');
             if (messageElement) {
