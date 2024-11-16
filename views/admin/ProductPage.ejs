@@ -1,4 +1,4 @@
-<%-include('.. /../views/partials/admin/header')%>
+<%-include('../../views/partials/admin/header')%>
   <style>
     .size-stock-list {
       list-style-type: none;
@@ -239,15 +239,19 @@
               icon: "success",
               title: 'Offer added',
               text: 'Offer applied succesfully',
-              timer: 5000,
+              timer: 1500,
+              showConfirmButton:false
             })
-            location.reload()
+            .then(() => {
+              window.location.reload();
+            })
           } else {
             Swal.fire({
               icon: "error",
               title: 'Error',
               text: 'Offer not added',
-              timer: 5000,
+              timer: 1500,
+              showConfirmButton:false
             })
           }
         }
@@ -263,8 +267,6 @@
           text: "Are you sure you want to remove offer",
           showCancelButton: true,
           confirmButtonText: 'yes, Remove it',
-          timer: 5000,
-          timerProgressBar: true,
         }).then(async (result) => {
           if (result.isConfirmed) {
             $.ajax({
@@ -280,17 +282,21 @@
                     icon: "success",
                     title: "offer removed",
                     text: "Offer removed succesfully",
-                    timer: 5000,
+                    timer:1500,
                     timerProgressBar: true,
+                    showConfirmButton:false
                   })
-
+                  .then(() => {
+                    window.location.reload();
+                  })
                 } else {
                   Swal.fire({
                     icon: "error",
                     title: "Error",
                     text: 'error removing offer',
-                    timer: 5000,
+                    timer: 1500,
                     timerProgressBar: true,
+                    showConfirmButton:false
                   })
                 }
 
@@ -306,4 +312,4 @@
       }
     }
   </script>
-  <%-include('.. /../views/partials/admin/footer')%>
+<%-include('../../views/partials/admin/footer')%>
