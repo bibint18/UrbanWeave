@@ -74,16 +74,19 @@ exports.getEditCoupon = async (req,res) => {
 exports.editCoupon = async (req,res) => {
   try {
     console.log("inside edit")
-    const Id = req.params.id
-    console.log("orderId : ",Id)
+    const id = req.params.id
+    console.log("orderId : ",id)
     const{code,startDate,endDate,minimum,maximum,discount,Maxdiscount,status} = req.body
     console.log("edit",code,startDate,endDate,minimum,maximum,discount,Maxdiscount,status)
     console.log(typeof Maxdiscount)
-    const existedCode = await Coupon.findOne({code:code})
-    if(existedCode){
-      return res.status(400).json({success:false,message:"Coupon code already exists!"})
+    const existedCode = await Coupon.findById(id)
+    if(code != existedCode.code){
+      const already = await Coupon.findOne({code:code})
+      if(already){
+        return res.status(400).json({success:false,message:"Coupon code already exists!"})
+      }
     }
-    const coupon = await Coupon.findByIdAndUpdate(Id,{
+    const coupon = await Coupon.findByIdAndUpdate(id,{
       code:code,
       start_date:startDate,
       end_date:endDate,
@@ -93,11 +96,7 @@ exports.editCoupon = async (req,res) => {
       maximumDiscount:Maxdiscount,
       status:status 
     },{new:true})
-    
-    if(!coupon){
-      return res.status(400).json({success:false,message:"No order found"})
-    }
-    return res.status(200).json({success:true})
+    return res.status(200).json({success:true,message:"Coupon Updated Succesfully!"})
   } catch (error) {
     console.log(error)
     return res.status(400).json({success:false,message:"Something went wrong!"})

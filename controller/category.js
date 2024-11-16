@@ -49,6 +49,7 @@ exports.revert = async (req, res) => {
 
 exports.editcategory = async (req, res) => {
   try{
+    const id = req.params.id
   const { categoryName, description } = req.body;
   console.log(categoryName, description);
   const category = await Category.findById(id)
