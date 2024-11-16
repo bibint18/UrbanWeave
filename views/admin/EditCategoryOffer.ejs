@@ -101,9 +101,9 @@
       <div class="container ms-0 justify-content-center" style="max-width: 450px;">
         <h1>Edit Category Offers</h1>
         <form id="offerForm" action="" method="">
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="category">Select Category</label>
-            <select id="category" name="category" class="form-control" required>
+            <select id="category" name="category" class="form-control"  required>
               <% categories.forEach(category=> { %>
                 <option value="<%= category._id %>" <%=offers.category._id.toString()===category._id.toString()
                   ? 'selected' : '' %>>
@@ -111,6 +111,13 @@
                 </option>
                 <% }) %>
             </select>
+          </div> -->
+
+          <div class="form-group">
+            <label for="discountPercentage">Category Name</label>
+            <input type="text" id="categoryy" name="categoryy" class="form-control"
+              value="<%= offers.category.categoryName %>" disabled>
+              <input type="hidden" id="category" name="category" value="<%offers.category%>">
           </div>
 
           <div class="form-group">

@@ -94,6 +94,12 @@
       border-radius: 5px;
       /* Rounded corners for list items */
     }
+    .error-message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
   </style>
   </head>
 
@@ -125,11 +131,13 @@
           <div class="form-group">
             <label for="startDate">Start Date</label>
             <input type="date" id="startDate" class="form-control" required>
+            <div class="error-message" id="startDateError"></div>
           </div>
 
           <div class="form-group">
             <label for="endDate">End Date</label>
             <input type="date" id="endDate" class="form-control" required>
+            <div class="error-message" id="expiryDateError"></div>
           </div>
 
           <button type="submit" id="createOfferBtn" class="btn btn-primary btn-block">Create Offer</button>
@@ -229,19 +237,57 @@
       //     });
 
       // Handle offer creation
+
+      document.addEventListener('DOMContentLoaded', function () {
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
+
+  // Set the min attribute to today's date
+  document.getElementById('startDate').setAttribute('min', formattedDate);
+  document.getElementById('endDate').setAttribute('min', formattedDate);
+});
       document.getElementById('offerForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent form submission
         const category = document.getElementById('category').value;
-        console.log(category);
-
         const discountPercentage = document.getElementById('discountPercentage').value;
-        console.log(discountPercentage);
-
         const startDate = document.getElementById('startDate').value;
-        console.log(startDate);
-
         const endDate = document.getElementById('endDate').value;
-        console.log(endDate);
+        document.getElementById('startDateError')?.remove();
+  document.getElementById('endDateError')?.remove();
+
+  // Create date objects for comparison
+  const startDateObj = new Date(startDate);
+  const endDateObj = new Date(endDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset the time to the beginning of the day
+  
+
+  let isValid = true;
+
+  // Validation logic
+  if (startDateObj < today) {
+    isValid = false;
+    const errorElement = document.createElement('div');
+    errorElement.id = 'startDateError';
+    errorElement.className = 'error-message';
+    errorElement.textContent = 'Start date cannot be in the past.';
+    document.getElementById('startDate').after(errorElement);
+  }
+
+  if (endDateObj < startDateObj) {
+    isValid = false;
+    const errorElement = document.createElement('div');
+    errorElement.id = 'endDateError';
+    errorElement.className = 'error-message';
+    errorElement.textContent = 'End date cannot be before the start date.';
+    document.getElementById('endDate').after(errorElement);
+  }
+
+  // If validation fails, prevent the form from submitting
+  if (!isValid) {
+    return;
+  }
+
 
         fetch('/admin/offers/add', {
           method: 'POST',
@@ -268,8 +314,9 @@
               Swal.fire({
                 icon: 'error',
                 title: "Error",
-                text: "Error adding offer",
-
+                text: data.message,
+                timer:1500,
+                showConfirmbutton:false
               })
             }
           })
@@ -278,11 +325,14 @@
             Swal.fire({
               icon: "error",
               title: "Error",
-              text: "something went wrong!"
+              text: "something went wrong!",
+              timer:1500,
+              showConfirmbutton:false
             })
-
           })
       });
+
+
 
       function DeleteCategoryOffer(CatOfferId) {
         Swal.fire({
