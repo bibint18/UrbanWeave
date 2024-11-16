@@ -213,6 +213,14 @@
   font-weight: bold;
   border-color: #007bff;
 }
+.inp-btn{
+background-color: white;
+padding: 1%;
+}
+.inp-btn:focus{
+  border: none;
+}
+
 
   </style>
 </head>
@@ -265,6 +273,11 @@
   <!-- </div> -->
 
   <!-- Order Table -->
+   
+    <form action="/admin/orders" method="get">
+    <input type="text" name="search" class="inp-btn" placeholder="Search..."> <button class="btn">Search</button>
+  </form>
+   
   <div class="table-container">
     <table>
       <thead>
@@ -311,15 +324,15 @@
 
   <div class="pagination">
     <% if (currentPage > 1) { %>
-      <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+      <a href="?page=<%= currentPage - 1 %>&search=<%= searchQuery %>" class="pagination-link">Previous</a>
     <% } %>
     
     <% for (let i = 1; i <= totalPages; i++) { %>
-      <a href="?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+      <a href="?page=<%= i %>&search=<%= searchQuery %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
     <% } %>
   
     <% if (currentPage < totalPages) { %>
-      <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+      <a href="?page=<%= currentPage + 1 %>&search=<%= searchQuery %>" class="pagination-link">Next</a>
     <% } %>
   </div>
   
