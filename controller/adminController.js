@@ -32,8 +32,13 @@ exports.getDashboard = (req, res) => {
 };
 exports.ListUsers = async (req, res) => {
   try {
-    const users = await User.find({});
-    res.render("admin/users", { users });
+    let page = req.query.page || 1;
+    let limit=4;
+    let skip = (page -1) * limit;
+    let totalUsers = await User.countDocuments();
+    let totalPages=Math.ceil(totalUsers/limit)
+    const users = await User.find({}).skip(skip).limit(limit)
+    res.render("admin/users", { users ,currentPage:page,totalPages});
   } catch (err) {
     console.log(err);
   }
@@ -61,16 +66,25 @@ exports.unblockUser = async (req, res) => {
 
 exports.searchUser =async (req,res) => {
   const searchQuery = req.query.search
+  let page = req.query.page || 1;
+  let limit=4;
+  let skip = (page -1) * limit;
+  const totalUser = await User.find({
+    $or:[{username:{$regex:searchQuery,$options:'i'}},
+      {email:{$regex:searchQuery,$options:'i'}}]
+  }).countDocuments()
+  const totalPages = Math.ceil(totalUser/limit)
   const users = await User.find({
     $or:[{username:{$regex:searchQuery,$options:'i'}},
       {email:{$regex:searchQuery,$options:'i'}}]
-  })
+  }).skip(skip).limit(limit)
   console.log(users)
-  return res.render('admin/users',{users})
+  return res.render('admin/users',{users,currentPage:page,totalPages})
 }
 
 exports.logout = (req,res) => {
-  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) }); 
+  console.log('isnide logout')
+  res.cookie('jwt_admin', '', { httpOnly: true, expires: new Date(0) }); 
   return res.redirect("/admin/login")
 }
 

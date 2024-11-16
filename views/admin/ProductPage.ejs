@@ -1,125 +1,147 @@
-<%-include('../../views/partials/admin/header')%>
-<style>
-  .size-stock-list {
-  list-style-type: none; /* Remove bullet points */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
-}
+<%-include('.. /../views/partials/admin/header')%>
+  <style>
+    .size-stock-list {
+      list-style-type: none;
+      /* Remove bullet points */
+      padding: 0;
+      /* Remove padding */
+      margin: 0;
+      /* Remove margin */
+    }
 
-.size-stock-item {
-  display: inline-flex; /* Use inline-flex for alignment */
-  align-items: center;
-  margin-right: 15px; /* Space between items */
-}
+    .size-stock-item {
+      display: inline-flex;
+      /* Use inline-flex for alignment */
+      align-items: center;
+      margin-right: 15px;
+      /* Space between items */
+    }
 
-.stock-box {
-  display: inline-block; /* Make it inline-block */
-  padding: 3px 5px; /* Smaller padding */
-  border: 1px solid #ccc; /* Light border */
-  border-radius: 3px; /* Rounded corners */
-  background-color: #f9f9f9; /* Light background color */
-  margin-left: 5px; /* Space between size and stock box */
-}
+    .stock-box {
+      display: inline-block;
+      /* Make it inline-block */
+      padding: 3px 5px;
+      /* Smaller padding */
+      border: 1px solid #ccc;
+      /* Light border */
+      border-radius: 3px;
+      /* Rounded corners */
+      background-color: #f9f9f9;
+      /* Light background color */
+      margin-left: 5px;
+      /* Space between size and stock box */
+    }
 
-.line-break {
-  display: block; /* Break line */
-  width: 100%; /* Full width for line break */
-  margin-top: 5px; /* Space between lines */
-}
+    .line-break {
+      display: block;
+      /* Break line */
+      width: 100%;
+      /* Full width for line break */
+      margin-top: 5px;
+      /* Space between lines */
+    }
 
-.pagination {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  padding: 1rem;
-}
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      padding: 1rem;
+    }
 
-/* Pagination link styling */
-.pagination-link {
-  text-decoration: none;
-  color: #333;
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-weight: 500;
-  transition: background-color 0.3s, color 0.3s;
-}
+    /* Pagination link styling */
+    .pagination-link {
+      text-decoration: none;
+      color: #333;
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-/* Hover effect */
-.pagination-link:hover {
-  background-color: #007bff;
-  color: #fff;
-  border-color: #007bff;
-}
+    /* Hover effect */
+    .pagination-link:hover {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
 
-/* Active page styling */
-.pagination-link.active {
-  background-color: #007bff;
-  color: #fff;
-  font-weight: bold;
-  border-color: #007bff;
-}
+    /* Active page styling */
+    .pagination-link.active {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      border-color: #007bff;
+    }
+  </style>
 
-</style>
-<head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-</head>
-<div class="content-header">
-  <div>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+  </head>
+  <div class="content-header">
+    <div>
       <h2 class="content-title card-title">Products</h2>
+    </div>
   </div>
-</div>
-<header class="card-header text-center mb-20">
-  <form action="/admin/product/search" method="get" class="d-inline">
-      <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
-          <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search" value="<%= searchQuery || '' %>">
-          <button class="btn  border-0" type="submit">Search</button>
+  <header class="card-header text-center mb-20">
+    <form action="/admin/product/search" method="get" class="d-inline">
+      <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
+        style="width: 500px; margin-left: 230px;">
+        <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands"
+          name="search" value="<%= searchQuery || '' %>">
+        <button class="btn  border-0" type="submit">Search</button>
       </div>
-  </form>
-</header>
-<div class="right mt-5">
-  <table class="table table-striped">
+    </form>
+  </header>
+  <div class="right mt-5">
+    <table class="table table-striped">
       <thead>
-          <tr>
-              <th scope="col"><b> Product name</b></th>
-              <!-- <th scope="col"><b>Brand</b></th> -->
-              <th scope="col"><b>Category</b></th>
-              <th scope="col"><b>Sale Price</b></th>
-              <th scope="col"><b>Offer Price</b></th>
-              <th scope="col"><b>Offer</b></th>
-              <th scope="col"><b>Quantity</b></th>
-              <th scope="col"><b>Action</b></th>
-              <th scope="col"><b>Edit</b></th>
-          </tr>
+        <tr>
+          <th scope="col"><b> Product name</b></th>
+          <!-- <th scope="col"><b>Brand</b></th> -->
+          <th scope="col"><b>Category</b></th>
+          <th scope="col"><b>Sale Price</b></th>
+          <th scope="col"><b>Offer Price</b></th>
+          <th scope="col"><b>Offer</b></th>
+          <th scope="col"><b>Quantity</b></th>
+          <th scope="col"><b>Action</b></th>
+          <th scope="col"><b>Edit</b></th>
+        </tr>
       </thead>
       <tbody>
-          <% products.forEach(product => {%>
+        <% products.forEach(product=> {%>
           <tr>
-              <td><%= product.ProductName %></td>
-              <!-- <td></td> -->
-              <td><%= product.category.categoryName %></td>
-              <td><%= product.salePrice %></td>
-              <td>
-                <% if(product.productOffer){ %>
-                    <%= product.productOffer %>
+            <td>
+              <%= product.ProductName %>
+            </td>
+            <!-- <td></td> -->
+            <td>
+              <%= product.category.categoryName %>
+            </td>
+            <td>
+              <%= product.salePrice %>
+            </td>
+            <td>
+              <% if(product.productOffer){ %>
+                <%= product.productOffer %>
                   <% }else {%>
                     0%
                     <% } %>
-              </td>
-              <td>
-                  <% if(product.productOffer === 0) { %>
-                  <button class="btn btn-info" onclick="AddOffer('<%= product._id%>')" style="width: 100px;">
-                      <a href="#" class="text-white">Add Offer</a>
-                  </button>
-                  <%}else{%>
+            </td>
+            <td>
+              <% if(product.productOffer===0) { %>
+                <button class="btn btn-info" onclick="AddOffer('<%= product._id%>')" style="width: 100px;">
+                  <a href="#" class="text-white">Add Offer</a>
+                </button>
+                <%}else{%>
                   <button class="btn btn-info" onclick="removeOffer('<%= product._id%>')" style="width: 100px;">
-                      <a href="#" class="text-white">Remove</a>
+                    <a href="#" class="text-white">Remove</a>
                   </button>
                   <%}%>
-              </td>
-              <!-- <td><%= product.quantity %></td> -->
+            </td>
+            <!-- <td><%= product.quantity %></td> -->
 
-              <!-- <td>
+            <!-- <td>
                 <ul>
                   <% product.sizes.forEach(size => { %>
                     <li><strong><%= size.size %>:</strong> <%= size.stock %></li>
@@ -127,152 +149,161 @@
                 </ul>
               </td> -->
 
-              <td>
-                <ul class="size-stock-list">
-                  <% product.sizes.forEach((size, index) => { %>
-                    <li class="size-stock-item">
-                      <span class="size-text"><strong><%= size.size %>:</strong></span>
-                      <span class="stock-box"><%= size.stock %></span>
-                    </li>
-                    <% if ((index + 1) % 2 === 0) { %>
-                      <li class="line-break"></li> <!-- Add a break every two sizes -->
+            <td>
+              <ul class="size-stock-list">
+                <% product.sizes.forEach((size, index)=> { %>
+                  <li class="size-stock-item">
+                    <span class="size-text"><strong>
+                        <%= size.size %>:
+                      </strong></span>
+                    <span class="stock-box">
+                      <%= size.stock %>
+                    </span>
+                  </li>
+                  <% if ((index + 1) % 2===0) { %>
+                    <li class="line-break"></li> <!-- Add a break every two sizes -->
                     <% } %>
-                  <% }) %>
-                </ul>
-              </td>
+                      <% }) %>
+              </ul>
+            </td>
 
-              <td>
-                <% if(product.isDeleted===false) {%>
-                  <button class="btn btn-danger" style="width: 80px;">
-                      <a href="/admin/product/block?id=<%= product._id %>" class="text-white" style="text-decoration: none;">Block</a>
-                  </button>
+            <td>
+              <% if(product.isDeleted===false) {%>
+                <button class="btn btn-danger" style="width: 80px;">
+                  <a href="/admin/product/block?id=<%= product._id %>" class="text-white"
+                    style="text-decoration: none;">Block</a>
+                </button>
                 <%}else{%>
                   <button class="btn btn-success" style="width: 80px;">
-                      <a href="/admin/product/unblock?id=<%=product._id%>" class="text-white" style="text-decoration: none;">Unblock</a>
+                    <a href="/admin/product/unblock?id=<%=product._id%>" class="text-white"
+                      style="text-decoration: none;">Unblock</a>
                   </button>
-                <%}%>
-              </td>
-              <td>
-                  <button class="btn btn-info" style="width: 80px;">
-                      <a href="/admin/product/getEdit?id=<%=product._id%>" class="text-white" style="text-decoration: none;">Edit</a>
-                  </button>
-              </td>
+                  <%}%>
+            </td>
+            <td>
+              <button class="btn btn-info" style="width: 80px;">
+                <a href="/admin/product/getEdit?id=<%=product._id%>" class="text-white"
+                  style="text-decoration: none;">Edit</a>
+              </button>
+            </td>
           </tr>
-       <% }) %>
+          <% }) %>
       </tbody>
 
-  </table>
-</div>
-</div>
-</div>
+    </table>
+  </div>
+  </div>
+  </div>
 
-<div class="container mt-3">
-</div>
+  <div class="container mt-3">
+  </div>
 
 
 
-<div class="pagination">
-  <% if (currentPage > 1) { %>
-    <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
-  <% } %>
-  
-  <% for (let i = 1; i <= totalPages; i++) { %>
-    <a href="?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
-  <% } %>
+  <div class="pagination">
+    <% if (currentPage> 1) { %>
+      <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+      <% } %>
 
-  <% if (currentPage < totalPages) { %>
-    <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
-  <% } %>
-</div>
+        <% for (let i=1; i <=totalPages; i++) { %>
+          <a href="?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+            <%= i %>
+          </a>
+          <% } %>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-  async function AddOffer(productId){
-    const{value:amount} = await Swal.fire({
-      title:"Enter Offer Value in percentge",
-      input : 'number' ,
-      inputLabel:"percentage",
-      inputPlaceholder:"%"
-    })
-    $.ajax({
-      url:'/admin/product/offer/add',
-      method:"post",
-      data:{
-        percentage:amount,
-        productId:productId
-      },
-      success : function (response){
-        if(response.success){
-          Swal.fire({
-            icon :"success",
-            title:'Offer added',
-            text:'Offer applied succesfully',
-            timer:5000,
-          })
-          location.reload()
-        }else{
-          Swal.fire({
-            icon :"error",
-            title:'Error',
-            text:'Offer not added',
-            timer:5000,
-          })
+            <% if (currentPage < totalPages) { %>
+              <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+              <% } %>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    async function AddOffer(productId) {
+      const { value: amount } = await Swal.fire({
+        title: "Enter Offer Value in percentge",
+        input: 'number',
+        inputLabel: "percentage",
+        inputPlaceholder: "%"
+      })
+      $.ajax({
+        url: '/admin/product/offer/add',
+        method: "post",
+        data: {
+          percentage: amount,
+          productId: productId
+        },
+        success: function (response) {
+          if (response.success) {
+            Swal.fire({
+              icon: "success",
+              title: 'Offer added',
+              text: 'Offer applied succesfully',
+              timer: 5000,
+            })
+            location.reload()
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: 'Error',
+              text: 'Offer not added',
+              timer: 5000,
+            })
+          }
         }
-      }
-    })
-  }
-
-  async function removeOffer(productId){
-    console.log("inside remove")
-    try {
-      Swal.fire({
-        icon:'warning',
-        title:"Remove offer",
-        text:"Are you sure you want to remove offer",
-        showCancelButton:true,
-        confirmButtonText:'yes, Remove it',
-        timer: 5000,
-        timerProgressBar:true,
-      }).then(async(result) => {
-        if(result.isConfirmed){
-          $.ajax({
-            url:'/admin/product/offer/remove',
-            method:"post",
-            data:{
-              productId:productId
-            },
-            success: function (response){
-              console.log(response)
-              if(response.success){
-                Swal.fire({
-                  icon:"success",
-                  title:"offer removed",
-                  text:"Offer removed succesfully",
-                  timer:5000,
-                  timerProgressBar:true,
-                })
-                
-              }else{
-                Swal.fire({
-                  icon :"error",
-                  title:"Error",
-                  text:'error removing offer',
-                  timer:5000,
-                  timerProgressBar:true,
-                })
-              }
-              
-            }
-          })
-          
-        }else{
-          console.log("not confirmed")
-        }
-      }) 
-    } catch (error) {
-      console.log(error)
+      })
     }
-  }
-</script>
-<%-include('../../views/partials/admin/footer')%>
+
+    async function removeOffer(productId) {
+      console.log("inside remove")
+      try {
+        Swal.fire({
+          icon: 'warning',
+          title: "Remove offer",
+          text: "Are you sure you want to remove offer",
+          showCancelButton: true,
+          confirmButtonText: 'yes, Remove it',
+          timer: 5000,
+          timerProgressBar: true,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: '/admin/product/offer/remove',
+              method: "post",
+              data: {
+                productId: productId
+              },
+              success: function (response) {
+                console.log(response)
+                if (response.success) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "offer removed",
+                    text: "Offer removed succesfully",
+                    timer: 5000,
+                    timerProgressBar: true,
+                  })
+
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: 'error removing offer',
+                    timer: 5000,
+                    timerProgressBar: true,
+                  })
+                }
+
+              }
+            })
+
+          } else {
+            console.log("not confirmed")
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  </script>
+  <%-include('.. /../views/partials/admin/footer')%>
