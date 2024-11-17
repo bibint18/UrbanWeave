@@ -235,7 +235,7 @@ exports.addAddress = async (req,res) => {
   }
   user.address.push(newAddress);
   await user.save();
-  return res.redirect('/userProfile')
+  return res.redirect('/manageAddress')
 }catch(err){
   console.log(err)
 }
@@ -290,14 +290,12 @@ exports.editAddress = async (req,res) => {
 exports.deleteAddress =async (req,res) => {
   try {
     console.log(req.query);
-    
     const id = req.query.id
     console.log(id)
     const updated =  await User.findOneAndUpdate({"address._id":id},{$pull:{address:{_id:id}}},{new:true})
-    console.log("after deelete",updated)
-    return res.redirect('/manageAddress')
-    
+    return res.status(200).json({success:true,message:"Address deleted"})
   } catch (error) {
     console.log(error)
+    return res.status(400).json({success:false,message:"Something went wrong!"})
   }
 }

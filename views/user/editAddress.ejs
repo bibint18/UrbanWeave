@@ -90,7 +90,7 @@
 <body>
     <div class="address-form-container">
         <h2>Edit Address</h2>
-        <form method="POST" action="/address/edit?id=<%=address._id%>">
+        <form method="POST" action="/address/edit?id=<%=address._id%>" id="EditAddressForm">
             <div class="form-group">
                 <label for="fullName">Full Name</label>
                 <input type="text" id="fullName" name="fullName" value="<%= address.fullName %>" required>
@@ -154,3 +154,7 @@
     </div>
 </body>
 </html>
+
+<script>
+    
+</script>

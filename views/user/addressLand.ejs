@@ -93,17 +93,58 @@
             <!-- <span class="options-icon">⋮</span> -->
             <a href="/address/edit?id=<%=address._id%>"><button type="submit" class="addBtn">edit</button></a>
             
-            <form action="/address/delete?id=<%=address._id%>" method="post" onsubmit="return confirmDelete()">
-                <button type="submit" class="addBtn">delete</button>
-            </form>
+             
+                <button type="submit" class="addBtn" onclick="confirmDelete('<%=address._id%>',event)">delete</button>
+            
              
         </div>
     </div>
 <% }) %>
 <script>
-    function confirmDelete(){
-        const ask = confirm("Are you sure, You want to delete the address")
-        return ask
+    
+    function confirmDelete(addressId,event){
+        event.preventDefault();
+        Swal.fire({
+            icon:'warning',
+            title:'Are you sure',
+            text: 'You will not be able to recover this address.',
+            showCancelButton: true,
+            showConfirmButton:true
+        })
+        .then(result=> {
+            if(result.isConfirmed){
+                fetch(`/address/delete?id=${addressId}`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(data.success){
+                        Swal.fire({
+                            icon:'success',
+                            title:'Address deleted',
+                            text: 'You have successfully deleted the address.',
+                            timer:1500,
+                            showConfirmButton:false
+                        })
+                        .then(() => {
+                            location.reload()
+                        })
+                    }else{
+                        Swal.fire({
+                            icon:'error',
+                            title:'Error',
+                            text: 'Failed to delete address.',
+                            timer:1500,
+                            showConfirmButton:false
+
+                        })
+                    }
+                })
+            }
+        })
     }
 </script>
 
