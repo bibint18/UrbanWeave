@@ -131,7 +131,7 @@
           <!-- <h4><span>all total:</span><span>Rs: <%= MFtotal %></span></h4> -->
           <!-- <a href="/checkout" class="btn border-btn">process to checkout</a> -->
           <% let outOfStock = cartItems.some(item => item.quantity > item.product.sizes.find(s => s.size === item.size).stock); %>
-          <a href="/checkout" class="btn border-btn" <%= outOfStock ? 'disabled' : '' %>>Process to Checkout</a>
+          <a href="/checkout" class="btn border-btn" <%= (outOfStock || cartItems.length<1)? 'disabled' : '' %>>Process to Checkout</a>
         </div>
       </div>
       
@@ -246,9 +246,10 @@
     e.preventDefault();
     Swal.fire({
       icon: 'error',
-      title: 'Out of Stock',
-      text: 'Some items in your cart are out of stock. Please adjust quantities before proceeding.',
-      showConfirmButton: true
+      title: 'Cannot procceed further',
+      text: 'Please look the Quantity in the cart',
+      showConfirmButton: true,
+      timer:1500
     });
   }
 });

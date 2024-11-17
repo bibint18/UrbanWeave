@@ -10,7 +10,7 @@ const Coupon = require('../model/admin/CouponModel')
 const Wallet = require('../model/user/WalletModel')
 exports.getOrdersPage =async (req,res) => {
   try {
-    
+    const search = req.query.search || ''
     const user = req.user
     const userId = req.user._id 
     console.log(userId);
@@ -24,10 +24,19 @@ exports.getOrdersPage =async (req,res) => {
       };
       console.log(sortOptions)
     }
+    let SearchQuery ={
+      user:userId,
+      ...sortOptions
+    }
+    if(search){
+      SearchQuery ={
+        $or:[{oid:new RegExp(search,'i')}]
+      }
+    }
     console.log(sortOptions)
-    const totalOrders = await Order.countDocuments({ user: userId, ...sortOptions });
+    const totalOrders = await Order.countDocuments(SearchQuery);
     const totalPages = Math.ceil(totalOrders / limit);
-    let orders = await Order.find({user:userId,...sortOptions}).populate('products.product').sort({ orderDate: -1 }).skip(skip).limit(limit).exec()
+    let orders = await Order.find(SearchQuery).populate('products.product').sort({ orderDate: -1 }).skip(skip).limit(limit).exec()
     console.log("or: ",orders);
 
     if (sort) {
@@ -40,7 +49,7 @@ exports.getOrdersPage =async (req,res) => {
       });
     }
     return res.render('user/orders',{orders,sort,user, currentPage: parseInt(page, 10),
-      totalPages,})
+      totalPages,search})
   } catch (error) {
     console.log(error)
     return res.status(400).json({success:false,message:error})

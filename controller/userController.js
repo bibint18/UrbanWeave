@@ -44,7 +44,7 @@ exports.getUserLogin = (req, res) => {
 };
 exports.getHome = async (req, res) => {
   try {
-    const products = await Products.find({ isDeleted: false });
+    const products = await Products.find({ isDeleted: false }).limit(8)
     if(req.isAuthenticated()){
     console.log("isauth")
     console.log("uswr; ",req.user)
@@ -336,6 +336,8 @@ exports.getProductDetails = async (req, res) => {
   console.log(id);
   const user = req.cookies.jwt;
   const products = await Products.findById(id);
+  const HereCategory = products.category
+  console.log("hereCategory",HereCategory)
   console.log("products: ",products)
   const CatOffer = await CategoryOffer.findOne({category:products.category})
   let CatOfferPercentage=0;
@@ -347,7 +349,7 @@ exports.getProductDetails = async (req, res) => {
   if (products.isDeleted == true) {
     return res.redirect("/home");
   }
-  const prod = await Products.find({ isDeleted: false });
+  const prod = await Products.find({ category:HereCategory }).limit(8)
   res.render("user/product-details", { products, prod, user ,CatOfferPercentage});
 };
 

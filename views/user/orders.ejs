@@ -276,6 +276,9 @@ body {
   font-weight: bold;
   border-color: #007bff;
 }
+.SearchForm{
+  display: contents;
+}
 
 
   </style>
@@ -312,34 +315,16 @@ body {
             </form>
           </div>
         </div>
-
-
-        <!-- <div class="filter-group">
-          <h4>ORDER STATUS</h4>
-          <label><input type="checkbox"> On the way</label>
-          <label><input type="checkbox"> Delivered</label>
-          <label><input type="checkbox"> Cancelled</label>
-          <label><input type="checkbox"> Returned</label>
-        </div> -->
-
-        <!-- Order Time Filter -->
-        <!-- <div class="filter-group">
-          <h4>ORDER TIME</h4>
-          <label><input type="checkbox"> Last 30 days</label>
-          <label><input type="checkbox"> 2023</label>
-          <label><input type="checkbox"> 2022</label>
-          <label><input type="checkbox"> 2021</label>
-          <label><input type="checkbox"> 2020</label>
-          <label><input type="checkbox"> Older</label>
-        </div> -->
       </aside>
 
       <!-- Orders Section -->
       <section class="orders-section">
         <!-- Search bar -->
         <div class="search-bar">
-          <input type="text" placeholder="Search your orders here">
+          <form action="/orders" method="GET" class="SearchForm">
+          <input type="text" placeholder="Search your orders here" name="search">
           <button class="search-btn">Search Orders</button>
+        </form>
         </div>
 
         <!-- Orders list -->
@@ -402,15 +387,15 @@ body {
 
 <div class="pagination">
   <% if (currentPage > 1) { %>
-    <a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>" class="pagination-link">Previous</a>
+    <a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>&search=<%=search%>" class="pagination-link">Previous</a>
   <% } %>
   
   <% for (let i = 1; i <= totalPages; i++) { %>
-    <a href="?page=<%= i %>&sort=<%= sort %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+    <a href="?page=<%= i %>&sort=<%= sort %>&search=<%=search%>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
   <% } %>
 
   <% if (currentPage < totalPages) { %>
-    <a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>" class="pagination-link">Next</a>
+    <a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>&search=<%=search%>" class="pagination-link">Next</a>
   <% } %>
 </div>
 
@@ -545,6 +530,9 @@ async function retryPayment(orderId) {
           text:'Your order has been cancelled.',
           timer:1500,
           showConfirmButton:false
+        })
+        .then(() => {
+          location.reload()
         })
         const  orderElement = document.getElementById(`order-${orderId}`)
         console.log("ele,",orderElement);
