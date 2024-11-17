@@ -250,6 +250,7 @@
                     <div class="mb-3">
                       <label for="maximum<%= coupon._id %>" class="form-label">Maximum Purchase</label>
                       <input type="text" class="form-control" id="maximum<%= coupon._id %>" name="maximum" value="<%= coupon.maximum %>">
+                      <div id="error-message-<%= coupon._id %>" style="color: red; margin-top: 5px;"></div>
                     </div>
                     <div class="mb-3">
                       <label for="Maxdiscount<%= coupon._id %>" class="form-label">Maximum Discount</label>
@@ -331,6 +332,16 @@
 
     <script>
 
+document.addEventListener('DOMContentLoaded', () => {
+  // Get today's date in the format 'YYYY-MM-DD'
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Select all startDate and endDate inputs in the modal
+  document.querySelectorAll('input[type="date"]').forEach(dateInput => {
+    dateInput.setAttribute('min', today);
+  });
+});
+
 
       function submitCouponForm(CouponID,event){
         event.preventDefault();
@@ -344,6 +355,19 @@
         console.log("INnside function: ",code,startDate,endDate,minimum
           ,maximum,discount,Maxdiscount
         )
+        if (minimum >= maximum) {
+      // Display an error message in red
+      let errorElement = document.getElementById(`error-message-${CouponID}`);
+      errorElement.textContent = 'Error: Minimum purchase should be less than the maximum purchase.';
+      return; // Prevent form submission
+    } else {
+      // Clear the error message if validation passes
+      let errorElement = document.getElementById(`error-message-${CouponID}`);
+      if (errorElement) {
+        errorElement.textContent = '';
+      }
+    }
+
         fetch(`/admin/coupon/edit/${CouponID}`,{
           method:'post',
           headers:{
