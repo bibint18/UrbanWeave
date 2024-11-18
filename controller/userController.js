@@ -359,8 +359,10 @@ exports.getProductDetails = async (req, res) => {
   console.log("products: ",products)
   const CatOffer = await CategoryOffer.findOne({category:products.category})
   let CatOfferPercentage=0;
+  let CatOfferEndDate= Date.now()
   if(CatOffer){
      CatOfferPercentage = CatOffer.discountPercentage
+     CatOfferEndDate=CatOffer.endDate
   console.log(CatOfferPercentage)
   }
   
@@ -368,7 +370,7 @@ exports.getProductDetails = async (req, res) => {
     return res.redirect("/home");
   }
   const prod = await Products.find({ category:HereCategory }).limit(8)
-  res.render("user/product-details", { products, prod, user ,CatOfferPercentage});
+  res.render("user/product-details", { products, prod, user ,CatOfferPercentage,CatOfferEndDate});
 };
 
 exports.getPayment = (req, res) => {

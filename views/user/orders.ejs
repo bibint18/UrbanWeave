@@ -279,6 +279,21 @@ body {
 .SearchForm{
   display: contents;
 }
+.clear-button {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  text-decoration: none;
+}
+
+.clear-button:hover {
+  background-color: #d32f2f;
+}
 
 
   </style>
@@ -322,8 +337,11 @@ body {
         <!-- Search bar -->
         <div class="search-bar">
           <form action="/orders" method="GET" class="SearchForm">
-          <input type="text" placeholder="Search your orders here" name="search">
+          <input type="text" placeholder="Search your orders here" value="<%=search%>" name="search">
           <button class="search-btn">Search Orders</button>
+          <% if (search) { %>
+            <a href="/orders" class="clear-button">Clear</a>
+          <% } %>
         </form>
         </div>
 

@@ -99,7 +99,7 @@
               
             </div>
             <div class="">
-              <% if (CatOfferPercentage && CatOfferPercentage > 0) { %>
+              <% if (CatOfferPercentage && CatOfferPercentage > 0 && new Date(CatOfferEndDate) > new Date()) { %>
                 <div class="category-offer" style="margin-top: 10px; color: #28a745; font-weight: bold;">
                   Category Offer: <%= CatOfferPercentage %>% OFF
                 </div>
