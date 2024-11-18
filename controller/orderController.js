@@ -299,11 +299,11 @@ exports.Invoice = async(req,res) => {
     // Summary section with styled text
     doc.moveDown();
     doc.fontSize(14).text('Summary:', { underline: true });
-    doc.fontSize(12).text(`Subtotal: ₹${subtotal.toFixed(2)}`);
-    doc.text(`Offer Amount: ₹${order.CategoryOffer.toFixed(2)}`);
-    doc.text(`Coupon Discount: ₹${order.CouponDiscount.toFixed(2)}`);
-    doc.text(`Delivery Fee: ₹40`);
-    doc.fontSize(14).fillColor('red').text(`Total Amount: ₹${order.AmountPaid.toFixed(2)}`, { bold: true });
+    doc.fontSize(12).text(`Subtotal: ${subtotal.toFixed(2)}`);
+    doc.text(`Offer Amount: ${order.CategoryOffer.toFixed(2)}`);
+    doc.text(`Coupon Discount: ${order.CouponDiscount.toFixed(2)}`);
+    doc.text(`Delivery Fee: 40`);
+    doc.fontSize(14).fillColor('red').text(`Total Amount: ${order.AmountPaid.toFixed(2)}`, { bold: true });
 
     // Finalize the PDF and end the stream
     doc.end();

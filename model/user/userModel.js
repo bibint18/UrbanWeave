@@ -1,73 +1,80 @@
-const mongoose = require('mongoose')
-const { type } = require('os')
-const bcrypt = require('bcrypt')
+const mongoose = require("mongoose");
+const { type } = require("os");
+const bcrypt = require("bcrypt");
 
 const addressSchema = mongoose.Schema({
-    fullName: { type: String, required: true },
-    phone: { type: String, required: true },
-    addressLine1: { type: String, required: true },
-    addressLine2: { type: String },
-    city: { type: String, required: true },
-    state: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
-    addType:{type: String,enum: ['office', 'home'],required:false}
-})
+  fullName: { type: String, required: true },
+  phone: { type: String, required: true },
+  addressLine1: { type: String, required: true },
+  addressLine2: { type: String },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  postalCode: { type: String, required: true },
+  country: { type: String, required: true },
+  addType: { type: String, enum: ["office", "home"], required: false },
+});
 
 const userSchema = mongoose.Schema({
-  
-  username:{
-    type:String,
-    required:false
+  username: {
+    type: String,
+    required: false,
   },
-  email:{
-    type:String,
-    unique:true,
-    required:true
+  email: {
+    type: String,
+    unique: true,
+    required: true,
   },
-  googleId:{
-    type:String,
-    unique:false,
+  googleId: {
+    type: String,
+    unique: false,
   },
-  password:{
-    type:String,
-    required:false
+  password: {
+    type: String,
+    required: false,
   },
   gender: {
     type: String,
-    enum: ['male', 'female'],
-    required: false
+    enum: ["male", "female"],
+    required: false,
   },
   mobile: {
     type: String,
-    required: false
+    required: false,
   },
-  isBlocked:{
-    type:Boolean,
-    default:false
+  isBlocked: {
+    type: Boolean,
+    default: false,
   },
-  address:[addressSchema]
-  ,
+  address: [addressSchema],
   usedCoupons: {
     type: [String],
-    default: []
-},
+    default: [],
+  },
+  referralCount:{type:Number},
+  referralCode: { type: String, unique: true },
+  referredBy: { type: String, default: null },
   isVerified: {
-     type: Boolean, 
-     default: false 
-    },
-    passwordResetToken:String,
-    passwordResetExpiry:Date,
-})
+    type: Boolean,
+    default: false,
+  },
+  passwordResetToken: String,
+  passwordResetExpiry: Date,
+});
 //hashing before save
-userSchema.pre("save", async function (next){
-  if(!this.isModified("password")) return next();
-  this.password =await bcrypt.hash(this.password,10)
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  if (!this.referralCode) {
+    this.referralCode = generateUniqueReferralCode();
+  }
   next();
-})
+});
 
-userSchema.methods.comparePassword = function(userPswd){
-  return bcrypt.compare(userPswd,this.password)
+userSchema.methods.comparePassword = function (userPswd) {
+  return bcrypt.compare(userPswd, this.password);
+};
+function generateUniqueReferralCode() {
+  return Math.random().toString(36).substr(2, 8).toUpperCase();
 }
 
-module.exports = mongoose.model('User',userSchema)
+module.exports = mongoose.model("User", userSchema);

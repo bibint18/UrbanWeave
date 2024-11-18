@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 exports.loadWallet = async (req, res) => {
   try {
     const user = req.user._id;
+    const User = req.user
     let wallet = await Wallet.findOne({ user: user });
       if (!wallet) {
         await Wallet.create({
@@ -13,7 +14,7 @@ exports.loadWallet = async (req, res) => {
         });
       }
       console.log(wallet)
-    return res.render("user/wallet", { user,wallet });
+    return res.render("user/wallet", { user,wallet,User});
   } catch (error) {
     console.log(error);
     return res
@@ -63,31 +64,4 @@ exports.AddMoney = async (req, res) => {
   }
 };
 
-// const initializeWallets = async () => {
-//   try {
-//     const users = await User.find(); // Get all users from the database
 
-//     for (let user of users) {
-//       // Check if the user already has a wallet
-//       const existingWallet = await Wallet.findOne({ userId: user._id });
-
-//       // If no wallet exists, create one with balance 0
-//       if (!existingWallet) {
-//         await Wallet.create({
-//           user: user._id,
-//           balance: 0,
-//           transactions: [], // Empty transaction history
-//         });
-//         console.log(`Initialized wallet for user: ${user._id}`);
-//       }
-//     }
-
-//     console.log("Wallets initialized for all users");
-//   } catch (error) {
-//     console.error("Error initializing wallets:", error);
-//   } finally {
-//     mongoose.connection.close(); // Close the connection after the script finishes
-//   }
-// };
-
-// initializeWallets();

@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Products = require("../model/admin/prodectModel");
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
+const Wallet = require('../model/user/WalletModel')
 function sendResetEmail(email, resetLink) {
   console.log("triggered")
   const transporter = nodemailer.createTransport({
@@ -61,8 +62,9 @@ exports.getHome = async (req, res) => {
 
 let otpStore = {};
 exports.SignToLogin = async (req, res) => {
-  const { username, email, password, rpassword } = req.body;
-  console.log(username, email, password, rpassword);
+  const { username, email, password, rpassword ,referralCode} = req.body;
+  console.log(username, email, password, rpassword,referralCode);
+  console.log(typeof referralCode)
   if (
     !username ||
     username.trim() === "" ||
@@ -82,10 +84,17 @@ exports.SignToLogin = async (req, res) => {
   }
   const pre = await User.findOne({ email: email });
   console.log(pre);
-  if (pre.length > 0) {
+  if (pre) {
     return res.render("user/up", { error: "Email already exists!" });
   }
-
+let referrer = null 
+if(referralCode){
+  referrer = await User.findOne({referralCode});
+  console.log("reffere: ",referrer)
+  if (!referrer) {
+    return res.render("user/up", { error: "Invalid referral code!" });
+  }
+}
   try {
     // const user = new User({ username, email, password, isverified: false });
     // user.save();
@@ -97,6 +106,7 @@ exports.SignToLogin = async (req, res) => {
       username,
       email,
       password,
+      referredBy:referrer ? referrer.referralCode : null ,
     };
     // otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
     // console.log(otpStore);
@@ -158,9 +168,17 @@ exports.otpSubmit = async (req, res) => {
     //   if (existingUser) {
     //     return res.json({ success: false, message: "Email is already registered!" });
     //   }
-    const { username, email, password } = req.session.otpStore || {};
-    const user = new User({ username, email, password });
+    const { username, email, password,referredBy } = req.session.otpStore || {};
+    const user = new User({ username, email, password,referredBy });
     user.save();
+    if(referredBy){
+      const referrerUser = await User.findOne({referralCode:referredBy})
+      if(referrerUser){
+        // referrerUser.referralCount = referrerUser.referralCount + 1
+        // referrerUser.save()
+        await creditWallets(user._id,referrerUser._id,100);
+      }
+    }
     //  User.findOneAndUpdate({email},{isverified:true})
     // console.log(newOtp, enteredOtp);
     // return res.redirect("/userLogin");
@@ -356,3 +374,34 @@ exports.getProductDetails = async (req, res) => {
 exports.getPayment = (req, res) => {
   return res.render("payment");
 };
+
+
+async function creditWallets(newUserId,referrerId,amount){
+  let newUserWallet = await Wallet.findOne({user:newUserId})
+  if(!newUserWallet){
+    newUserWallet = new Wallet({user:newUserId})
+  }
+  newUserWallet.balance+=amount
+  newUserWallet.transactions.push({
+    type:"credit",
+    date:Date.now(),
+    amount:amount,
+    description: `Referral bonus ${amount} credited to your wallet`
+  })
+  await newUserWallet.save()
+
+  let referrerWallet = await Wallet.findOne({user:referrerId})
+  if(!referrerWallet){
+    referrerWallet = new Wallet({user:referrerId})
+  }
+  referrerWallet.balance+=amount
+  referrerWallet.transactions.push({
+    type:"credit",
+    date:Date.now(),
+    amount:amount,
+    description: `Referral bonus ${amount} credited to your wallet`
+  })
+  await referrerWallet.save()
+}
+
+

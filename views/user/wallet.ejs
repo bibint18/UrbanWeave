@@ -1,4 +1,4 @@
-<%-include('../../views/partials/user/header.ejs')%>
+<%-include('../../views/partials/user/header')%>
 
     <title>Wallet Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -162,51 +162,44 @@
         }
 
         .payment-history {
-    padding: 10px;
-}
+            padding: 10px;
+        }
 
-.transaction-item {
-    background-color: #f0f0f0;
-    padding: 15px;
-    margin-bottom: 10px; /* Adds spacing between transactions */
-    border-radius: 5px; /* Optional: makes corners rounded */
-    border: 1px solid #333; /* Optional: adds a border for clearer separation */
-}
-
+        .transaction-item {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin-bottom: 10px;
+            /* Adds spacing between transactions */
+            border-radius: 5px;
+            /* Optional: makes corners rounded */
+            border: 1px solid #333;
+            /* Optional: adds a border for clearer separation */
+        }
     </style>
     <div class="container">
-        <!-- Sidebar -->
-        <!-- <div class="sidebar">
-        <div class="profile">
-            <img src="https://via.placeholder.com/80" alt="Profile Picture">
-            <h3>James Collins</h3>
-        </div>
-        <a href="#" class="menu-item"><i class="fas fa-wallet"></i> Your Wallet</a>
-        <a href="#" class="menu-item"><i class="fas fa-box"></i> Your Orders</a>
-        <a href="#" class="menu-item"><i class="fas fa-shipping-fast"></i> Open Orders</a>
-        <a href="#" class="menu-item"><i class="fas fa-times-circle"></i> Cancelled Orders</a>
-        <a href="#" class="menu-item"><i class="fas fa-heart"></i> Wishlist</a>
-        <a href="#" class="menu-item"><i class="fas fa-map-marker-alt"></i> Addresses</a>
-        <a href="#" class="menu-item"><i class="fas fa-credit-card"></i> Payment Options</a>
-        <a href="#" class="menu-item"><i class="fas fa-user-cog"></i> Login & Security</a>
-        <a href="#" class="menu-item"><i class="fas fa-bell"></i> Notifications</a>
-    </div> -->
+        
 
         <!-- Main Content -->
         <div class="main-content">
             <div class="balance-section">
                 <div class="balance-card available-balance">
                     ₹ <%= wallet.balance%><br>
-                    <small>Available Balance</small>
+                        <small>Available Balance</small>
                 </div>
                 <div class="balance-card reward-balance">
-                    $5.00<br>
+                    $0.00<br>
                     <small>Reward Balance</small>
                 </div>
                 <div class="balance-card pending-balance">
                     $0.00<br>
                     <small>Pending Balance</small>
                 </div>
+            </div>
+            <div>
+                <p>Your Referral Code: <strong>
+                        <%=User.referralCode%>
+                    </strong></p>
+                <button onclick="copyToClipboard('<%= user.referralCode %>')">Copy Code</button>
             </div>
 
             <input type="text" id="AmountValue" placeholder="Enter Amount to add">
@@ -215,22 +208,32 @@
             <!-- Payment History -->
             <div class="payment-history">
                 <h4>Payment History</h4>
-                <% wallet.transactions.forEach((history) => { %> 
+                <% wallet.transactions.sort((a, b)=> new Date(b.date) - new Date(a.date)).forEach((history) => { %>
                     <div class="transaction-item">
-                        <p>Transaction Type: <%= history.type %></p>
-                        <p>Transaction Amount: <%= history.amount %></p>
-                        <p>Transaction Date: <%= history.date %></p>
-                        <p>Description: <%= history.description %></p>
+                        <p>Transaction Type: <%= history.type %>
+                        </p>
+                        <p>Transaction Amount: <%= history.amount %>
+                        </p>
+                        <p>Transaction Date: <%= history.date %>
+                        </p>
+                        <p>Description: <%= history.description %>
+                        </p>
                     </div>
-                <% }) %>
+                    <% }) %>
             </div>
         </div>
     </div>
 
 
-   <%-include('../../views/partials/user/footer.ejs')%>
+
+    <%-include('../../views/partials/user/footer')%>
 
         <script>
+            function copyToClipboard(code) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert('Referral code copied to clipboard');
+                });
+            }
 
             document.querySelector('#AddMoney').addEventListener('click', function () {
                 const amount = document.getElementById('AmountValue').value
@@ -252,9 +255,9 @@
                                 timer: 1500,
                                 showConfirmButton: false
                             })
-                            .then(() => {
-                                location.reload()
-                            })
+                                .then(() => {
+                                    location.reload()
+                                })
                         } else {
                             Swal.fire({
                                 icon: "error",
