@@ -653,6 +653,9 @@ function exportExcel() {
     ['Coupon Deductions', document.getElementById('totalCouponDeductions').textContent],
     ['Total Orders', document.getElementById('totalOrders').textContent]
   ];
+  const detailedOrdersHeading = ['Order ID', 'User', 'Amount Paid', 'Coupon Deduction', 'Category Offer', 'Created At'];
+  data.push([]);  // Add a blank row for spacing
+  data.push(detailedOrdersHeading);
   const detailedOrders = document.querySelectorAll('.detailed-order');
   console.log("detailedOrders: ",detailedOrders)
   detailedOrders.forEach(order => {
@@ -665,6 +668,16 @@ function exportExcel() {
     data.push([orderId, user, amountPaid, couponDeduction, categoryOffer, createdAt]);
   });
   const worksheet = XLSX.utils.aoa_to_sheet(data);
+  
+  // Define column widths (measured in characters)
+  worksheet['!cols'] = [
+    { wch: 20 },  // Width for 'Metric' / 'Order ID'
+    { wch: 30 },  // Width for 'Value' / 'User'
+    { wch: 15 },  // Width for 'Amount Paid'
+    { wch: 20 },  // Width for 'Coupon Deduction'
+    { wch: 25 },  // Width for 'Category Offer'
+    { wch: 25 }   // Width for 'Created At'
+  ];
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Report');
   XLSX.writeFile(workbook, 'sales_report.xlsx');
