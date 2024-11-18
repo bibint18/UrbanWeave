@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
 
           const startDate = document.getElementById('startDate').value;
-          const endDate = document.getElementById('endDate').value;
+          let endDate = document.getElementById('endDate').value;
           const minimum = parseFloat(document.getElementById('minimum').value.trim());
           const maximum = parseFloat(document.getElementById('maximum').value.trim());
           const discount = parseFloat(document.getElementById('discount').value.trim());
@@ -475,7 +475,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('maximumError').textContent = 'Maximum purchase must be greater than minimum purchase.';
             isValid = false;
           }
-          if (isValid) {
+          if (isValid && endDate) {
+            let endDateObj = new Date(endDate);
+            endDateObj.setHours(23, 59, 59, 999);  // Set endDate to the last moment of the day
+            endDate = endDateObj  // Update the endDate to match the backend format
+        }
+          if (isValid ) {
             fetch("/admin/coupons/add", {
               method: 'post',
               headers: {

@@ -186,7 +186,7 @@ exports.getCheckout = async (req, res) => {
     const user = req.user;
     const userId = req.user.id;
     const users = await User.findById(userId);
-    const coupons = await Coupon.find();
+    const coupons = await Coupon.find({endDate: { $gte: new Date() }});
     const addresses = users.address;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
