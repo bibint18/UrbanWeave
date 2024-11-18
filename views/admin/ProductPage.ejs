@@ -202,17 +202,17 @@
 
   <div class="pagination">
     <% if (currentPage> 1) { %>
-      <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+      <a href="?page=<%= currentPage - 1 %>&search=<%=searchQuery%>" class="pagination-link">Previous</a>
       <% } %>
 
         <% for (let i=1; i <=totalPages; i++) { %>
-          <a href="?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+          <a href="?page=<%= i %>&search=<%=searchQuery%>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
             <%= i %>
           </a>
           <% } %>
 
             <% if (currentPage < totalPages) { %>
-              <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+              <a href="?page=<%= currentPage + 1 %>&search=<%=searchQuery%>" class="pagination-link">Next</a>
               <% } %>
   </div>
 

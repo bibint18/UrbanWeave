@@ -196,6 +196,26 @@
                 <p><strong>Grand Total:</strong>$ <%=orders.totalAmount%>
                 </p>
               </div>
+
+              <div class="summary-item mt-4">
+                <h5>Offer Details: </h5>
+                <p><strong>Coupon Discount:</strong> $ <%=orders.
+                  CouponDiscount%>
+                </p>
+                <p><strong>Offer Amount:</strong> $<%=orders.
+                  CategoryOffer%></p>
+                <!-- <p><strong>Tax (GST):</strong> $5.00</p> -->
+                <% if (orders.usedCoupons && orders.usedCoupons.length > 0) { %>
+                  <p><strong>Used Coupons:</strong></p>
+                  <ul>
+                    <% orders.usedCoupons.forEach((coupon) => { %>
+                      <li style="color: darkolivegreen;"><%=coupon%></li>
+                    <% }) %>
+                  </ul>
+                <% } else { %>
+                  <p>No coupons used.</p>
+                <% } %>
+              </div>
         </div>
 
         <!-- Right Sidebar (Summary, Address, Payment, Delivery) -->
@@ -212,10 +232,20 @@
             </p>
           </div>
 
-          <!-- <div class="summary-item mt-4">
+          <div class="summary-item mt-4">
             <h5>Shipping Address</h5>
-            <p>3517 W. Gray St. Utica, Pennsylvania 57867</p>
-          </div> -->
+            <!-- <p><%=orders.address%></p> -->
+            <span>FullName: <%=orders.address.fullName%>,</span>
+            <span>Phone: <%=orders.address.phone%>,</span>
+            <span>Line 1: <%=orders.address. addressLine1%>,</span>
+            <span>Line 1: <%=orders.address. addressLine2%>,</span>
+            <span>City: <%=orders.address.city%>,</span>
+            <span>State: <%=orders.address.state%>,</span>
+            <span>Zip: <%=orders.address.postalCode%>,</span>
+            <span>country: <%=orders.address.country%>,</span>
+            <p>address Type: <%=orders.address.addType%>
+            </p>
+          </div>
 
           <div class="summary-item mt-4">
             <h5>Payment Method</h5>
@@ -260,7 +290,7 @@
             body: JSON.stringify({ orderId: orderId, newPaymentStatus: newPaymentStatus }),
           })
             .then(response => {
-             
+
               return response.json();
             })
             .then(data => {
@@ -319,7 +349,7 @@
             body: JSON.stringify({ productId: productId, newStatus: newStatus, orderId: orderId, size: size }),
           })
             .then(response => {
-              
+
               return response.json();
             })
             .then(data => {
@@ -421,4 +451,4 @@
       }
     </script>
 
-    <%-include('../../views/partials/admin/footer')%>
+<%-include('../../views/partials/admin/footer')%>
