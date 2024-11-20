@@ -373,7 +373,9 @@ body {
 
                   <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= ProductItem.ProductStatus %></span></p>
                   <p><span >OrderID: <%= order.oid %></span></p>
+                  <% if (ProductItem.ProductStatus != 'Cancelled' && (order.paymentStatus === 'Paid' || ProductItem.ProductStatus === 'Delivered')) { %>
                   <button class="invoice-btn"><a href="/order/<%= order._id %>/invoice" class="btn anchor-class">Download Invoice</a></button> 
+                  <% } %>
                 </div>
                 
                 <div class="buttons-area">

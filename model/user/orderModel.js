@@ -74,7 +74,7 @@ const orderSchema = new mongoose.Schema({
   },
   PaymentMethod: {
     type: String,
-    enum: ["ONLINE PAYMENT (RAZORPAY)", "CASH ON DELIVERY"],
+    enum: ["ONLINE PAYMENT (RAZORPAY)", "CASH ON DELIVERY","WALLET"],
   },
   CouponDiscount: {
     type: Number,

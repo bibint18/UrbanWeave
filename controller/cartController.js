@@ -4,6 +4,7 @@ const User = require("../model/user/userModel");
 const Order = require("../model/user/orderModel");
 const Coupon = require("../model/admin/CouponModel");
 const CategoryOffer = require("../model/admin/CategoryOfferModel");
+const Wallet = require('../model/user/WalletModel')
 const { getNextOrderId } = require("../utils/orderUtils");
 
 exports.getCart = async (req, res) => {
@@ -188,6 +189,8 @@ exports.getCheckout = async (req, res) => {
     const users = await User.findById(userId);
     const coupons = await Coupon.find({endDate: { $gte: new Date() }});
     const addresses = users.address;
+    const wallet = await Wallet.findOne({user:userId})
+    const walletBalance = wallet.balance
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     let deliveryFee = 40;
@@ -263,6 +266,7 @@ exports.getCheckout = async (req, res) => {
       saved,
       RegularTotal,
       deliveryFee,
+      walletBalance
     });
   } catch (error) {
     console.log(error);
@@ -283,7 +287,6 @@ exports.getAddAddress = async (req, res) => {
 
 exports.checkoutAddAddress = async (req, res) => {
   try {
-    // console.log(req.user);
     const {
       fullName,
       phone,
@@ -574,6 +577,7 @@ exports.placeOrderCOD = async (req, res) => {
     let originalTotal = Number(OriginalTotal);
     let totalQuantity = Number(Quantity);
     const userId = req.user._id;
+    const wallet= await Wallet.findOne({user:userId})
     const cartItems = await Cart.find({ user: userId }).populate("product");
     console.log("cartitems:", cartItems);
     const user = await User.findById(userId).lean();
@@ -583,14 +587,14 @@ exports.placeOrderCOD = async (req, res) => {
     );
     const selectedAddress = user.address[selectedIndex];
     console.log("add: ", selectedAddress);
-    if (TotalToPay > 1000) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "COD not available for order above rs 1000",
-        });
-    }
+    // if (TotalToPay > 1000) {
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       success: false,
+    //       message: "COD not available for order above rs 1000",
+    //     });
+    // }
     if (!selectedAddress) {
       return res
         .status(400)
@@ -680,7 +684,29 @@ exports.placeOrderCOD = async (req, res) => {
       },
     });
     console.log("till");
-    await newOrder.save();
+    console.log(typeof TotalToPay)
+    // log('')
+    if(PayMethod=='WALLET'){
+      if(wallet.balance < TotalToPay){
+        return res.status(400).json({success:false,message:"Not enough balance in wallet"})
+      }
+      wallet.balance -= TotalToPay;
+      wallet.transactions.push({
+        type: 'debit',
+        amount: TotalToPay,
+        description: `Payment for order ${orderId} debited ${TotalToPay} rs`,
+        date:Date.now()
+      })
+      await wallet.save();
+      newOrder.paymentStatus="Paid"
+      await newOrder.save();
+    }else if(PayMethod ==='CASH ON DELIVERY'){
+      if(TotalToPay>1000){
+        return res.status(400).json({success:false,message:"Cash on delivery is not available for rs above 1000"})
+      }
+      await newOrder.save()
+    }
+    
     const coupon = await Coupon.findOne({ code: CouponCode });
     if (coupon) {
       const user = await User.findById(userId);
