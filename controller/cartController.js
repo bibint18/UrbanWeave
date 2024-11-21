@@ -4,22 +4,18 @@ const User = require("../model/user/userModel");
 const Order = require("../model/user/orderModel");
 const Coupon = require("../model/admin/CouponModel");
 const CategoryOffer = require("../model/admin/CategoryOfferModel");
-const Wallet = require('../model/user/WalletModel')
+const Wallet = require("../model/user/WalletModel");
 const { getNextOrderId } = require("../utils/orderUtils");
 
 exports.getCart = async (req, res) => {
   try {
     const user = req.user;
-    console.log("cartuser: ", user);
-
     const userId = req.user.id;
     const cartItems = await Cart.find({ user: userId })
       .populate("product")
       .exec();
-
     const itemsWithTotal = cartItems.map((item) => {
       const total = item.quantity * item.product.salePrice;
-      // const MFTotal = item.quantity * item.product.regularPrice
       return {
         ...item.toObject(),
         total,
@@ -61,20 +57,15 @@ exports.getCart = async (req, res) => {
 
 exports.AddCart = async (req, res) => {
   try {
-    // console.log("req,",req.user)
-    console.log("inside add cart: ");
     const userId = req.user.id;
     const { size, productId, quantity } = req.body;
     const requestedQuantity = parseInt(quantity, 10);
-    console.log("proId : ", productId);
     const product = await Product.findById(productId);
-    console.log(product);
     if (!product) {
       return res
         .status(400)
         .json({ success: false, message: "product not found" });
     }
-
     const sizeStock = product.sizes.find((s) => s.size === size);
     if (!sizeStock) {
       return res
@@ -98,7 +89,6 @@ exports.AddCart = async (req, res) => {
       size: size,
     });
     if (cartItem) {
-      // cartItem.quantity += parseInt(quantity,10)
       const newQuantity = cartItem.quantity + requestedQuantity;
       if (newQuantity > sizeStock.stock || newQuantity > 5) {
         return res
@@ -116,9 +106,6 @@ exports.AddCart = async (req, res) => {
       });
       await cartItem.save();
     }
-    // sizeStock.stock -= requestedQuantity;
-    // await product.save();
-
     return res.status(200).json({ success: true, message: "added" });
   } catch (error) {
     console.log(error);
@@ -135,7 +122,6 @@ exports.UpdateQuantity = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
     }
-
     const sizeStock = product.sizes.find((s) => s.size === size);
     if (!sizeStock || newQuantity > sizeStock.stock) {
       return res
@@ -147,17 +133,14 @@ exports.UpdateQuantity = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Maximum quantity is 5" });
     }
-
     let cartItem = await Cart.findById(cartId);
     if (!cartItem) {
       return res
         .status(404)
         .json({ success: false, message: "Cart item not found" });
     }
-
     cartItem.quantity = newQuantity;
     await cartItem.save();
-
     res.status(200).json({ success: true, message: "Quantity updated" });
   } catch (error) {
     console.error(error);
@@ -170,7 +153,6 @@ exports.deleteCart = async (req, res) => {
     const id = req.params.id;
     const deleteItem = await Cart.findByIdAndDelete(id);
     if (!deleteItem) {
-      console.log("no item");
       return res
         .status(400)
         .json({ success: false, message: "item not found" });
@@ -187,10 +169,10 @@ exports.getCheckout = async (req, res) => {
     const user = req.user;
     const userId = req.user.id;
     const users = await User.findById(userId);
-    const coupons = await Coupon.find({endDate: { $gte: new Date() }});
+    const coupons = await Coupon.find({ endDate: { $gte: new Date() } });
     const addresses = users.address;
-    const wallet = await Wallet.findOne({user:userId})
-    const walletBalance = wallet.balance
+    const wallet = await Wallet.findOne({ user: userId });
+    const walletBalance = wallet.balance;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     let deliveryFee = 40;
@@ -221,16 +203,8 @@ exports.getCheckout = async (req, res) => {
         startDate: { $lte: new Date() },
         endDate: { $gte: new Date() },
       });
-      // let discountAmount =0;
       let categoryDiscountAmount = 0;
       let productDiscountAmount = 0;
-
-      // if(categoryOffer){
-      //   discountAmount = salePrice * (categoryOffer.discountPercentage / 100)
-      //   console.log("discountedAmpunt: ",discountAmount)
-      //   totalOfferAmount += discountAmount * quantity
-      //   console.log("totalOfferAmoiunt: ",totalOfferAmount)
-      // }
       if (categoryOffer) {
         categoryDiscountAmount =
           salePrice * (categoryOffer.discountPercentage / 100);
@@ -244,12 +218,9 @@ exports.getCheckout = async (req, res) => {
       );
       totalOfferAmount += discountAmount * quantity;
       finalPrice = salePrice - discountAmount;
-      // totalAmount += salePrice * quantity;
-      // console.log('totalAmount: ',totalAmount)
       discountedTotalAmount += finalPrice * quantity;
     }
     discountedTotalAmount += deliveryFee;
-    // console.log("finalPrie: ",saved);
     const OriginalTotal = cartItem.reduce(
       (acc, curr) => acc + curr.quantity * curr.product.regularPrice,
       0
@@ -266,7 +237,7 @@ exports.getCheckout = async (req, res) => {
       saved,
       RegularTotal,
       deliveryFee,
-      walletBalance
+      walletBalance,
     });
   } catch (error) {
     console.log(error);
@@ -277,7 +248,6 @@ exports.getCheckout = async (req, res) => {
 exports.getAddAddress = async (req, res) => {
   try {
     const addresses = await User.findById(req.user.id);
-    // console.log("rendering ", addresses);
     res.render("user/checkoutAddAddress", { addresses });
   } catch (error) {
     console.log(error);
@@ -326,7 +296,6 @@ exports.getEditAddress = async (req, res) => {
       { "address.$": 1 }
     );
     const user = userAddress.address[0];
-    // console.log("aaddress:",user)
     res.render("user/checkoutEditAddress", { address: user });
   } catch (error) {
     console.log(error);
@@ -335,7 +304,6 @@ exports.getEditAddress = async (req, res) => {
 
 exports.editAddress = async (req, res) => {
   try {
-    console.log("req:", req.query);
     const id = req.query.id;
     console.log(id, "got from edit");
     const {
@@ -349,18 +317,7 @@ exports.editAddress = async (req, res) => {
       country,
       addType,
     } = req.body;
-    console.log(
-      "post from body: ",
-      fullName,
-      phone,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      postalCode,
-      country,
-      addType
-    );
+
     const updatedAddress = await User.findOneAndUpdate(
       { "address._id": id },
       {
@@ -378,8 +335,6 @@ exports.editAddress = async (req, res) => {
       },
       { new: true }
     );
-    console.log("updated", updatedAddress);
-    // res.send("done")
     return res.redirect("/checkout");
   } catch (error) {
     console.log(error);
@@ -389,7 +344,6 @@ exports.editAddress = async (req, res) => {
 
 exports.placeOrder = async (req, res) => {
   try {
-    console.log("inside placeorder");
     const {
       address,
       totalToPay,
@@ -422,15 +376,11 @@ exports.placeOrder = async (req, res) => {
     let totalQuantity = Number(Quantity);
     const userId = req.user._id;
     const cartItems = await Cart.find({ user: userId }).populate("product");
-    console.log("cartitems:", cartItems);
     const user = await User.findById(userId).lean();
-    console.log("user: ", user);
     const selectedIndex = user.address.findIndex(
       (addr) => addr._id.toString() === address
     );
     const selectedAddress = user.address[selectedIndex];
-    console.log("add: ", selectedAddress);
-
     if (!selectedAddress) {
       return res
         .status(400)
@@ -442,18 +392,11 @@ exports.placeOrder = async (req, res) => {
         .json({ success: false, message: "No items in cart" });
     }
     const products = [];
-
     for (const item of cartItems) {
       let categoryOfferAmount = 0;
       const productz = item.product;
       const salePrice = productz.salePrice;
       const quantity = item.quantity;
-      // let categoryOffer = await CategoryOffer.findOne({
-      //   category:productz.category._id,
-      //   isActive:true,
-      //   startDate:{$lte:new Date()},
-      //   endDate:{$gte: new Date()}
-      // })
       const categoryOffer = await CategoryOffer.findOne({
         category: productz.category._id,
         isActive: true,
@@ -483,7 +426,6 @@ exports.placeOrder = async (req, res) => {
         price: product.salePrice,
         categoryOffer: categoryOfferAmount.toFixed(2),
       });
-      console.log("till here");
     }
     const orderId = await getNextOrderId();
     const newOrder = new Order({
@@ -500,7 +442,7 @@ exports.placeOrder = async (req, res) => {
       usedCoupons: CouponCode,
       tempCouponAmount: DiscountAmount,
       CategoryOffer: categoryOfferWhole,
-      razorpayOrderId:0,
+      razorpayOrderId: 0,
       address: {
         fullName: selectedAddress.fullName,
         addressLine1: selectedAddress.addressLine1,
@@ -513,28 +455,7 @@ exports.placeOrder = async (req, res) => {
         addType: selectedAddress.addType,
       },
     });
-    console.log("till");
     await newOrder.save();
-    // const coupon = await Coupon.findOne({ code: CouponCode });
-    // if (coupon) {
-    //   const user = await User.findById(userId);
-    //   if (!user.usedCoupons.includes(CouponCode)) {
-    //     user.usedCoupons.push(CouponCode);
-    //     await user.save();
-    //     console.log(`Coupon ${CouponCode} added to user's usedCoupons array`);
-    //   } else {
-    //     console.log(`Coupon ${CouponCode} was already used by the user`);
-    //   }
-    // }
-    // for (const item of products) {
-    //   const product = await Product.findById(item.product);
-    //   const sizeStock = product.sizes.find((s) => s.size === item.size);
-    //   if (sizeStock) {
-    //     sizeStock.stock -= item.quantity;
-    //   }
-    //   await product.save();
-    // }
-    // await Cart.deleteMany({ user: userId });
     res.json({
       success: true,
       message: "Order placed successfully!",
@@ -548,7 +469,6 @@ exports.placeOrder = async (req, res) => {
 
 exports.placeOrderCOD = async (req, res) => {
   try {
-    console.log("inside placeorder");
     const {
       address,
       totalToPay,
@@ -572,29 +492,18 @@ exports.placeOrderCOD = async (req, res) => {
       Quantity
     );
     let TotalToPay = Number(totalToPay);
-    console.log("tooo: ", TotalToPay);
     let categoryOfferWhole = Number(CatOffer);
     let originalTotal = Number(OriginalTotal);
     let totalQuantity = Number(Quantity);
     const userId = req.user._id;
-    const wallet= await Wallet.findOne({user:userId})
+    const wallet = await Wallet.findOne({ user: userId });
     const cartItems = await Cart.find({ user: userId }).populate("product");
-    console.log("cartitems:", cartItems);
     const user = await User.findById(userId).lean();
-    console.log("user: ", user);
     const selectedIndex = user.address.findIndex(
       (addr) => addr._id.toString() === address
     );
     const selectedAddress = user.address[selectedIndex];
     console.log("add: ", selectedAddress);
-    // if (TotalToPay > 1000) {
-    //   return res
-    //     .status(400)
-    //     .json({
-    //       success: false,
-    //       message: "COD not available for order above rs 1000",
-    //     });
-    // }
     if (!selectedAddress) {
       return res
         .status(400)
@@ -606,18 +515,11 @@ exports.placeOrderCOD = async (req, res) => {
         .json({ success: false, message: "No items in cart" });
     }
     const products = [];
-
     for (const item of cartItems) {
       let categoryOfferAmount = 0;
       const productz = item.product;
       const salePrice = productz.salePrice;
       const quantity = item.quantity;
-      // let categoryOffer = await CategoryOffer.findOne({
-      //   category:productz.category._id,
-      //   isActive:true,
-      //   startDate:{$lte:new Date()},
-      //   endDate:{$gte: new Date()}
-      // })
       const categoryOffer = await CategoryOffer.findOne({
         category: productz.category._id,
         isActive: true,
@@ -647,15 +549,7 @@ exports.placeOrderCOD = async (req, res) => {
         price: product.salePrice,
         categoryOffer: categoryOfferAmount.toFixed(2),
       });
-      console.log("till here");
-      // totalPrice += product.salePrice * product.quantity;
-      // console.log("totalPrice: ",totalPrice)
-      // discountTotalAmount += finalPrice * product.quantity
     }
-    // const productzz = await
-    // console.log("finallyy : ",discountTotalAmount);
-    // console.log(OriginalTotal)
-
     const orderId = await getNextOrderId();
     const newOrder = new Order({
       user: userId,
@@ -683,34 +577,36 @@ exports.placeOrderCOD = async (req, res) => {
         addType: selectedAddress.addType,
       },
     });
-    console.log("till");
-    console.log(typeof TotalToPay)
-    // log('')
-    if(PayMethod=='WALLET'){
-      if(wallet.balance < TotalToPay){
-        return res.status(400).json({success:false,message:"Not enough balance in wallet"})
+    if (PayMethod == "WALLET") {
+      if (wallet.balance < TotalToPay) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Not enough balance in wallet" });
       }
       wallet.balance -= TotalToPay;
       wallet.transactions.push({
-        type: 'debit',
+        type: "debit",
         amount: TotalToPay,
         description: `Payment for order ${orderId} debited ${TotalToPay} rs`,
-        date:Date.now()
-      })
+        date: Date.now(),
+      });
       await wallet.save();
-      newOrder.paymentStatus="Paid"
+      newOrder.paymentStatus = "Paid";
       await newOrder.save();
-    }else if(PayMethod ==='CASH ON DELIVERY'){
-      if(TotalToPay>1000){
-        return res.status(400).json({success:false,message:"Cash on delivery is not available for rs above 1000"})
+    } else if (PayMethod === "CASH ON DELIVERY") {
+      if (TotalToPay > 1000) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Cash on delivery is not available for rs above 1000",
+          });
       }
-      await newOrder.save()
+      await newOrder.save();
     }
-    
     const coupon = await Coupon.findOne({ code: CouponCode });
     if (coupon) {
       const user = await User.findById(userId);
-      // Check if the coupon code is already used by the user
       if (!user.usedCoupons.includes(CouponCode)) {
         user.usedCoupons.push(CouponCode);
         await user.save();

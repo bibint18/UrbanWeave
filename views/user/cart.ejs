@@ -63,48 +63,6 @@
                 <td colspan="8">Your Cart is Empty</td>
               </tr>
               <% } %>
-              <!-- <tr>
-                <td><span class="cp_no">2</span></td>
-                <td><a href="#" class="cp_img"><img src="img/cart-prdct/2.jpg" alt="" /></a></td>
-                <td><a href="#" class="cp_title">This is Product Title</a></td>
-                <td>
-                  <div class="cp_quntty">																			
-                    <input name="quantity" value="1" size="2" type="number">													
-                  </div>
-                </td>
-                <td><p class="cp_price">$104.99</p></td>
-                <td><p class="cpp_total">$104.99</p></td>
-                <td><a class="btn btn-default cp_remove"><i class="fa fa-trash"></i></a></td>
-              </tr>
-              
-              <tr>
-                <td><span class="cp_no">3</span></td>
-                <td><a href="#" class="cp_img"><img src="img/cart-prdct/3.jpg" alt="" /></a></td>
-                <td><a href="#" class="cp_title">This is Product Title</a></td>
-                <td>
-                  <div class="cp_quntty">																			
-                    <input name="quantity" value="1" size="2" type="number">													
-                  </div>
-                </td>
-                <td><p class="cp_price">$104.99</p></td>
-                <td><p class="cpp_total">$104.99</p></td>
-                <td><a class="btn btn-default cp_remove"><i class="fa fa-trash"></i></a></td>
-              </tr>
-              
-              <tr>
-                <td><span class="cp_no">4</span></td>
-                <td><a href="#" class="cp_img"><img src="img/cart-prdct/4.jpg" alt="" /></a></td>
-                <td><a href="#" class="cp_title">This is Product Title</a></td>
-                <td>
-                  <div class="cp_quntty">																			
-                    <input name="quantity" value="1" size="2" type="number">													
-                  </div>
-                </td>
-                <td><p class="cp_price">$104.99</p></td>
-                <td><p class="cpp_total">$104.99</p></td>
-                <td><a class="btn btn-default cp_remove"><i class="fa fa-trash"></i></a></td>
-              </tr>
-               -->
             </tbody>
           </table>
         </div>
@@ -117,19 +75,14 @@
           <div class="col-sm-7">
             <div class="cart-action">
               <a href="/shop" class="btn border-btn">continiue shopping</a>
-              <!-- <a href="#" class="btn border-btn">update shopping bag</a> -->
             </div>
           </div>
-          
         </div>
       </div>
       
       <div class="col-md-4 col-xs-12 cart-checkout-process text-right">
         <div class="wrap">
-          <!-- <p><span>Subtotal</span><span>$200.00</span></p> -->
           <h4><span>Grand total:</span><span>Rs: <%= GrandTotal %></span></h4>
-          <!-- <h4><span>all total:</span><span>Rs: <%= MFtotal %></span></h4> -->
-          <!-- <a href="/checkout" class="btn border-btn">process to checkout</a> -->
           <% let outOfStock = cartItems.some(item => item.quantity > item.product.sizes.find(s => s.size === item.size).stock); %>
           <a href="/checkout" class="btn border-btn" <%= (outOfStock || cartItems.length<1)? 'disabled' : '' %>>Process to Checkout</a>
         </div>
@@ -167,7 +120,7 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        location.reload(); // Reload to update totals and other values
+        location.reload(); 
       } else {
         Swal.fire({
           icon: 'error',
@@ -199,7 +152,6 @@
   confirmButtonText: 'Yes, delete it!'
 }).then((result) => {
   if (result.isConfirmed) {
-    // Perform fetch request to delete the cart item
     fetch(`/cart/delete/${cartItemId}`, {
       method: 'DELETE',
     })

@@ -177,8 +177,10 @@
                     <%=productItem.ProductStatus%>%>
                   </span>
                 </div>
+                <% if(productItem.ProductStatus !=='Cancelled' && productItem.ProductStatus !=='Returned' && productItem.ProductStatus !=='Delivered' ){ %>
                 <button class="btn btn-cancel btn-sm"
                   onclick="CancelOrder('<%=orders._id%>','<%=productItem.product._id%>','<%=productItem.size%>')">Cancel</button>
+                  <% } %>
               </div>
             </div>
             <% }) %>
@@ -227,6 +229,9 @@
             </p>
             <p><strong>Date:</strong>
               <%= new Date(orders.orderDate).toLocaleDateString('en-GB')%>
+            </p>
+            <p><strong>User:</strong>
+              <%=orders.user.email %>
             </p>
             <p class="total-price">Total: $<%= orders.totalAmount%>
             </p>

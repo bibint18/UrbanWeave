@@ -7,14 +7,9 @@ const jwt = require("jsonwebtoken")
 // let sessionCoupons = {};
 exports.VerifyCoupon = async (req, res) => {
   const userId = req.user._id;
-
   const { couponCode, totalAmount ,YouSaved} = req.body;
-  console.log("from front: ", couponCode, totalAmount,YouSaved);
   let Saved = parseFloat(YouSaved.match(/[\d.]+/)[0]); 
-  console.log("saveeeeeeeeeeeeeed: ",Saved)
   const coupon = await Coupon.findOne({ code: couponCode, status: "active" });
-  console.log(coupon);
-
   if (!coupon) {
     return res.json({ success: false, message: "Invalid or expired coupon." });
   }
@@ -22,10 +17,7 @@ exports.VerifyCoupon = async (req, res) => {
     return res.json({ success: false, message: "Coupon has expired." });
   }
   const user = await User.findById(userId);
-  console.log(user)
   const AlreadyClaimed = await User.findOne({_id:userId,usedCoupons:{$in:[couponCode]}})
-  console.log("already: ",AlreadyClaimed);
-  
   if(AlreadyClaimed){
     return res.status(400).json({success:false,message:"Coupon aalready claimed once!"})
   }
@@ -36,20 +28,12 @@ exports.VerifyCoupon = async (req, res) => {
       message: `Minimum spend of ₹${minimumSpend} required.`,
     });
   }
-  console.log(totalAmount, "totalAmount");
-  console.log(coupon.discount, "coupon.discount");
   const discountAmount = Math.min(
     totalAmount * (coupon.discount / 100),
     coupon.maximumDiscount
   ).toFixed(2)
-  console.log(discountAmount, "disco ");
-
   const newTotal = (totalAmount - discountAmount).toFixed(2);
-  console.log("newtotal: ", newTotal);
   const AmountSaved = (Saved + parseFloat( discountAmount)).toFixed(2)
-  console.log("final savig: ",AmountSaved);
-  
-  console.log(req.user)
   return res.status(200).json({
     success: true,
     message: "Coupon applied",

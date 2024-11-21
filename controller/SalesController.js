@@ -5,7 +5,6 @@ const moment = require("moment");
 exports.fetchReport = async (req, res) => {
   try {
     const { type, startDate, endDate } = req.query;
-    console.log("from params: ", type, startDate, endDate);
     let filter = {};
     let start = new Date();
     let end = new Date();
@@ -32,17 +31,14 @@ exports.fetchReport = async (req, res) => {
       end.setHours(23, 59, 59, 999);
     }
     filter.createdAt = { $gte: start, $lte: end };
-    console.log(filter);
     const orders = await Order.find(filter)
       .populate("user")
       .populate("products.product");
-    console.log("ord: ", orders);
     let totalRevenue = 0;
     let totalDiscounts = 0;
     let totalCouponDeductions = 0;
     let totalOrders = orders.length;
     let detailedOrders =[];
-    console.log(totalOrders);
     const salesData = {
       labels: [],
       sales: [],
@@ -61,7 +57,6 @@ exports.fetchReport = async (req, res) => {
         categoryOffer: order.CategoryOffer || 0,
         createdAt: moment(order.createdAt).format("YYYY-MM-DD"),
       });
-      console.log("detailedOrders: ",detailedOrders)
       const period = moment(order.createdAt).format("YYYY-MM-DD");
       if (!salesData.labels.includes(period)) {
         salesData.labels.push(period);
@@ -97,7 +92,6 @@ exports.fetchReport = async (req, res) => {
 
 exports.getTopProducts = async (req,res) => {
   try {
-    console.log("reavhed")
     const topProducts=await Order.aggregate([
       {$unwind:'$products'},
       {$group:{
@@ -118,7 +112,6 @@ exports.getTopProducts = async (req,res) => {
     {$unwind:'$productDetails'}
     ])
     return res.json({ topProducts});
-    // return res.render('admin/dashboard',{topProducts,detailedOrders:[],topCategory:[]})
   } catch (error) {
     console.log(error)
     return res.send(error)
@@ -159,7 +152,6 @@ exports.getTopCategory = async (req,res) => {
     ])
     console.log(topCategory)
     return res.json({ topCategory });
-    // return res.render('admin/dashboard',{topCategory,detailedOrders:[],topProducts:[]})
   } catch (error) {
     console.log(error)
     res.send(error)

@@ -354,6 +354,10 @@ exports.getProductDetails = async (req, res) => {
   console.log(id);
   const user = req.cookies.jwt;
   const products = await Products.findById(id);
+  let OfferPrice=0
+  if(products.productOffer){
+    OfferPrice =products.salePrice - ((products.salePrice) * products.productOffer / 100)
+  }
   const HereCategory = products.category
   console.log("hereCategory",HereCategory)
   console.log("products: ",products)
@@ -370,7 +374,7 @@ exports.getProductDetails = async (req, res) => {
     return res.redirect("/home");
   }
   const prod = await Products.find({ category:HereCategory }).limit(8)
-  res.render("user/product-details", { products, prod, user ,CatOfferPercentage,CatOfferEndDate});
+  res.render("user/product-details", { products, prod, user ,CatOfferPercentage,CatOfferEndDate,OfferPrice});
 };
 
 exports.getPayment = (req, res) => {

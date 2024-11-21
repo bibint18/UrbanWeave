@@ -13,7 +13,6 @@ exports.loadWallet = async (req, res) => {
           transactions: [], 
         });
       }
-      console.log(wallet)
     return res.render("user/wallet", { user,wallet,User});
   } catch (error) {
     console.log(error);
@@ -26,7 +25,6 @@ exports.loadWallet = async (req, res) => {
 exports.AddMoney = async (req, res) => {
   try {
     const { amount } = req.body;
-    console.log(amount);
     if (amount <= 0) {
       return res.status(400).json({
         success: false,
@@ -35,17 +33,13 @@ exports.AddMoney = async (req, res) => {
     }
     const userId = req.user._id;
     let wallet = await Wallet.findOne({ user:userId});
-    console.log(wallet)
-    console.log(wallet);
     if (!wallet) {
-      console.log("create");
       wallet = new Wallet({
         user: userId,
         balance: 0,
         transactions: [],
       });
     }
-
     wallet.balance += amount;
     wallet.transactions.push({
       amount: amount,

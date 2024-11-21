@@ -1,89 +1,101 @@
+const Category = require("../model/admin/categoryModel");
+const CategoryOffer = require("../model/admin/CategoryOfferModel");
+const Products = require("../model/admin/prodectModel");
 
-const Category = require('../model/admin/categoryModel')
-const CategoryOffer = require('../model/admin/CategoryOfferModel')
-const Products = require('../model/admin/prodectModel')
-
-exports.ListCategoryOffer = async(req,res) => {
+exports.ListCategoryOffer = async (req, res) => {
   try {
-    const categories = await Category.find() 
-    console.log(categories);
-    const offers = await CategoryOffer.find().populate('category')
-    const products = await Products.find().populate('category')
-    return res.render('admin/CategoryOffer',{categories,offers,products})
+    const categories = await Category.find();
+    const offers = await CategoryOffer.find().populate("category");
+    const products = await Products.find().populate("category");
+    return res.render("admin/CategoryOffer", { categories, offers, products });
   } catch (error) {
     console.log(error);
-    return res.send(error)
+    return res.send(error);
   }
-}
+};
 
-exports.AddCategoryOffer = async (req,res) => {
+exports.AddCategoryOffer = async (req, res) => {
   try {
-    const {category, discountPercentage, startDate, endDate } = req.body 
-    console.log("from backend",category, discountPercentage, startDate, endDate )
-    let existing = await CategoryOffer.findOne({category:category})
-    if(existing){
-      return res.status(400).json({success:false,message:"Category offer already exist"})
+    const { category, discountPercentage, startDate, endDate } = req.body;
+    let existing = await CategoryOffer.findOne({ category: category });
+    if (existing) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category offer already exist" });
     }
-    if(discountPercentage>90){
-      return res.status(400).json({success:false,message:"Discounnt should not be more than 90%"})
+    if (discountPercentage > 80) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Discount should not be more than 80%",
+        });
     }
-    const newOffer = new CategoryOffer ({
-      category:category,
-      discountPercentage:discountPercentage,
-      startDate:startDate,
-      endDate:endDate,
-
-    })
-    await newOffer.save()
-    return res.status(200).json({success:true,message:"Coupon applied successfully!"})
+    const newOffer = new CategoryOffer({
+      category: category,
+      discountPercentage: discountPercentage,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    await newOffer.save();
+    return res
+      .status(200)
+      .json({ success: true, message: "Coupon applied successfully!" });
   } catch (error) {
-    console.log(error)
-    return res.status(400).json({success:false,message:"something went wrong!"})
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: "something went wrong!" });
   }
-}
+};
 
-
-exports.deleteCatOffer = async (req,res) => {
+exports.deleteCatOffer = async (req, res) => {
   try {
-    const id = req.params.id
-    console.log(id)
-    const  offer = await CategoryOffer.findByIdAndDelete(id)
-    return res.status(200).json({success:true,message:"Succesfully deleted"})
+    const id = req.params.id;
+    const offer = await CategoryOffer.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json({ success: true, message: "Succesfully deleted" });
   } catch (error) {
-    console.log(error)
-    return res.status(400).json({success:false,message:"Something went wrong!"})
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: "Something went wrong!" });
   }
-}
+};
 
-exports.getEditCatOffer = async(req,res) => {
-  const id = req.params.id
-  console.log(id)
-  const categories = await Category.find() 
-    const offers = await CategoryOffer.findById(id).populate('category')
-    console.log("offers: ",offers)
-    return res.render('admin/EditCategoryOffer',{categories,offers})
-}
+exports.getEditCatOffer = async (req, res) => {
+  const id = req.params.id;
+  const categories = await Category.find();
+  const offers = await CategoryOffer.findById(id).populate("category");
+  return res.render("admin/EditCategoryOffer", { categories, offers });
+};
 
-exports.EditOffer = async (req,res) => {
+exports.EditOffer = async (req, res) => {
   try {
-    console.log("inside edit")
-    const id = req.params.id
-    const {category, discountPercentage, startDate, endDate } = req.body
-    const cat = await CategoryOffer.findById(id)
-    console.log("from from=nt",category)
-    console.log(cat.category)
-    if(discountPercentage>90){
-      return res.status(400).json({success:false,message:"Discount percentage cannot be more than 90%"})
+    const id = req.params.id;
+    const { category, discountPercentage, startDate, endDate } = req.body;
+    const cat = await CategoryOffer.findById(id);
+    if (discountPercentage > 80) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Discount percentage cannot be more than 80%",
+        });
     }
-    const offer = await CategoryOffer.findByIdAndUpdate(id,{
-      
-      discountPercentage:discountPercentage,
-      startDate:startDate,
-      endDate:endDate
-    })
-    return res.status(200).json({success:true,message:"Offer updated succesfully!"})
+    const offer = await CategoryOffer.findByIdAndUpdate(id, {
+      discountPercentage: discountPercentage,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    return res
+      .status(200)
+      .json({ success: true, message: "Offer updated succesfully!" });
   } catch (error) {
-    console.log(error)
-    return res.status(400).json({success:false,message:"Something went wrong!"})
+    console.log(error);
+    return res
+      .status(400)
+      .json({ success: false, message: "Something went wrong!" });
   }
-}
+};

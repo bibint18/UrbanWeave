@@ -82,8 +82,8 @@
             <div class="pd_price_dtls fix">
               <!-- Product Price -->
               <div class="pd_price">
-                <span class="new">$<%=products.salePrice%></span>
-                <span class="old">$<%= products.regularPrice %></span>
+                <span class="new">&#8377;<%=products.salePrice%></span>
+                <span class="old">&#8377;<%= products.regularPrice %></span>
               </div>
               
               <!-- Product Rating -->
@@ -100,7 +100,7 @@
             </div>
             <div class="">
               <% if (CatOfferPercentage && CatOfferPercentage > 0 && new Date(CatOfferEndDate) > new Date()) { %>
-                <div class="category-offer" style="margin-top: 10px; color: #28a745; font-weight: bold;">
+                <div class="category-offer" style="margin-top: 10px; color: #ff546e; font-weight: bold;">
                   Category Offer: <%= CatOfferPercentage %>% OFF
                 </div>
               <% } %>
@@ -109,8 +109,8 @@
               <% if (products.
               productOffer && products.
               productOffer > 0) { %>
-                <div class="category-offer" style="margin-top: 10px; color: #e47f13; font-weight: bold;">
-                  Product Offer: <%= products.productOffer %>% OFF
+                <div class="category-offer" style="margin-top: 10px; color: #ff546e; font-weight: bold;">
+                  Product Offer: <%= products.productOffer %>% OFF &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #28a745;">Offer Amount: &#8377;<%= OfferPrice%></span>
                 </div>
               <% } %>
             </div>
@@ -226,9 +226,9 @@
                 <h3 class="title"><a href="/products/details/<%= product._id %>">
                     <%= product.ProductName %>
                   </a></h3>
-                <div class="price">$<%= product.salePrice %>
+                <div class="price">&#8377;<%= product.salePrice %>
                     <% if (product.regularPrice) { %>
-                      <span>$<%= product.regularPrice %></span>
+                      <span>&#8377;<%= product.regularPrice %></span>
                       <% } %>
                 </div>
                 <a class="add-to-cart" href="">+ Add To Cart</a>
