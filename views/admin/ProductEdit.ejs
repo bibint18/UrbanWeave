@@ -97,18 +97,22 @@
                                           <div>
                                             <label class="mr-5" for="size_s">S</label>
                                             <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box"  value="<%= products.sizes.find(sizeObj => sizeObj.size === 'S') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>"> 
+                                            <div id="sizeS-error" class="error-message"></div>
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_m">M</label>
                                             <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'M') ? products.sizes.find(sizeObj => sizeObj.size === 'M').stock : '' %>" >
+                                            <div id="sizeM-error" class="error-message"></div>
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_l">L</label>
                                             <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'L') ? products.sizes.find(sizeObj => sizeObj.size === 'L').stock : '' %>" >
+                                            <div id="sizeL-error" class="error-message"></div>
                                           </div>
                                           <div>
                                             <label class="mr-5" for="size_xl">XL</label>
                                             <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'XL') ? products.sizes.find(sizeObj => sizeObj.size === 'XL').stock : '' %>" >
+                                            <div id="sizeXL-error" class="error-message"></div>
                                           </div>
                                         </div>
                                       </div>
@@ -385,16 +389,13 @@ function handleFileSelect(event) {
             clearErrorMessages();
             const name = document.getElementsByName('productName')[0].value;
             const description = document.getElementById('descriptionid').value;
-            // const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('regularPrice')[0].value;
             const saleprice = document.getElementsByName('salePrice')[0].value;
-            // const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
-            // const images = document.getElementById('input1')
-            // const images2 = document.getElementById('input2')
-            // const images3 = document.getElementById('input3')
-            // const images4 = document.getElementById('input4')
-            // const quantity = document.getElementById('quantity')
+            const sizeS = document.getElementById('size_s').value.trim();
+            const sizeM = document.getElementById('size_m').value.trim();
+            const sizeL = document.getElementById('size_l').value.trim();
+            const sizeXL = document.getElementById('size_xl').value.trim();
             let isValid = true
             if (name.trim() === "") {
                 displayErrorMessage('productName-error', 'Please enter a product name.');
@@ -411,32 +412,14 @@ function handleFileSelect(event) {
                 displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
                 isValid = false;
             }
-
-
-
-
-
-            // if (parseInt(quantity) < 0) {
-            //     displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-            //     isValid = false;
-            // }
-
-
-
-
             if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
                 displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
                 isValid = false;
             }
-
             if (price.trim() === "") {
                 displayErrorMessage('regularPrice-error', 'Please enter a color.');
                 isValid = false;
             }
-
-
-
-
             if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
                 displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
                 isValid = false;
@@ -445,32 +428,22 @@ function handleFileSelect(event) {
                 displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
                 isValid = false;
             }
-
-
-            // if (color.trim() === "") {
-            //     displayErrorMessage('color-error', 'Please enter a color.');
-            //     isValid = false;
-            // }
-
-            
-
-
-            // if (images.files.length === 0) {
-            //     displayErrorMessage("images-error", 'Please select an image.');
-            //     isValid = false;
-            // }
-            // if (images2.files.length === 0) {
-            //     displayErrorMessage("images-error2", 'Please select an image.');
-            //     isValid = false;
-            // }
-            // if (images3.files.length === 0) {
-            //     displayErrorMessage("images-error3", 'Please select an image.');
-            //     isValid = false;
-            // }
-            // if (images4.files.length === 0) {
-            //     displayErrorMessage("images-error4", 'Please select an image.');
-            //     isValid = false;
-            // }
+            if (!sizeS || isNaN(sizeS) || sizeS < 0 || sizeS > 100) {
+                displayErrorMessage('sizeS-error', 'Size S must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeM || isNaN(sizeM) || sizeM < 0 || sizeM > 100) {
+                displayErrorMessage('sizeM-error', 'Size M must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeL || isNaN(sizeL) || sizeL < 0 || sizeL > 100) {
+                displayErrorMessage('sizeL-error', 'Size L must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeXL || isNaN(sizeXL) || sizeXL < 0 || sizeXL > 100) {
+                displayErrorMessage('sizeXL-error', 'Size XL must be a number between 0 and 100.');
+                isValid = false;
+            }
             return isValid;
         }
 

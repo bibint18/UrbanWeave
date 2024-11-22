@@ -31,15 +31,14 @@
             <div class="col-lg-6">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form method="post" action="/admin/product/add" enctype="multipart/form-data" 
-">
-                            <div class="mb-4">
-                                <label for="product_name" class="form-label">Product Name</label>
-                                <input type="text" placeholder="Type here" name="productName"
-                                    class="form-control border" id="product_name">
-                                <div id="productName-error" class="error-message"></div>
-                            </div>
-                            <!-- <div class="col-lg-4 mb-4">
+                        <form method="post" action="/admin/product/add" enctype="multipart/form-data" ">
+                            <div class=" mb-4">
+                            <label for="product_name" class="form-label">Product Name</label>
+                            <input type="text" placeholder="Type here" name="productName" class="form-control border"
+                                id="product_name">
+                            <div id="productName-error" class="error-message"></div>
+                    </div>
+                    <!-- <div class="col-lg-4 mb-4">
                                 <label class="form-label">Brand</label>
                                 <select class="form-select border" name="brand">
                                     <option value="">
@@ -47,175 +46,183 @@
                                 </select>
                                 <div id="brand-error" class="error-message"></div>
                             </div> -->
+                    <div class="mb-4">
+                        <label class="form-label">Full description</label>
+                        <textarea placeholder="Type here" id="descriptionid" name="description"
+                            class="form-control border" rows="4"></textarea>
+                        <div id="description-error" class="error-message"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
                             <div class="mb-4">
-                                <label class="form-label">Full description</label>
-                                <textarea placeholder="Type here" id="descriptionid" name="description"
-                                    class="form-control border" rows="4"></textarea>
-                                <div id="description-error" class="error-message"></div>
+                                <label class="form-label">Regular price</label>
+                                <input placeholder="$" name="regularPrice" type="text" class="form-control border"
+                                    id="'regularPrice'">
+                                <div id="regularPrice-error" class="error-message"></div>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Regular price</label>
-                                        <input placeholder="$" name="regularPrice" type="text"
-                                            class="form-control border" id="'regularPrice'">
-                                        <div id="regularPrice-error" class="error-message"></div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Sale price</label>
-                                        <input placeholder="$" name="salePrice" type="text" class="form-control border">
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-4">
+                                <label class="form-label">Sale price</label>
+                                <input placeholder="$" name="salePrice" type="text" class="form-control border">
 
-                                    </div>
-                                    <div id="salePrice-error" class="error-message"></div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <!-- <div class="mb-4">
+                            </div>
+                            <div id="salePrice-error" class="error-message"></div>
+                        </div>
+                        <div class="col-lg-4">
+                            <!-- <div class="mb-4">
                                         <label class="form-label">Quantity</label>
                                         <input placeholder="" name="quantity" type="text" class="form-control border">
                                         <div id="quantity-error" class="error-message"></div>
                                     </div> -->
-                                </div>
-                            </div>
-                            <div class="row">
+                        </div>
+                    </div>
+                    <div class="row">
 
-                                <div class="col-lg-4">
-                                    <!-- <div class="mb-4">
+                        <div class="col-lg-4">
+                            <!-- <div class="mb-4">
                                         <label class="form-label">Color</label>
                                         <input name="color" type="text" class="form-control border">
                                     </div>
                                     <div id="color-error" class="error-message"></div> -->
 
-                                    <!--here the size form importing-->
+                            <!--here the size form importing-->
 
-                                    <div class="product-form  mb-3">
-                                        <div class="d-flex flex-row gap-4 align-item-center">
-                                            <label class="form-label">sizes:</label>
-                                          <div>
-                                            <label class="mr-5" for="size_s">S</label>
-                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box">
-                                          </div>
-                                          <div>
-                                            <label class="mr-5" for="size_m">M</label>
-                                            <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3" class="tiny-box">
-                                          </div>
-                                          <div>
-                                            <label class="mr-5" for="size_l">L</label>
-                                            <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3" class="tiny-box">
-                                          </div>
-                                          <div>
-                                            <label class="mr-5" for="size_xl">XL</label>
-                                            <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3" class="tiny-box">
-                                          </div>
-                                        </div>
-                                      </div>
-
-                                      <!--ended-->
-                                    
-                                </div>
-
-                            </div>
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row gx-2">
-                                        <div class="col-sm-6 mb-3">
-                                            <label class="form-label">Category</label>
-                                            <select class="form-select border" style="width: 150px;" name="category">
-                                                <% categories.forEach(category=> { %>
-                                                    <option value="<%= category._id %>">
-                                                        <%= category.categoryName %>
-                                                    </option>
-                                                    <% }) %>
-                                            </select>
-                                            <div id="category-error" class="error-message"></div>
-                                        </div>
+                            <div class="product-form  mb-3">
+                                <div class="d-flex flex-row gap-4 align-item-center">
+                                    <label class="form-label">sizes:</label>
+                                    <div>
+                                        <label class="mr-5" for="size_s">S</label>
+                                        <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3"
+                                            class="tiny-box">
+                                        <div id="sizeS-error" class="error-message"></div>
+                                    </div>
+                                    <div>
+                                        <label class="mr-5" for="size_m">M</label>
+                                        <input type="text" name="sizes[m]" id="size_m" min="0" maxlength="3"
+                                            class="tiny-box">
+                                        <div id="sizeM-error" class="error-message"></div>
+                                    </div>
+                                    <div>
+                                        <label class="mr-5" for="size_l">L</label>
+                                        <input type="text" name="sizes[l]" id="size_l" min="0" maxlength="3"
+                                            class="tiny-box">
+                                        <div id="sizeL-error" class="error-message"></div>
+                                    </div>
+                                    <div>
+                                        <label class="mr-5" for="size_xl">XL</label>
+                                        <input type="text" name="sizes[xl]" id="size_xl" min="0" maxlength="3"
+                                            class="tiny-box">
+                                        <div id="sizeXL-error" class="error-message"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card mb-2">
-                                <div class="card-header">
-                                    <h4>Choose images</h4>
-                                </div>
-                                <div class="border row">
-                                    <div id="addedImagesContainer" class="thumbnails-container"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                        <img src="" alt="" id="imgView1">
-                                        <input class="form-control" type="file" name="images" id="input1"
-                                            accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage1(event), viewImage(event, 1)">
-                                        <div id="images-error" class="error-message"></div>
-                                    </div>
-                                    <div class="image-cropper d-flex align-items-center"
-                                        style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                        <img src="" id="croppedImg1" alt="">
-                                        <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
-                                    </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                        <img src="" alt="" id="imgView2">
+                            <!--ended-->
 
+                        </div>
 
-                                        <input class="form-control" type="file" name="images" id="input2"
-                                            accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage2(event),viewImage(event, 2)">
-                                        <div id="images-error2" class="error-message"></div>
-                                    </div>
-                                    <div class="image-cropper d-flex align-items-center"
-                                        style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                        <img src="" id="croppedImg2" alt="">
-                                        <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                        <img src="" alt="" id="imgView3">
-
-
-                                        <input class="form-control" type="file" name="images" id="input3"
-                                            accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage3(event),viewImage(event, 3)">
-                                        <div id="images-error3" class="error-message"></div>
-                                    </div>
-                                    <div class="image-cropper d-flex align-items-center"
-                                        style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                        <img src="" id="croppedImg3" alt="">
-                                        <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                        <img src="" alt="" id="imgView4">
-
-
-
-                                        <input class="form-control" type="file" name="images" id="input4"
-                                            accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage4(event),viewImage(event, 4)">
-                                        <div id="images-error4" class="error-message"></div>
-                                    </div>
-                                    <div class="image-cropper d-flex align-items-center"
-                                        style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                        <img src="" id="croppedImg4" alt="">
-                                        <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
-                                    </div>
-                                </div>
-
-                            </div>
                     </div>
-                    <div>
-                        <button class="btn btn-md rounded font-sm hover-up" type="submit" onclick="validateAndSubmit(event)
-">Publish</button>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select border" style="width: 150px;" name="category">
+                                        <% categories.forEach(category=> { %>
+                                            <option value="<%= category._id %>">
+                                                <%= category.categoryName %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                    <div id="category-error" class="error-message"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    </form>
+                    <div class="card mb-2">
+                        <div class="card-header">
+                            <h4>Choose images</h4>
+                        </div>
+                        <div class="border row">
+                            <div id="addedImagesContainer" class="thumbnails-container"></div>
+                        </div>
+                        <div class="row">
+                            <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                <img src="" alt="" id="imgView1">
+                                <input class="form-control" type="file" name="images" id="input1"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onchange="viewImage1(event), viewImage(event, 1)">
+                                <div id="images-error" class="error-message"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                                <img src="" id="croppedImg1" alt="">
+                                <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                <img src="" alt="" id="imgView2">
+
+
+                                <input class="form-control" type="file" name="images" id="input2"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onchange="viewImage2(event),viewImage(event, 2)">
+                                <div id="images-error2" class="error-message"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                                <img src="" id="croppedImg2" alt="">
+                                <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                <img src="" alt="" id="imgView3">
+
+
+                                <input class="form-control" type="file" name="images" id="input3"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onchange="viewImage3(event),viewImage(event, 3)">
+                                <div id="images-error3" class="error-message"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                                <img src="" id="croppedImg3" alt="">
+                                <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="card-body align-items-center" style="margin-bottom: 20px;">
+                                <img src="" alt="" id="imgView4">
+
+
+
+                                <input class="form-control" type="file" name="images" id="input4"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onchange="viewImage4(event),viewImage(event, 4)">
+                                <div id="images-error4" class="error-message"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
+                                <img src="" id="croppedImg4" alt="">
+                                <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+                <div>
+                    <button class="btn btn-md rounded font-sm hover-up" type="submit" onclick="validateAndSubmit(event)
+">Publish</button>
+                </div>
+                </form>
             </div>
+        </div>
         </div>
         </div>
     </section>
@@ -224,121 +231,121 @@
 
 
 
-function validateAndSubmit(event) {
-    if (validateForm()) {
-        document.forms[0].submit();
-    }else{
-        event.preventDefault();
-    }
-}
-
-function viewImage1(event) {
-    document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0]);
-}
-
-function viewImage2(event) {
-    document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0]);
-}
-
-function viewImage3(event) {
-    document.getElementById('imgView3').src = URL.createObjectURL(event.target.files[0]);
-}
-
-function viewImage4(event) {
-    document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0]);
-}
-
-// Corrected function name and image references
-function viewImage(event, index) {
-    let input = event.target;
-    let reader = new FileReader();
-    
-    reader.onload = function () {
-        let dataURL = reader.result;
-        let image = document.getElementById('imgView' + index);
-        image.src = dataURL;
-
-        // Initialize Cropper.js
-        let cropper = new Cropper(image, {
-            aspectRatio: 1,
-            viewMode: 1,
-            guides: true,
-            background: false,
-            autoCropArea: 1,
-            zoomable: true
-        });
-
-        // Display the cropper container
-        let cropperContainer = document.querySelector("#croppedImg" + index).parentNode;
-        cropperContainer.style.display = "block";
-
-        // Handle Save button click
-        let saveButton = document.querySelector("#saveButton" + index);
-        saveButton.addEventListener('click', async function () {
-            let croppedCanvas = cropper.getCroppedCanvas();
-            let croppedImage = document.getElementById("croppedImg" + index);
-            croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0); // Set cropped image source
-
-            let timestamp = new Date().getTime();
-            let fileName = `cropped-img-${timestamp}-${index}.png`;
-
-            // Create a Blob from cropped canvas
-            croppedCanvas.toBlob(async (blob) => {
-                // Create a new File object from the Blob
-                let croppedFile = new File([blob], fileName, { type: 'image/png' });
-
-                // Create a DataTransfer object to replace the original input file with the cropped file
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(croppedFile);
-                document.getElementById('input' + index).files = dataTransfer.files; // Replace input files
-
-                // Hide cropper and destroy instance
-                cropperContainer.style.display = "none";
-                cropper.destroy();
-            }, 'image/png');
-        });
-    };
-    reader.readAsDataURL(input.files[0]);
-}
-
-// Handle file selection for multiple images and thumbnails
-let selectedImage = [];
-document.getElementById('input1').addEventListener('change', handleFileSelect);
-
-function handleFileSelect(event) {
-    const addedImagesContainer = document.getElementById('addedImagesContainer');
-    addedImagesContainer.innerHTML = "";
-    const files = event.target.files;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        selectedImage.push(file);
-
-        const thumbnail = document.createElement('div');
-        thumbnail.classList.add("thumbnail");
-
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        img.alt = "thumbnail";
-        img.style.width = "50px";
-        img.style.height = "auto";
-
-        const removeIcon = document.createElement("span");
-        removeIcon.classList.add("remove-icon");
-        removeIcon.innerHTML = "&times;";
-        removeIcon.addEventListener('click', function () {
-            const index = selectedImage.indexOf(file);
-            if (index !== -1) {
-                selectedImage.splice(index, 1);
+        function validateAndSubmit(event) {
+            if (validateForm()) {
+                document.forms[0].submit();
+            } else {
+                event.preventDefault();
             }
-            thumbnail.remove();
-        });
+        }
 
-        thumbnail.appendChild(img);
-        thumbnail.appendChild(removeIcon);
-        addedImagesContainer.appendChild(thumbnail);
-    }
-}
+        function viewImage1(event) {
+            document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        function viewImage2(event) {
+            document.getElementById('imgView2').src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        function viewImage3(event) {
+            document.getElementById('imgView3').src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        function viewImage4(event) {
+            document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        // Corrected function name and image references
+        function viewImage(event, index) {
+            let input = event.target;
+            let reader = new FileReader();
+
+            reader.onload = function () {
+                let dataURL = reader.result;
+                let image = document.getElementById('imgView' + index);
+                image.src = dataURL;
+
+                // Initialize Cropper.js
+                let cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    guides: true,
+                    background: false,
+                    autoCropArea: 1,
+                    zoomable: true
+                });
+
+                // Display the cropper container
+                let cropperContainer = document.querySelector("#croppedImg" + index).parentNode;
+                cropperContainer.style.display = "block";
+
+                // Handle Save button click
+                let saveButton = document.querySelector("#saveButton" + index);
+                saveButton.addEventListener('click', async function () {
+                    let croppedCanvas = cropper.getCroppedCanvas();
+                    let croppedImage = document.getElementById("croppedImg" + index);
+                    croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0); // Set cropped image source
+
+                    let timestamp = new Date().getTime();
+                    let fileName = `cropped-img-${timestamp}-${index}.png`;
+
+                    // Create a Blob from cropped canvas
+                    croppedCanvas.toBlob(async (blob) => {
+                        // Create a new File object from the Blob
+                        let croppedFile = new File([blob], fileName, { type: 'image/png' });
+
+                        // Create a DataTransfer object to replace the original input file with the cropped file
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(croppedFile);
+                        document.getElementById('input' + index).files = dataTransfer.files; // Replace input files
+
+                        // Hide cropper and destroy instance
+                        cropperContainer.style.display = "none";
+                        cropper.destroy();
+                    }, 'image/png');
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // Handle file selection for multiple images and thumbnails
+        let selectedImage = [];
+        document.getElementById('input1').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const addedImagesContainer = document.getElementById('addedImagesContainer');
+            addedImagesContainer.innerHTML = "";
+            const files = event.target.files;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                selectedImage.push(file);
+
+                const thumbnail = document.createElement('div');
+                thumbnail.classList.add("thumbnail");
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.alt = "thumbnail";
+                img.style.width = "50px";
+                img.style.height = "auto";
+
+                const removeIcon = document.createElement("span");
+                removeIcon.classList.add("remove-icon");
+                removeIcon.innerHTML = "&times;";
+                removeIcon.addEventListener('click', function () {
+                    const index = selectedImage.indexOf(file);
+                    if (index !== -1) {
+                        selectedImage.splice(index, 1);
+                    }
+                    thumbnail.remove();
+                });
+
+                thumbnail.appendChild(img);
+                thumbnail.appendChild(removeIcon);
+                addedImagesContainer.appendChild(thumbnail);
+            }
+        }
 
 
         function validateForm() {
@@ -354,6 +361,10 @@ function handleFileSelect(event) {
             const images2 = document.getElementById('input2')
             const images3 = document.getElementById('input3')
             const images4 = document.getElementById('input4')
+            const sizeS = document.getElementById('size_s').value.trim();
+            const sizeM = document.getElementById('size_m').value.trim();
+            const sizeL = document.getElementById('size_l').value.trim();
+            const sizeXL = document.getElementById('size_xl').value.trim();
             // const quantity = document.getElementsByName('quantity')
             let isValid = true
             if (name.trim() === "") {
@@ -414,6 +425,23 @@ function handleFileSelect(event) {
                 displayErrorMessage("images-error4", 'Please select an image.');
                 isValid = false;
             }
+            if (!sizeS || isNaN(sizeS) || sizeS < 0 || sizeS > 100) {
+                displayErrorMessage('sizeS-error', 'Size S must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeM || isNaN(sizeM) || sizeM < 0 || sizeM > 100) {
+                displayErrorMessage('sizeM-error', 'Size M must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeL || isNaN(sizeL) || sizeL < 0 || sizeL > 100) {
+                displayErrorMessage('sizeL-error', 'Size L must be a number between 0 and 100.');
+                isValid = false;
+            }
+            if (!sizeXL || isNaN(sizeXL) || sizeXL < 0 || sizeXL > 100) {
+                displayErrorMessage('sizeXL-error', 'Size XL must be a number between 0 and 100.');
+                isValid = false;
+            }
+
             return isValid;
         }
 
@@ -435,4 +463,4 @@ function handleFileSelect(event) {
 
 
     </script>
-   <%-include('../../views/partials/admin/footer')%>
+<%-include('../../views/partials/admin/footer')%>
