@@ -6,8 +6,10 @@ const { logout } = require('../controller/userController')
 exports.protect = async (req,res,next) => {
   const token = req.cookies.jwt || req.headers.authorization?.split(' ')[1]; 
   if (req.user) {
-    console.log("User authenticated via session:", req.user);
-    return next(); // User is authenticated by session, allow access
+    if(req.user.isBlocked){
+      return res.redirect('/userLogin')
+    }
+    return next(); 
   }
   if(!token){
     console.log("NO TOKEN USER NEED TO LOGIN")

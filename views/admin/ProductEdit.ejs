@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-9">
                 <div class="content-header">
-                    <h2 class="content-title">Add New Product</h2>
+                    <h2 class="content-title">Edit Product</h2>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -71,22 +71,22 @@
                                     </div>
                                     <div id="salePrice-error" class="error-message"></div>
                                 </div>
-                                <div class="col-lg-4">
+                                <!-- <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Quantity</label>
                                         <input placeholder="" name="quantity" type="text" class="form-control border" value="<%=products.quantity%>" id="quantity">
                                         <div id="quantity-error" class="error-message"></div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row">
 
                                 <div class="col-lg-4">
-                                    <div class="mb-4">
+                                    <!-- <div class="mb-4">
                                         <label class="form-label">Color</label>
                                         <input name="color" type="text" class="form-control border" value="<%=products.color%>">
                                     </div>
-                                    <div id="color-error" class="error-message"></div>
+                                    <div id="color-error" class="error-message"></div> -->
 
                                     <!--aded-->
                                     
@@ -381,21 +381,6 @@ function handleFileSelect(event) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         function validateForm() {
             clearErrorMessages();
             const name = document.getElementsByName('productName')[0].value;
@@ -403,13 +388,13 @@ function handleFileSelect(event) {
             // const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('regularPrice')[0].value;
             const saleprice = document.getElementsByName('salePrice')[0].value;
-            const color = document.getElementsByName('color')[0].value;
+            // const color = document.getElementsByName('color')[0].value;
             const category = document.getElementsByName('category')[0].value;
             // const images = document.getElementById('input1')
             // const images2 = document.getElementById('input2')
             // const images3 = document.getElementById('input3')
             // const images4 = document.getElementById('input4')
-            const quantity = document.getElementById('quantity')
+            // const quantity = document.getElementById('quantity')
             let isValid = true
             if (name.trim() === "") {
                 displayErrorMessage('productName-error', 'Please enter a product name.');
@@ -431,10 +416,10 @@ function handleFileSelect(event) {
 
 
 
-            if (parseInt(quantity) < 0) {
-                displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-                isValid = false;
-            }
+            // if (parseInt(quantity) < 0) {
+            //     displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+            //     isValid = false;
+            // }
 
 
 
@@ -462,10 +447,10 @@ function handleFileSelect(event) {
             }
 
 
-            if (color.trim() === "") {
-                displayErrorMessage('color-error', 'Please enter a color.');
-                isValid = false;
-            }
+            // if (color.trim() === "") {
+            //     displayErrorMessage('color-error', 'Please enter a color.');
+            //     isValid = false;
+            // }
 
             
 

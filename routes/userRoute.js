@@ -45,8 +45,23 @@ router.get('/auth/google', (req, res, next) => {
     prompt: 'select_account'
   })(req, res, next);
 });
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userSignup'}),(req,res) =>{
-  res.redirect('/home')
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userSignup'}),async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (user.isBlocked) {
+      req.logout(() => {
+        return res.status(403).render('error', {
+          message: 'Your account is blocked.',
+        });
+      });
+    } else {
+      res.redirect('/home');
+    }
+  } catch (err) {
+    console.error('Error during Google callback:', err);
+    res.status(500).send('An error occurred during login.');
+  }
 })
 router.get("/products/details/:id",userRouter.getProductDetails)
 
