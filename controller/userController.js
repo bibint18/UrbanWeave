@@ -194,7 +194,12 @@ exports.resend = (req, res) => {
   try {
     const newOtp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = Date.now() + 5 * 60 * 1000;
-    otpStore[email] = { newOtp: newOtp, otpExpiry };
+    // otpStore[email] = { newOtp: newOtp, otpExpiry };
+    req.session.otpStore={
+      ...req.session.otpStore,
+      newOtp,
+      otpExpiry
+    }
     const Transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -212,7 +217,7 @@ exports.resend = (req, res) => {
       if (err) {
         return res.status(500).send(err);
       }
-      console.log("send", info.response);
+      console.log("send", info.response,newOtp);
       return res.render("user/otp", { email });
     });
   } catch (err) {

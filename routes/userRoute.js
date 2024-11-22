@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
 const router = express.Router();
+const User=require('../model/user/userModel')
 const userRouter = require('../controller/userController')
 const authMiddleware= require('../middleware/authMiddleware')
 // const homePageRoute = require("../controller/homepage")

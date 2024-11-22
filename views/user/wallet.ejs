@@ -199,7 +199,7 @@
                 <p>Your Referral Code: <strong>
                         <%=User.referralCode%>
                     </strong></p>
-                <button onclick="copyToClipboard('<%= user.referralCode %>')">Copy Code</button>
+                <!-- <button onclick="copyToClipboard('<%= user.referralCode %>')">Copy Code</button> -->
             </div>
 
             <input type="text" id="AmountValue" placeholder="Enter Amount to add">
@@ -224,16 +224,13 @@
         </div>
     </div>
 
-
-
     <%-include('../../views/partials/user/footer')%>
-
         <script>
-            function copyToClipboard(code) {
-                navigator.clipboard.writeText(code).then(() => {
-                    alert('Referral code copied to clipboard');
-                });
-            }
+            // function copyToClipboard(code) {
+            //     navigator.clipboard.writeText(code).then(() => {
+            //         alert('Referral code copied to clipboard');
+            //     });
+            // }
 
             document.querySelector('#AddMoney').addEventListener('click', function () {
                 const amount = document.getElementById('AmountValue').value

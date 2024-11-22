@@ -1,0 +1,32 @@
+<!-- views/error.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8d7da;
+      color: #721c24;
+      text-align: center;
+      padding: 20px;
+    }
+    .error-box {
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #f5c6cb;
+      border-radius: 5px;
+      background-color: #f8d7da;
+      max-width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-box">
+    <h1>Access Denied</h1>
+    <p><%= message %></p>
+  </div>
+</body>
+</html>
