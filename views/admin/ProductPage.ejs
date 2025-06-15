@@ -193,7 +193,7 @@
             </td>
 
             <td>
-              <% if(product.isDeleted===false) {%>
+              <% if(product.isBlocked===false) {%>
                 <button class="btn btn-danger" style="width: 80px;">
                   <a href="/admin/product/block?id=<%= product._id %>" class="text-white"
                     style="text-decoration: none;">Block</a>
@@ -319,6 +319,61 @@
                     icon: "error",
                     title: "Error",
                     text: 'error removing offer',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton:false
+                  })
+                }
+
+              }
+            })
+
+          } else {
+            console.log("not confirmed")
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
+        async function blockProduct(productId) {
+      console.log("inside remove")
+      try {
+        Swal.fire({
+          icon: 'warning',
+          title: "Block Product ",
+          text: "Are you sure you want to block product",
+          showCancelButton: true,
+          confirmButtonText: 'yes, Block it',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: '/admin/product/block/',
+              method: "post",
+              data: {
+                productId: productId
+              },
+              success: function (response) {
+                console.log(response)
+                if (response.success) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Product Blocked",
+                    text: "Product blocked succesfully",
+                    timer:1500,
+                    timerProgressBar: true,
+                    showConfirmButton:false
+                  })
+                  .then(() => {
+                    window.location.reload();
+                  })
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: 'error blocking product',
                     timer: 1500,
                     timerProgressBar: true,
                     showConfirmButton:false

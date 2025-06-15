@@ -76,7 +76,7 @@ exports.ListProducts = async (req, res) => {
     const categoryQuery = req.query.categoryQuery
     const limit = 4;
     const skip = (page - 1) * limit;
-    let filterCriteria = { isDeleted: false };
+    let filterCriteria = {isDeleted:false};
     if (categoryQuery) {
       filterCriteria.category = categoryQuery; // Filter by category
     }
@@ -132,7 +132,7 @@ exports.RemoveProductOffer = async (req, res) => {
 exports.unBlockProduct = async (req, res) => {
   try {
     const id = req.query.id;
-    await Product.updateOne({ _id: id }, { $set: { isDeleted: false } });
+    await Product.updateOne({ _id: id }, { $set: { isBlocked: false} });
     return res.redirect("/admin/product");
   } catch (error) {
     console.log(error);
@@ -141,8 +141,10 @@ exports.unBlockProduct = async (req, res) => {
 
 exports.blockProduct = async (req, res) => {
   try {
+    console.log("reached blocj")
+    console.log(req.query)
     const id = req.query.id;
-    await Product.updateOne({ _id: id }, { $set: { isDeleted: true } });
+    await Product.updateOne({ _id: id }, { $set: { isBlocked: true } });
     return res.redirect("/admin/product");
   } catch (err) {
     {

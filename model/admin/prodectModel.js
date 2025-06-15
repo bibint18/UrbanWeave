@@ -76,6 +76,10 @@ const ProductSchema = new mongoose.Schema(
       default:false,
       required: true,
     },
+    isBlocked:{
+      type:Boolean,
+      default:false
+    }
   },
   { timestamps: true }
 );

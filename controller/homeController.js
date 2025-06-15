@@ -11,7 +11,7 @@ exports.ShopPage = async (req, res) => {
     const limit = 8;
     const skip = (page - 1) * limit;
     let sortOptions = {};
-    let filterCriteria = { isDeleted: false };
+    let filterCriteria = {isDeleted: false,isBlocked:false };
     if (categoryQuery) {
       filterCriteria.category = categoryQuery;
     }

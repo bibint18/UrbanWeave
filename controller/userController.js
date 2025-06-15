@@ -423,7 +423,7 @@ exports.getProductDetails = async (req, res) => {
   console.log(CatOfferPercentage)
   }
   
-  if (products.isDeleted == true) {
+  if (products.isDeleted == true || products.isBlocked==true) {
     return res.redirect("/home");
   }
   const prod = await Products.find({ category:HereCategory }).limit(8)

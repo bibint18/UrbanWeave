@@ -40,13 +40,13 @@
         <form action="/admin/user/search" method="get">
           <div class="col-md-6 d-flex">
             <input type="text" id="searchUser" class="form-control border border-right-0" placeholder="Search users..."
-              name="search" >
+              name="search">
             <button type="submit" class="border-0">Search</button>
           </div>
         </form>
         <% if(search){ %>
           <a href="/admin/users"> <button class="border-0">clear</button></a>
-         <% } %>
+          <% } %>
       </div>
       <div class="table-container">
         <table class="user-table">
@@ -60,7 +60,7 @@
           </thead>
           <tbody>
             <% users.forEach(user=> { %>
-              <tr>
+              <tr data-user-id="<%= user._id %>">
                 <td>
                   <%= user.username %>
                 </td>
@@ -89,7 +89,8 @@
         <% } %>
 
           <% for (let i=1; i <=totalPages; i++) { %>
-            <a href="?page=<%= i %>&search=<%=search%>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+            <a href="?page=<%= i %>&search=<%=search%>"
+              class="pagination-link <%= i === currentPage ? 'active' : '' %>">
               <%= i %>
             </a>
             <% } %>
@@ -122,10 +123,15 @@
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 1500,
-              }
-              ).then(() => {
-                location.reload();
-              });
+              })
+              // .then(() => {
+              // location.reload();
+              const row = $(`tr[data-user-id="${userId}"]`);
+              row.find('td:nth-child(3)').text('Blocked'); // Update status to Blocked
+              const button = row.find('td:nth-child(4) button');
+              button.text('Unblock'); // Change button text
+              button.attr('onclick', `unblockUser('${userId}')`);
+              // });
             },
             error: function (error) {
               Swal.fire({
@@ -171,9 +177,12 @@
                 icon: 'success',
                 timer: 1500,
                 showConfirmButton: false
-              }).then(() => {
-                location.reload();
-              });
+              })
+              const row = $(`tr[data-user-id="${userId}"]`);
+              row.find('td:nth-child(3)').text('Active');
+              const button = row.find('td:nth-child(4) button');
+              button.text('Block');
+              button.attr('onclick', `blockUser('${userId}')`);
             },
             error: function (error) {
               Swal.fire({
