@@ -206,11 +206,11 @@
                   <img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
 
                 </a>
-                <ul class="social">
+            <!--    <ul class="social">
                   <li><a href="" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
                   <li><a href="" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
                   <li><a href="" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
-                </ul>
+                </ul> -->
                 <% if (product.isOnSale) { %>
                   <span class="product-new-label">Sale</span>
                   <% } %>
@@ -319,7 +319,7 @@
         Swal.fire({
           icon:"error",
           title:"Error",
-          text:"Error adding Product to Wishlist",
+          text:"Error!! Please Login and try again",
           timer:1500,
           showConfirmButton:false
         })
@@ -379,9 +379,10 @@
           console.log(err)
           Swal.fire({
             title: 'Error!',
-            text: 'An unexpected error occurred.',
+            text: 'Error!! Please login and try again.',
             icon: 'error',
-            confirmButtonText: 'OK'
+            showConfirmButton:false,
+	    timer:1500
           })
         })
     }

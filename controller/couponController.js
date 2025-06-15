@@ -2,8 +2,9 @@ const Coupon = require("../model/admin/CouponModel");
 
 exports.getCoupons = async (req, res) => {
   try {
-    const coupons = await Coupon.find({ isDeleted: false });
-    return res.render("admin/coupons", { coupons, coupon: null });
+    const searchQuery = req.query.search || "";
+    const coupons = await Coupon.find({ isDeleted: false,code:{$regex:searchQuery} });
+    return res.render("admin/coupons", { coupons, coupon: null,search:searchQuery });
   } catch (error) {
     console.log(error);
     return res.send(error);

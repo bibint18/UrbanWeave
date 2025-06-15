@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 
 exports.getAddProduct = async (req, res) => {
   const products = await Product.find();
-  const categories = await Category.find();
+  const categories = await Category.find({isDeleted:false});
   res.render("admin/productDemo", { categories });
 };
 
@@ -66,29 +66,35 @@ exports.AddProduct = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    return res.json("something went wrong!");
+    return res.json({"error":err});
   }
 };
 
 exports.ListProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
+    const categoryQuery = req.query.categoryQuery
     const limit = 4;
     const skip = (page - 1) * limit;
-    const products = await Product.find()
+    let filterCriteria = { isDeleted: false };
+    if (categoryQuery) {
+      filterCriteria.category = categoryQuery; // Filter by category
+    }
+    const products = await Product.find(filterCriteria)
       .populate("category")
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
     const categories = await Category.find({ isDeleted: false });
-    const totalProducts = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments(filterCriteria);
     const totalPages = Math.ceil(totalProducts / limit);
-    res.render("admin/productPage", {
+    res.render("admin/ProductPage", {
       products,
       categories,
       searchQuery: null,
       currentPage: page,
       totalPages,
+      categoryQuery
     });
   } catch (error) {
     console.log(error);
@@ -148,10 +154,14 @@ exports.blockProduct = async (req, res) => {
 
 exports.getEditProduct = async (req, res) => {
   const id = req.query.id;
-  const products = await Product.findOne({ _id: id });
+  const products = await Product.findOne({ _id: id }).populate('category')
   const categories = await Category.find({ isDeleted: false });
+  let currentCategory = null;
+  if (products.category && products.category.isDeleted) {
+    currentCategory = products.category;
+  }
   const sizes = products.sizes;
-  return res.render("admin/ProductEdit", { products, categories, sizes });
+  return res.render("admin/ProductEdit", { products, categories, sizes,currentCategory });
 };
 
 exports.editProducts = async (req, res) => {
@@ -184,7 +194,7 @@ exports.editProducts = async (req, res) => {
 
     const updatedData = {
       ProductName: data.productName,
-      description: data.description,
+      description: data.descriptionData,
       category: category,
       regularPrice: data.regularPrice,
       salePrice: data.salePrice,
@@ -226,7 +236,7 @@ exports.SearchProduct = async (req, res) => {
   try {
     const search = req.query.search;
     const page = parseInt(req.query.page) || 1;
-    const limit = 7;
+    const limit = 4;
     const skip = (page - 1) * limit;
     const categories = await Category.find({ isDeleted: false });
     const matchingCategories = await Category.find({
@@ -248,12 +258,13 @@ exports.SearchProduct = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .populate("category");
-    return res.render("admin/productPage", {
+    return res.render("admin/ProductPage", {
       products,
       categories,
       searchQuery: search,
       currentPage: page,
       totalPages,
+      categoryQuery:null
     });
   } catch (error) {
     return res.send(error);

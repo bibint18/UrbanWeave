@@ -4,10 +4,16 @@ const Products = require("../model/admin/prodectModel");
 
 exports.ListCategoryOffer = async (req, res) => {
   try {
-    const categories = await Category.find();
-    const offers = await CategoryOffer.find().populate("category");
+const searchQuery = await req.query.search || '';
+    const categories = await Category.find({isDeleted:false});
+<!--    const offers = await CategoryOffer.find().populate("category");  -->
+const offers = await CategoryOffer.find()
+      .populate({
+        path: 'category',
+        match: { categoryName: { $regex: searchQuery, $options: 'i' } }
+      });
     const products = await Products.find().populate("category");
-    return res.render("admin/CategoryOffer", { categories, offers, products });
+    return res.render("admin/CategoryOffer", { categories, offers:offers.filter(o => o.category), products,searchQuery });
   } catch (error) {
     console.log(error);
     return res.send(error);

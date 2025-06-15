@@ -40,7 +40,13 @@ exports.ShopPage = async (req, res) => {
       default:
         sortOptions = { createdAt: -1 };
     }
-    const products = await Product.find(filterCriteria)
+    const categoryIds = await Category.find({ isDeleted: false }).distinct('_id');
+    const products = await Product.find({
+          $and: [
+        filterCriteria,
+        { category: { $in: categoryIds } }
+      ]
+    })
       .collation({ locale: "en", strength: 2 })
       .sort(sortOptions)
       .skip(skip)

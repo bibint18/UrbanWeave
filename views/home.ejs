@@ -11,12 +11,12 @@
 						<div class="single-slide-item-table">
 							<div class="single-slide-item-tablecell">
 								<div class="slider_content text-left slider-animated-1">						
-									<p class="animated">Diwali 2024</p>
+									<p class="animated">New Year 2025</p>
 									<h1 class="animated">best shopping</h1>
 									<h4 class="animated">Join with us for the trending collection <br> Shop now with amazing offers. </h4>
-									<a href="#" class="btn main_btn animated">Shop Now</a>
-									<a href="#" class="btn main_btn coll_btn animated">Collection</a>
-								</div>
+									<a href="/shop" class="btn main_btn animated">Shop Now</a>
+								<!--	<a href="#" class="btn main_btn coll_btn animated">Collection</a> -->
+ 								</div>
 							</div>
 						</div>						
 					</div>
@@ -31,7 +31,7 @@
 									<h1 class="animated">New Collection</h1>
 									<h4 class="animated">Trending collections of Women!...Join us SHOP NOW </h4>
 									<a href="/shop" class="btn main_btn animated">Shop Now</a>
-									<a href="/shop" class="btn main_btn coll_btn animated">Collection</a>
+								<!--	<a href="/shop" class="btn main_btn coll_btn animated">Collection</a> -->
 								</div>
 							</div>
 						</div>	
@@ -47,7 +47,7 @@
 									<h1 class="animated">New Collection</h1>
 									<h4 class="animated">Trending collections of Mens!...Join us SHOP NOW </h4>
 									<a href="/shop" class="btn main_btn animated">Shop Now</a>
-									<a href="/shop" class="btn main_btn coll_btn animated">Collection</a>
+								<!--	<a href="/shop" class="btn main_btn coll_btn animated">Collection</a> -->
 								</div>
 							</div>
 						</div>
@@ -67,9 +67,9 @@
 							<div class="box-content">
 								<div class="promo-content">
 									<h3 class="title">Womens</h3>
-									<span class="post">2024 Collection</span>
+									<span class="post">2025 Collection</span>
 									<p>You Will Love Upto 60% Off</p>
-									<a class="shop_now_btn" href="#">Shop Now</a>
+									<a class="shop_now_btn" href="/shop">Shop Now</a>
 								</div>
 							</div>
 						</div>													
@@ -81,9 +81,9 @@
 							<div class="box-content">
 								<div class="promo-content">
 									<h3 class="title">KIDS</h3>
-									<span class="post">KIDS Collection 2024</span>
+									<span class="post">KIDS Collection 2025</span>
 									<p>You Will Love Upto 50% Off</p>
-									<a class="shop_now_btn" href="#">Shop Now</a>
+									<a class="shop_now_btn" href="/shop">Shop Now</a>
 								</div>
 							</div>
 						</div>														
@@ -97,7 +97,7 @@
 									<h3 class="title">MENS</h3>
 									<span class="post">Exclusive Desgin</span>
 									<p>You Will Love Upto 20% Off</p>
-									<a class="shop_now_btn" href="#">Shop Now</a>
+									<a class="shop_now_btn" href="/shop">Shop Now</a>
 								</div>
 							</div>
 						</div>									
@@ -138,9 +138,9 @@
 					<div class="product_filter">
 						<ul>
 							<li class=" active filter" data-filter="all">All</li>
-							<li class="filter" data-filter=".sale">Sale</li>
+						<!--	<li class="filter" data-filter=".sale">Sale</li>
 							<li class="filter" data-filter=".bslr">Bestseller</li>
-							<li class="filter" data-filter=".ftrd">Featured</li>
+							<li class="filter" data-filter=".ftrd">Featured</li> -->
 						</ul>
 					</div>
 					
@@ -157,11 +157,11 @@
 																		<img class="pic-2" src="/uploads/re-image/<%= product.productImage[1] %>" alt="product image 2">
 																<% } %>
 														</a>
-														<ul class="social">
+													<!--	<ul class="social">
 																<li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
 																<li><a href="#" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
 																<li><a href="#" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
-														</ul>
+														</ul> -->
 														<% if (product.isOnSale) { %>
 																<span class="product-new-label">Sale</span>
 														<% } %>
@@ -175,12 +175,12 @@
 												</ul>
 												<div class="product-content">
 														<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.ProductName %></a></h3>
-														<div class="price">$<%= product.salePrice %>
+														<div class="price">₹<%= product.salePrice %>
 																<% if (product.regularPrice) { %>
-																		<span>$<%= product.regularPrice %></span>
+																		<span>₹<%= product.regularPrice %></span>
 																<% } %>
 														</div>
-														<a class="add-to-cart" href="#" onclick="addToCart('<%= product._id %>')">+ Add To Cart</a>
+														<a class="add-to-cart" href="#" onclick="addToCart('<%= product._id %>')">_</a> 
 												</div>
 										</div>
 								</div>
@@ -275,12 +275,12 @@
 							</ul>
 							<div class="product-content">
 								<h3 class="title"><a href="/products/details/<%= product._id %>"><%= product.ProductName %></a></h3>
-								<div class="price">$<%= product.salePrice %>
+								<div class="price">₹<%= product.salePrice %>
 									<% if (product.regularPrice) { %>
-											<span>$<%= product.regularPrice %></span>
+											<span>₹<%= product.regularPrice %></span>
 									<% } %>
 							</div>
-								<a class="add-to-cart" href="#">+ Add To Cart</a>
+								<a class="add-to-cart" href="#">_</a>
 							</div>
 						</div>
 					</div><!-- End Col -->	
@@ -289,7 +289,7 @@
 					<% }) %>			
 				</div>
 
-			</div>
+			</div>00
 		</section>
 		<!-- End Featured Products Area -->
 

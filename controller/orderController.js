@@ -180,6 +180,7 @@ exports.UpdatePayStatus = async (req, res) => {
       $push: { usedCoupons: couponCode },
       AmountPaid: AmountToPay,
       CouponDiscount: ThatOrder.tempCouponAmount,
+      OrdCouponDiscount:ThatOrder.tempCouponAmount,
       tempCouponAmount: 0,
     });
     let products = ThatOrder.products;

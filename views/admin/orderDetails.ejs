@@ -164,7 +164,7 @@
                   <p class="mb-0 me-sm-3"><strong>Quantity:</strong>
                     <%=productItem.quantity%>
                   </p>
-                  <p class="mb-0 me-sm-3"><strong>Price:</strong> $ <%=productItem.price%>
+                  <p class="mb-0 me-sm-3"><strong>Price:</strong> ₹ <%=productItem.price%>
                   </p>
                   <p class="mb-0 me-sm-3"><strong>Size:</strong>
                     <%=productItem.size%>
@@ -191,22 +191,22 @@
               <!-- Summary -->
               <div class="summary-item mt-4">
                 <h5>Cart Totals</h5>
-                <p><strong>Subtotal:</strong> $ <%=orders.totalAmount%>
+                <p><strong>Subtotal:</strong> ₹ <%=orders.OrdOriginalTotal%>
                 </p>
-                <p><strong>Shipping:</strong> Free</p>
-                <!-- <p><strong>Tax (GST):</strong> $5.00</p> -->
-                <p><strong>Grand Total:</strong>$ <%=orders.totalAmount%>
+                <p><strong>Shipping:</strong>rs 40</p>
+                <!-- <p><strong>Tax (GST):</strong> ₹5.00</p> -->
+                <p><strong>Grand Total:</strong>₹ <%=orders.OrdSubTotal%>
                 </p>
               </div>
 
               <div class="summary-item mt-4">
                 <h5>Offer Details: </h5>
-                <p><strong>Coupon Discount:</strong> $ <%=orders.
-                  CouponDiscount%>
+                <p><strong>Coupon Discount:</strong> ₹ <%=orders.
+                  OrdCouponDiscount%>
                 </p>
-                <p><strong>Offer Amount:</strong> $<%=orders.
-                  CategoryOffer%></p>
-                <!-- <p><strong>Tax (GST):</strong> $5.00</p> -->
+                <p><strong>Offer Amount:</strong> ₹<%=orders.
+                  OrdOfferAmount%></p>
+                <!-- <p><strong>Tax (GST):</strong> ₹5.00</p> -->
                 <% if (orders.usedCoupons && orders.usedCoupons.length > 0) { %>
                   <p><strong>Used Coupons:</strong></p>
                   <ul>
@@ -233,7 +233,7 @@
             <p><strong>User:</strong>
               <%=orders.user.email %>
             </p>
-            <p class="total-price">Total: $<%= orders.totalAmount%>
+            <p class="total-price">Total: ₹<%= orders.SummaryTotal%>
             </p>
           </div>
 
@@ -269,13 +269,13 @@
             </select>
           </div>
 
-          <div class="summary-item mt-4">
+        <!--  <div class="summary-item mt-4">
             <h5>Expected Date Of Delivery</h5>
             <p><strong>
                 <%= new Date().toLocaleDateString('en-GB')%>
               </strong></p>
-            <button class="btn btn-dark btn-sm">Track Order</button>
-          </div>
+           <!-- <button class="btn btn-dark btn-sm">Track Order</button> -->
+          </div> -->
         </div>
 
       </div>

@@ -277,10 +277,10 @@
                   </div>
                   <div class="d-flex justify-content-between border-top pt-2 mt-2">
                     <div><strong>Valid From:</strong> <span>
-                        <%= coupon.startDate%>
+                        <%= new Date(coupon.startDate).toLocaleDateString() %>
                       </span></div>
                     <div><strong>Expires On:</strong> <span>
-                        <%= coupon.endDate%>
+                        <%=new Date(coupon.endDate).toLocaleDateString() %>
                       </span></div>
                     <div><strong>Status:</strong> <span class="text-success">
                         <% if (new Date(coupon.endDate) < Date.now()) { %>
@@ -320,8 +320,8 @@
         const originalTotalAmount = parseInt('<%= total %>;')
         console.log("loooooL: ", originalTotalAmount);
         function showWalletBalance() {
-          const walletBalance = '<%= walletBalance %>'; // Dynamically insert wallet balance
-          const totalAmount = '<%= total %>'; // Dynamically insert total amount
+          const walletBalance = Number('<%= walletBalance %>'); // Dynamically insert wallet balance
+          const totalAmount = Number('<%= total %>'); // Dynamically insert total amount
           document.getElementById('walletBalance').style.display = 'block';
 
           if (walletBalance < totalAmount) {

@@ -44,16 +44,31 @@
     }
 
     .search-bar {
+      display:flex;
       max-width: 250px;
-      position: relative;
+      
     }
 
     .search-bar input {
       width: 100%;
       padding: 8px;
       border-radius: 5px;
-      border: none;
+      border: 1px solid grey;
       outline: none;
+    }
+    .btn-search{
+      padding: 3px;
+      border-radius: 15px;
+      color:black;
+      border: none;
+      background-color: #8da7ab;
+    }
+    .btn-search:hover{
+      background-color: #3a3a55;
+      color: white;
+    }
+    .search-form{
+      display: contents;
     }
 
     /* Table styling */
@@ -181,7 +196,13 @@
             Add Coupon
           </button>
           <div class="search-bar">
-            <input type="text" placeholder="Search...">
+            <form class="search-form" action="/admin/coupons" method="get">
+            <input type="text" name="search" value="<%=search || '' %>" placeholder="Search...">
+            <button class="btn-search">Search</button>
+          </form>
+          <% if(search) { %> 
+            <a class="btn-search ms-2" href="/admin/coupons"> <button class="btn-search">Clear</button></a>
+            <% } %>
           </div>
         </div>
       </div>

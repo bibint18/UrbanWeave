@@ -257,22 +257,22 @@
               <option value="bar">Bar Chart</option>
               <option value="line">Line Chart</option>
             </select>
-            <div class="button-group">
+         <!--   <div class="button-group">
               <button class="button" onclick="fetchReport('daily')">1 Day</button>
               <button class="button" onclick="fetchReport('weekly')">1 Week</button>
               <button class="button" onclick="fetchReport('monthly')">1 Month</button>
               <button class="button" onclick="fetchReport('yearly')">1 Year</button>
               <select id="reportType" class="select" onchange="handleReportTypeChange()">
                 <option value="choose">Customise Here</option>
-                <!-- <option value="weekly">Weekly</option>
+                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option> -->
+                <option value="yearly">Yearly</option>
                 <option value="custom">Custom Range</option>
               </select>
               <input type="date" id="startDate" class="date-input" placeholder="Start Date" disabled>
               <input type="date" id="endDate" class="date-input" placeholder="End Date" disabled>
               <button class="apply-button" onclick="fetchCustomReport()">Apply Custom Date</button>
-            </div>
+            </div> -->
             <canvas id="salesChart"></canvas>
           </div>
 
@@ -475,6 +475,12 @@ document.getElementById('chartType').addEventListener('change',function(){
         endDateInput.disabled = true;
       }
     }
+ 
+document.addEventListener("DOMContentLoaded", () => {
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("startDate").max = today;
+  document.getElementById("endDate").max = today;
+});
 
     async function fetchCustomReport() {
       const startDate = document.getElementById('startDate').value;

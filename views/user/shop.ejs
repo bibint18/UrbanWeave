@@ -123,11 +123,11 @@
 										<img class="pic-1" src="/uploads/re-image/<%=product.productImage[0]%>"  alt="Product Image">
 										<img class="pic-2" src="/uploads/re-image/<%=product.productImage[1]%>"  alt="Product Image">
 									</a>
-									<ul class="social">
+								<!--	<ul class="social">
 										<li><a href="#" data-tip="Quick View"><i class="ti-zoom-in"></i></a></li>
 										<li><a href="#" data-tip="Add to Wishlist"><i class="ti-bag"></i></a></li>
 										<li><a href="#" data-tip="Add to Cart"><i class="ti-shopping-cart"></i></a></li>
-									</ul>
+									</ul>  -->
 									<% if(product.isOnSale){ %>
 									<span class="product-new-label">Sale</span>
 									<% } %>
@@ -146,7 +146,7 @@
 												<span>&#8377;<%= product.regularPrice %></span>
 										<% } %>
 								</div>
-									<a class="add-to-cart" href="#">+ Add To Cart</a>
+									<a class="add-to-cart" href="#">_</a>
 								</div>
 							</div>
 						</div><!-- End Col -->	
@@ -180,15 +180,15 @@
 						<div class="pagination text-center">
 							<ul>
 								<% if (currentPage > 1) { %>
-									<li><a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>&search=<%= search %>"><i class="fa fa-angle-left"></i></a></li>
+									<li><a href="?page=<%= currentPage - 1 %>&sort=<%= sort %>&search=<%= search %>&categoryQuery=<%=categoryQuery%>"><i class="fa fa-angle-left"></i></a></li>
 								<% } %>
 				
 								<% for (let i = 1; i <= totalPages; i++) { %>
-									<li><a href="?page=<%= i %>&sort=<%= sort %>&search=<%= search %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a></li>
+									<li><a href="?page=<%= i %>&sort=<%= sort %>&search=<%= search %>&categoryQuery=<%=categoryQuery%>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a></li>
 								<% } %>
 				
 								<% if (currentPage < totalPages) { %>
-									<li><a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>&search=<%= search %>"><i class="fa fa-angle-right"></i></a></li>
+									<li><a href="?page=<%= currentPage + 1 %>&sort=<%= sort %>&search=<%= search %>&categoryQuery=<%=categoryQuery%>"><i class="fa fa-angle-right"></i></a></li>
 								<% } %>
 							</ul>
 						</div>

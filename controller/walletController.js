@@ -1,3 +1,4 @@
+
 const Wallet = require("../model/user/WalletModel");
 const User = require("../model/user/userModel");
 const mongoose = require("mongoose");
@@ -7,7 +8,7 @@ exports.loadWallet = async (req, res) => {
     const User = req.user
     let wallet = await Wallet.findOne({ user: user });
       if (!wallet) {
-        await Wallet.create({
+       wallet = await Wallet.create({
           user: user,
           balance: 0,
           transactions: [], 

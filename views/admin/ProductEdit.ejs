@@ -130,12 +130,24 @@
                                     <div class="row gx-2">
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Category</label>
-                                            <select class="form-select border" style="width: 150px;" name="category">
-                                                  <% for(let i=0;i<categories.length;i++) {%>
-                                                    <option value="<%= categories[i]._id %>">
-                                                       <%=categories[i].categoryName%>
-                                                    </option>
-                                                    <% } %>
+                                        <!--    <select class="form-select border" style="width: 150px;" name="category">
+                                                <% for (let i = 0; i < categories.length; i++) { %>
+                                                  <option value="<%= categories[i]._id %>" <%= products.category.toString() === categories[i]._id.toString() ? 'selected' : '' %>>
+                                                    <%= categories[i].categoryName %>
+                                                  </option>
+                                                <% } %>
+                                              </select>  -->
+					<select class="form-select border" style="width: 150px;" name="category">
+                                                <% if (currentCategory) { %>
+                                                  <option value="<%= currentCategory._id %>" selected>
+                                                    <%= currentCategory.categoryName %> (Deleted)
+                                                  </option>
+                                                <% } %>
+                                                <% for (let i = 0; i < categories.length; i++) { %>
+                                                  <option value="<%= categories[i]._id %>" <%= products.category && products.category.toString() === categories[i]._id.toString() ? 'selected' : '' %>>
+                                                    <%= categories[i].categoryName %>
+                                                  </option>
+                                                <% } %>
                                             </select>
                                             <div id="category-error" class="error-message"></div>
                                         </div>
@@ -161,7 +173,7 @@
                                                 <img class="rounded" style="width: 50px; height: 60px;"
                                                     src="/uploads/re-image/<%=products.productImage[i]%>"
                                                     alt="">
-                                                <i onclick="deleteSingleImage('<%=products.productImage[i]%>','<%=products._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x"></i>
+                                                <span onclick="deleteSingleImage('<%=products.productImage[i]%>','<%=products._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x">X</span>
                                             </td>
                                         </div>
                                        
@@ -428,19 +440,19 @@ function handleFileSelect(event) {
                 displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
                 isValid = false;
             }
-            if (!sizeS || isNaN(sizeS) || sizeS < 0 || sizeS > 100) {
+            if (!sizeS || isNaN(sizeS) || sizeS < 1 || sizeS > 100) {
                 displayErrorMessage('sizeS-error', 'Size S must be a number between 0 and 100.');
                 isValid = false;
             }
-            if (!sizeM || isNaN(sizeM) || sizeM < 0 || sizeM > 100) {
+            if (!sizeM || isNaN(sizeM) || sizeM < 1 || sizeM > 100) {
                 displayErrorMessage('sizeM-error', 'Size M must be a number between 0 and 100.');
                 isValid = false;
             }
-            if (!sizeL || isNaN(sizeL) || sizeL < 0 || sizeL > 100) {
+            if (!sizeL || isNaN(sizeL) || sizeL < 1 || sizeL > 100) {
                 displayErrorMessage('sizeL-error', 'Size L must be a number between 0 and 100.');
                 isValid = false;
             }
-            if (!sizeXL || isNaN(sizeXL) || sizeXL < 0 || sizeXL > 100) {
+            if (!sizeXL || isNaN(sizeXL) || sizeXL < 1 || sizeXL > 100) {
                 displayErrorMessage('sizeXL-error', 'Size XL must be a number between 0 and 100.');
                 isValid = false;
             }

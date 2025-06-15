@@ -22,7 +22,7 @@ const {protect} = require('../middleware/authMiddleware')
 
 //
 router.get('/payment',userRouter.getPayment)
-router.get('/userLogin',userRouter.getUserLogin)
+router.get('/userLogin',authMiddleware.isLoggedIn,userRouter.getUserLogin)
 router.get('/home',userRouter.getHome)
 router.get('/userSignup',userRouter.getUserSignup)
 router.post('/signupSubmit',userRouter.SignToLogin)

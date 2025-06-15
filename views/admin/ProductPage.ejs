@@ -73,6 +73,14 @@
       font-weight: bold;
       border-color: #007bff;
     }
+    .headerForSearch{
+	display:flex;
+	justify-content:space-between
+     }
+     .clearButton{
+      display: flex;
+      padding-bottom: 24px;
+    }
   </style>
 
   <head>
@@ -83,14 +91,31 @@
       <h2 class="content-title card-title">Products</h2>
     </div>
   </div>
-  <header class="card-header text-center mb-20">
+  <header class="headerForSearch card-header mb-20" d-flex justify-content-between>
+    <div class="clearButton">
     <form action="/admin/product/search" method="get" class="d-inline">
       <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
-        style="width: 500px; margin-left: 230px;">
+        style="width: 500px; margin-left: 0px;">
         <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands"
           name="search" value="<%= searchQuery || '' %>">
         <button class="btn  border-0" type="submit">Search</button>
       </div>
+    </form>
+    <% if(searchQuery) { %> 
+    <button class="btn" onclick="location.href='/admin/product'">Clear</button>
+    <% } %>
+  </div>
+
+   <form id="CategoryForm" method="GET" action="/admin/product" class="d-inline">
+      <label>Sort by category:</label>
+      <select class="form-select" name="categoryQuery" onchange="document.getElementById('CategoryForm').submit()">
+        <option value="">All Categories</option>
+        <% categories.forEach((category) => { %>
+          <option value="<%= category._id %>" <%= category._id.toString() === categoryQuery ? 'selected' : '' %>>
+            <%= category.categoryName %>
+          </option>
+        <% }) %>
+      </select>
     </form>
   </header>
   <div class="right mt-5">
@@ -202,17 +227,17 @@
 
   <div class="pagination">
     <% if (currentPage> 1) { %>
-      <a href="?page=<%= currentPage - 1 %>&search=<%=searchQuery%>" class="pagination-link">Previous</a>
+      <a href="?page=<%= currentPage - 1 %>&search=<%=searchQuery%>&categoryQuery=<%= categoryQuery %>" class="pagination-link">Previous</a>
       <% } %>
 
         <% for (let i=1; i <=totalPages; i++) { %>
-          <a href="?page=<%= i %>&search=<%=searchQuery%>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+          <a href="?page=<%= i %>&search=<%=searchQuery%>&categoryQuery=<%= categoryQuery %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
             <%= i %>
           </a>
           <% } %>
 
             <% if (currentPage < totalPages) { %>
-              <a href="?page=<%= currentPage + 1 %>&search=<%=searchQuery%>" class="pagination-link">Next</a>
+              <a href="?page=<%= currentPage + 1 %>&search=<%=searchQuery%>&categoryQuery=<%= categoryQuery %>" class="pagination-link">Next</a>
               <% } %>
   </div>
 

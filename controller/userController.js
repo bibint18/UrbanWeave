@@ -62,6 +62,7 @@ exports.getHome = async (req, res) => {
 
 let otpStore = {};
 exports.SignToLogin = async (req, res) => {
+try{
   const { username, email, password, rpassword ,referralCode} = req.body;
   console.log(username, email, password, rpassword,referralCode);
   console.log(typeof referralCode)
@@ -82,58 +83,96 @@ exports.SignToLogin = async (req, res) => {
       error: "Password and confirm password must be same!",
     });
   }
-  const pre = await User.findOne({ email: email });
-  console.log(pre);
-  if (pre) {
-    return res.render("user/up", { error: "Email already exists!" });
-  }
-let referrer = null 
-if(referralCode){
-  referrer = await User.findOne({referralCode});
-  console.log("reffere: ",referrer)
-  if (!referrer) {
-    return res.render("user/up", { error: "Invalid referral code!" });
-  }
-}
-  try {
-    // const user = new User({ username, email, password, isverified: false });
-    // user.save();
-    const newOtp = crypto.randomInt(100000, 999999).toString();
-    const otpExpiry = Date.now() + 5 * 60 * 1000;
-    req.session.otpStore = {
-      newOtp,
-      otpExpiry,
-      username,
-      email,
-      password,
-      referredBy:referrer ? referrer.referralCode : null ,
-    };
-    // otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
-    // console.log(otpStore);
-    const Transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailoptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "your OTP code",
-      text: `Your Otp code is ${newOtp}`,
-    };
-
-    Transporter.sendMail(mailoptions, (err, info) => {
-      if (err) {
-        return res.status(500).send(err);
+  let referrer = null;
+    if (referralCode) {
+      referrer = await User.findOne({ referralCode });
+      console.log("reffere: ", referrer);
+      if (!referrer) {
+        return res.render("user/up", { error: "Invalid referral code!" });
       }
-      console.log(`otp sent `, info.response);
-      // res.redirect(`/otp?email=${email}`);
-      res.render("user/otp", { email: email });
-      console.log(`otp is ${newOtp} collection: ${otpStore}`);
-    });
+    }
+
+  const pre = await User.findOne({ email: email });
+    console.log(pre);
+    if (pre) {
+      if (pre.password) {
+        return res.render("user/up", { error: "Email already exist" });
+      } else if (pre.googleId && !pre.password) {
+        const newOtp = crypto.randomInt(100000, 999999).toString();
+        const otpExpiry = Date.now() + 5 * 60 * 1000;
+        req.session.otpStore = {
+          newOtp,
+          otpExpiry,
+          username,
+          email,
+          password,
+          referredBy: referrer ? referrer.referralCode : null,
+        };
+        // otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
+        // console.log(otpStore);
+        const Transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        const mailoptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: "your OTP code",
+          text: `Your Otp code is ${newOtp}`,
+        };
+
+        Transporter.sendMail(mailoptions, (err, info) => {
+          if (err) {
+            return res.status(500).send(err);
+          }
+          console.log(`otp sent `, info.response);
+          // res.redirect(`/otp?email=${email}`);
+          res.render("user/otp", { email: email });
+          console.log(`otp is ${newOtp} collection: ${otpStore}`);
+        });
+      }
+    } else {
+      const newOtp = crypto.randomInt(100000, 999999).toString();
+      const otpExpiry = Date.now() + 5 * 60 * 1000;
+      req.session.otpStore = {
+        newOtp,
+        otpExpiry,
+        username,
+        email,
+        password,
+        referredBy: referrer ? referrer.referralCode : null,
+      };
+      // otpStore[email] = { newOtp: newOtp, otpExpiry,username,email,password };
+      // console.log(otpStore);
+      const Transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const mailoptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "your OTP code",
+        text: `Your Otp code is ${newOtp}`,
+      };
+
+      Transporter.sendMail(mailoptions, (err, info) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+        console.log(`otp sent `, info.response);
+        // res.redirect(`/otp?email=${email}`);
+        res.render("user/otp", { email: email });
+        console.log(`otp is ${newOtp} collection: ${otpStore}`);
+      });
+    }
   } catch (err) {
     console.log(err);
     return res.render("user/up", { error: "Email already exist" });
@@ -163,25 +202,34 @@ exports.otpSubmit = async (req, res) => {
     // return res.send("expired request new one");
     return res.json({ success: false, messege: "Expired Request New One" }); //here
   }
+  if(storedOtp != enteredOtp){
+	return res.json({success:false,messege:"OTP is incorrect"})
+  }
   if (storedOtp === enteredOtp) {
     // const existingUser = await User.findOne({ email });
     //   if (existingUser) {
     //     return res.json({ success: false, message: "Email is already registered!" });
     //   }
     const { username, email, password,referredBy } = req.session.otpStore || {};
-    const user = new User({ username, email, password,referredBy });
-    user.save();
-    if(referredBy){
-      const referrerUser = await User.findOne({referralCode:referredBy})
-      if(referrerUser){
-        // referrerUser.referralCount = referrerUser.referralCount + 1
-        // referrerUser.save()
-        await creditWallets(user._id,referrerUser._id,100);
+
+   let existing = await User.findOne({ email });
+    if (existing) {
+      if (existing.googleId && !existing.password) {
+        (existing.username = username),
+          (existing.password = password),
+          (existing.referredBy = referredBy);
+        await existing.save();
+      }
+    } else {
+      existing = new User({ username, email, password, referredBy });
+      existing.save();
+    }
+    if (referredBy) {
+      const referrerUser = await User.findOne({ referralCode: referredBy });
+      if (referrerUser) {
+        await creditWallets(existing._id, referrerUser._id, 100);
       }
     }
-    //  User.findOneAndUpdate({email},{isverified:true})
-    // console.log(newOtp, enteredOtp);
-    // return res.redirect("/userLogin");
     return res.json({ success: true, redirectUrl: "/userLogin" });
   } else {
     // return res.send("Enter valid Otp");

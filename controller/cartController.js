@@ -169,10 +169,10 @@ exports.getCheckout = async (req, res) => {
     const user = req.user;
     const userId = req.user.id;
     const users = await User.findById(userId);
-    const coupons = await Coupon.find({ endDate: { $gte: new Date() } });
+    const coupons = await Coupon.find({ endDate: { $gte: new Date() },isDeleted:false });
     const addresses = users.address;
     const wallet = await Wallet.findOne({ user: userId });
-    const walletBalance = wallet.balance;
+    const walletBalance = wallet ? wallet.balance :0;
     const cartItem = await Cart.find({ user: userId }).populate("product");
     let totalProduct = 0;
     let deliveryFee = 40;
@@ -248,7 +248,7 @@ exports.getCheckout = async (req, res) => {
 exports.getAddAddress = async (req, res) => {
   try {
     const addresses = await User.findById(req.user.id);
-    res.render("user/checkoutAddAddress", { addresses });
+    res.render("user/checkoutAddaddress", { addresses });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false, message: error });
@@ -443,6 +443,11 @@ exports.placeOrder = async (req, res) => {
       tempCouponAmount: DiscountAmount,
       CategoryOffer: categoryOfferWhole,
       razorpayOrderId: 0,
+      OrdOriginalTotal:originalTotal,
+      OrdSubTotal:Subtotal,
+      OrdCouponDiscount:0,
+      OrdOfferAmount:categoryOfferWhole,
+      SummaryTotal:totalToPay,
       address: {
         fullName: selectedAddress.fullName,
         addressLine1: selectedAddress.addressLine1,
@@ -565,6 +570,11 @@ exports.placeOrderCOD = async (req, res) => {
       usedCoupons: CouponCode,
       tempCouponAmount: 0,
       CategoryOffer: categoryOfferWhole,
+      OrdOriginalTotal:originalTotal,
+      OrdSubTotal:Subtotal,
+      OrdCouponDiscount:DiscountAmount,
+      OrdOfferAmount:categoryOfferWhole,
+      SummaryTotal:totalToPay,
       address: {
         fullName: selectedAddress.fullName,
         addressLine1: selectedAddress.addressLine1,
