@@ -131,9 +131,10 @@ exports.RemoveProductOffer = async (req, res) => {
 
 exports.unBlockProduct = async (req, res) => {
   try {
-    const id = req.query.id;
-    await Product.updateOne({ _id: id }, { $set: { isBlocked: false} });
-    return res.redirect("/admin/product");
+    const {productId} = req.body
+    await Product.updateOne({ _id: productId }, { $set: { isBlocked: false} });
+    // return res.redirect("/admin/product");
+        return res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
   }
@@ -141,11 +142,10 @@ exports.unBlockProduct = async (req, res) => {
 
 exports.blockProduct = async (req, res) => {
   try {
-    console.log("reached blocj")
-    console.log(req.query)
-    const id = req.query.id;
-    await Product.updateOne({ _id: id }, { $set: { isBlocked: true } });
-    return res.redirect("/admin/product");
+    const {productId} = req.body;
+    await Product.updateOne({ _id: productId }, { $set: { isBlocked: true } });
+    // return res.redirect("/admin/product");
+    return res.status(200).json({ success: true });
   } catch (err) {
     {
       console.log(err);

@@ -135,7 +135,7 @@
       </thead>
       <tbody>
         <% products.forEach(product=> {%>
-          <tr>
+          <tr data-product-id="<%= product._id %>">
             <td>
               <%= product.ProductName %>
             </td>
@@ -155,12 +155,12 @@
             </td>
             <td>
               <% if(product.productOffer===0) { %>
-                <button class="btn btn-info" onclick="AddOffer('<%= product._id%>')" style="width: 100px;">
-                  <a href="#" class="text-white">Add Offer</a>
+                <button class="btn btn-info" onclick="AddOffer('<%= product._id%>')" style="width: 100px;">Add Offer
+                  <!-- <a href="#" class="text-white">Add Offer</a> -->
                 </button>
                 <%}else{%>
-                  <button class="btn btn-info" onclick="removeOffer('<%= product._id%>')" style="width: 100px;">
-                    <a href="#" class="text-white">Remove</a>
+                  <button class="btn btn-info" onclick="removeOffer('<%= product._id%>')" style="width: 100px;">Remove
+                    <!-- <a href="#" class="text-white">Remove</a> -->
                   </button>
                   <%}%>
             </td>
@@ -194,14 +194,15 @@
 
             <td>
               <% if(product.isBlocked===false) {%>
-                <button class="btn btn-danger" style="width: 80px;">
-                  <a href="/admin/product/block?id=<%= product._id %>" class="text-white"
-                    style="text-decoration: none;">Block</a>
+                <button class="btn btn-danger" style="width: 80px;" onclick="blockProduct('<%= product._id%>')">
+                  <!-- <a href="/admin/product/block?id=<%= product._id %>" class="text-white"
+                    style="text-decoration: none;">Block</a> -->
+                    Block
                 </button>
                 <%}else{%>
-                  <button class="btn btn-success" style="width: 80px;">
-                    <a href="/admin/product/unblock?id=<%=product._id%>" class="text-white"
-                      style="text-decoration: none;">Unblock</a>
+                  <button class="btn btn-success" style="width: 80px;" onclick="unblockProduct('<%= product._id%>')">UnBlock
+                    <!-- <a href="/admin/product/unblock?id=<%=product._id%>" class="text-white"
+                      style="text-decoration: none;">Unblock</a> -->
                   </button>
                   <%}%>
             </td>
@@ -251,6 +252,16 @@
         inputLabel: "percentage",
         inputPlaceholder: "%"
       })
+      console.log(amount)
+  if (!amount || isNaN(amount) || Number(amount) <= 0) {
+    await Swal.fire('Please enter a valid percentage greater than 0');
+    return;
+  }
+
+  if (Number(amount) > 70) {
+    await Swal.fire('Offer cannot be greater than 70%');
+    return;
+  }
       $.ajax({
         url: '/admin/product/offer/add',
         method: "post",
@@ -338,7 +349,7 @@
     }
 
 
-        async function blockProduct(productId) {
+      async function blockProduct(productId) {
       console.log("inside remove")
       try {
         Swal.fire({
@@ -358,6 +369,13 @@
               success: function (response) {
                 console.log(response)
                 if (response.success) {
+                                    const row = $(`tr[data-product-id="${productId}"]`);
+                console.log('Found row:', row.length, row);
+                if (row.length) {
+                  const button = row.find('td:nth-child(7) button');
+                  button.text('UnBlock');
+                  button.attr('class', 'btn btn-success'); // Update class to btn-success
+                  button.attr('onclick', `unblockProduct('${productId}')`);
                   Swal.fire({
                     icon: "success",
                     title: "Product Blocked",
@@ -366,14 +384,74 @@
                     timerProgressBar: true,
                     showConfirmButton:false
                   })
-                  .then(() => {
-                    window.location.reload();
-                  })
+                  }
                 } else {
                   Swal.fire({
                     icon: "error",
                     title: "Error",
                     text: 'error blocking product',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton:false
+                  })
+                }
+
+              }
+            })
+
+          } else {
+            console.log("not confirmed")
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    async function unblockProduct(productId) {
+      console.log("inside remove")
+      try {
+        Swal.fire({
+          icon: 'warning',
+          title: "Unblock Product ",
+          text: "Are you sure you want to Unblock product",
+          showCancelButton: true,
+          confirmButtonText: 'yes, Unblock it',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: '/admin/product/unblock/',
+              method: "post",
+              data: {
+                productId: productId
+              },
+              success: function (response) {
+                console.log(response)
+                if (response.success) {
+                  const row = $(`tr[data-product-id="${productId}"]`);
+                console.log('Found row:', row.length, row);
+                if (row.length) {
+                  const button = row.find('td:nth-child(7) button');
+                  button.text('Block');
+                  button.attr('class', 'btn btn-danger'); // Update class to btn-danger
+                  button.attr('onclick', `blockProduct('${productId}')`);
+                  Swal.fire({
+                    icon: "success",
+                    title: "Product unBlocked",
+                    text: "Product Unblocked succesfully",
+                    timer:1500,
+                    timerProgressBar: true,
+                    showConfirmButton:false
+                  })
+                }
+                  // .then(() => {
+                  //   window.location.reload();
+                  // })
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: 'error unblocking product',
                     timer: 1500,
                     timerProgressBar: true,
                     showConfirmButton:false
