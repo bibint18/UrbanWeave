@@ -9,9 +9,11 @@ exports.listCategory = async (req, res) => {
 exports.AddCategory = async (req, res) => {
   try {
     const { categoryName, description } = req.body;
+    console.log("Add cat cat and des",categoryName,description)
     const ExistingCategory = await Category.findOne({
-      categoryName: { $regex: categoryName, $options: "i" },
+      categoryName: { $regex: `^${categoryName}$`, $options: "i" },
     });
+    console.log("Exist ",ExistingCategory)
     if (ExistingCategory) {
       return res
         .status(400)
@@ -50,12 +52,18 @@ exports.editcategory = async (req, res) => {
   try {
     const id = req.params.id;
     const { categoryName, description } = req.body;
+    console.log("cat and dis",categoryName,description)
     const category = await Category.findById(id);
+    console.log('category from id',category)
     const CatName = category.categoryName;
+    if(CatName === categoryName){
+      return res.status(400).json({ success: false, message: "Same Category"})
+    }
     if (CatName != categoryName) {
       const PreCategory = await Category.findOne({
         categoryName: { $regex: `^${categoryName}$`, $options: "i" },
       });
+      console.log('precategory',PreCategory)
       if (PreCategory) {
         return res
           .status(400)
