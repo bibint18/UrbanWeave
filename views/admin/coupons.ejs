@@ -143,6 +143,33 @@
       color: black
     }
 
+    .pagination {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem;
+}
+.pagination-link {
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+.pagination-link:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+.pagination-link.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border-color: #007bff;
+}
+
     /* Responsive styling */
     @media (max-width: 768px) {
 
@@ -311,6 +338,19 @@
               <!-- Repeat similar <tr> for other products -->
         </tbody>
       </table>
+
+      <div class="pagination">
+  <% if (currentPage > 1) { %>
+    <a href="?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(search) %>" class="pagination-link">Previous</a>
+  <% } %>
+  <% for (let i = 1; i <= totalPages; i++) { %>
+    <a href="?page=<%= i %>&search=<%= encodeURIComponent(search) %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+  <% } %>
+  <% if (currentPage < totalPages) { %>
+    <a href="?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(search) %>" class="pagination-link">Next</a>
+  <% } %>
+</div>
+
     </div>
     <!--modal-->
     <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">

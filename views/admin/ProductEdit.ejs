@@ -1,5 +1,3 @@
-
-
 <%-include('../../views/partials/admin/header')%>
 
     <head>
@@ -10,17 +8,20 @@
             color: red;
         }
 
-
         .thumbnails-container {
             display: flex;
             overflow-x: auto;
         }
 
-
         .thumbnail {
             margin-right: 10px;
+        }
 
-
+        /* Added for general error messages */
+        .general-error {
+            color: red;
+            margin-bottom: 10px;
+            display: none;
         }
     </style>
     <section class="content-main">
@@ -33,25 +34,18 @@
             <div class="col-lg-6">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form method="post" action="/admin/product/edit/<%=products._id%>" enctype="multipart/form-data" onsubmit="return validateForm()
-">
+                        <!-- Added general error container -->
+                        <div id="general-error" class="general-error"></div>
+                        <form id="editProductForm" method="post" action="/admin/product/edit/<%=products._id%>" enctype="multipart/form-data">
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Product</label>
                                 <input type="text" placeholder="Type here" name="productName"
                                     class="form-control border" id="product_name" value="<%=products.ProductName%>">
                                 <div id="productName-error" class="error-message"></div>
                             </div>
-                            <!-- <div class="col-lg-4 mb-4">
-                                <label class="form-label">Brand</label>
-                                <select class="form-select border" name="brand">
-                                    <option value="">
-                                    </option>
-                                </select>
-                                <div id="brand-error" class="error-message"></div>
-                            </div> -->
                             <div class="mb-4">
                               <label class="form-label">Full description</label>
-                              <input name="descriptionData" value="<%=products.description%>"  class="form-control border"
+                              <input name="descriptionData" value="<%=products.description%>" class="form-control border"
                                   rows="4" id="descriptionid">
                                   <div id="description-error" class="error-message"></div>
                           </div>
@@ -68,35 +62,18 @@
                                     <div class="mb-4">
                                         <label class="form-label">Sale price</label>
                                         <input placeholder="$" name="salePrice" type="text" class="form-control border" value="<%=products.salePrice%>">
+                                        <div id="salePrice-error" class="error-message"></div>
                                     </div>
-                                    <div id="salePrice-error" class="error-message"></div>
                                 </div>
-                                <!-- <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Quantity</label>
-                                        <input placeholder="" name="quantity" type="text" class="form-control border" value="<%=products.quantity%>" id="quantity">
-                                        <div id="quantity-error" class="error-message"></div>
-                                    </div>
-                                </div> -->
                             </div>
                             <div class="row">
-
                                 <div class="col-lg-4">
-                                    <!-- <div class="mb-4">
-                                        <label class="form-label">Color</label>
-                                        <input name="color" type="text" class="form-control border" value="<%=products.color%>">
-                                    </div>
-                                    <div id="color-error" class="error-message"></div> -->
-
-                                    <!--aded-->
-                                    
-                                    
-                                    <div class="product-form  mb-3">
+                                    <div class="product-form mb-3">
                                         <div class="d-flex flex-row gap-4 align-item-center">
                                             <label class="form-label">sizes:</label>
                                           <div>
                                             <label class="mr-5" for="size_s">S</label>
-                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box"  value="<%= products.sizes.find(sizeObj => sizeObj.size === 'S') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>"> 
+                                            <input type="text" name="sizes[s]" id="size_s" min="0" maxlength="3" class="tiny-box" value="<%= products.sizes.find(sizeObj => sizeObj.size === 'S') ? products.sizes.find(sizeObj => sizeObj.size === 'S').stock : '' %>"> 
                                             <div id="sizeS-error" class="error-message"></div>
                                           </div>
                                           <div>
@@ -116,38 +93,28 @@
                                           </div>
                                         </div>
                                       </div>
-
-
-
-
-
-                                    <!---->
                                 </div>
-
                             </div>
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <div class="row gx-2">
                                         <div class="col-sm-6 mb-3">
                                             <label class="form-label">Category</label>
-                                        <!--    <select class="form-select border" style="width: 150px;" name="category">
-                                                <% for (let i = 0; i < categories.length; i++) { %>
-                                                  <option value="<%= categories[i]._id %>" <%= products.category.toString() === categories[i]._id.toString() ? 'selected' : '' %>>
-                                                    <%= categories[i].categoryName %>
-                                                  </option>
+                                            <select class="form-select border" style="width: 150px;" name="category">
+                                                <!-- Display the product's current category first, if it exists -->
+                                                <% if (products.category) { %>
+                                                    <option value="<%= products.category._id %>" selected>
+                                                        <%= products.category.categoryName %> <%= products.category.isDeleted ? '(Deleted)' : '' %>
+                                                    </option>
                                                 <% } %>
-                                              </select>  -->
-					<select class="form-select border" style="width: 150px;" name="category">
-                                                <% if (currentCategory) { %>
-                                                  <option value="<%= currentCategory._id %>" selected>
-                                                    <%= currentCategory.categoryName %> (Deleted)
-                                                  </option>
-                                                <% } %>
-                                                <% for (let i = 0; i < categories.length; i++) { %>
-                                                  <option value="<%= categories[i]._id %>" <%= products.category && products.category.toString() === categories[i]._id.toString() ? 'selected' : '' %>>
-                                                    <%= categories[i].categoryName %>
-                                                  </option>
-                                                <% } %>
+                                                <!-- Then list all other active categories, excluding the current one -->
+                                                <% categories.forEach(category => { %>
+                                                    <% if (!products.category || category._id.toString() !== products.category._id.toString()) { %>
+                                                        <option value="<%= category._id %>">
+                                                            <%= category.categoryName %>
+                                                        </option>
+                                                    <% } %>
+                                                <% }) %>
                                             </select>
                                             <div id="category-error" class="error-message"></div>
                                         </div>
@@ -158,30 +125,25 @@
                                 <div class="card-header">
                                     <h4>Choose images</h4>
                                 </div>
-                               
                                 <div class="border row">
                                     <div id="addedImagesContainer" class="thumbnails-container"></div>
                                 </div>
                                 <div class="row">
-
-                                  <% for(let i=0;i<products.productImage.length;i++) {%>
-                                  <div class="col-md-12">
-                                    <div class="mb-4">
-                                        <div class="col-12">
-                                            <td>
-                                                <input type="hidden" value="products.productImage[i]" id="imageDatas">
-                                                <img class="rounded" style="width: 50px; height: 60px;"
-                                                    src="/uploads/re-image/<%=products.productImage[i]%>"
-                                                    alt="">
-                                                <span onclick="deleteSingleImage('<%=products.productImage[i]%>','<%=products._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x">X</span>
-                                            </td>
+                                    <% for(let i=0; i<products.productImage.length; i++) { %>
+                                    <div class="col-md-12">
+                                        <div class="mb-4">
+                                            <div class="col-12">
+                                                <td>
+                                                    <input type="hidden" value="<%= products.productImage[i] %>" id="imageDatas">
+                                                    <img class="rounded" style="width: 50px; height: 60px;"
+                                                        src="/Uploads/re-image/<%= products.productImage[i] %>"
+                                                        alt="">
+                                                    <span onclick="deleteSingleImage('<%= products.productImage[i] %>','<%= products._id %>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x">X</span>
+                                                </td>
+                                            </div>
                                         </div>
-                                       
                                     </div>
-                                </div>
-                                <% } %>
-
-
+                                    <% } %>
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView1">
                                         <input class="form-control" type="file" name="images" id="input1"
@@ -195,15 +157,12 @@
                                         <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
                                     </div>
                                 </div>
-
                                 <div class="row">
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView2">
-
-
                                         <input class="form-control" type="file" name="images" id="input2"
                                             accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage2(event),viewImage(event, 2)">
+                                            onchange="viewImage2(event), viewImage(event, 2)">
                                         <div id="images-error2" class="error-message"></div>
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -212,15 +171,12 @@
                                         <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
                                     </div>
                                 </div>
-
                                 <div class="row">
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView3">
-
-
                                         <input class="form-control" type="file" name="images" id="input3"
                                             accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage3(event),viewImage(event, 3)">
+                                            onchange="viewImage3(event), viewImage(event, 3)">
                                         <div id="images-error3" class="error-message"></div>
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -229,16 +185,12 @@
                                         <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
                                     </div>
                                 </div>
-
                                 <div class="row">
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView4">
-
-
-
                                         <input class="form-control" type="file" name="images" id="input4"
                                             accept="image/png, image/jpeg, image/jpg"
-                                            onchange="viewImage4(event),viewImage(event, 4)">
+                                            onchange="viewImage4(event), viewImage(event, 4)">
                                         <div id="images-error4" class="error-message"></div>
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -247,44 +199,33 @@
                                         <button type="button" id="saveButton4" class="btn-sm btn-primary">Save</button>
                                     </div>
                                 </div>
-
                             </div>
                     </div>
                     <div>
-                        <button class="btn btn-md rounded font-sm hover-up" type="submit" onclick="validateAndSubmit()
-">Publish</button>
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
                     </div>
                     </form>
                 </div>
             </div>
         </div>
-        </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
-
-function deleteSingleImage(imageId,productId){
-  $.ajax({
-    url:"/admin/product/deleteImage",
-    method:'post',
-    data:{
-      imageName:imageId,
-      productId:productId,
-    },
-    success: function(response){
-      if(response.success){
-        window.location.reload();
-      }
-    }
-  })
-}
-
-
-function validateAndSubmit() {
-    if (validateForm()) {
-        document.forms[0].submit();
-    }
+function deleteSingleImage(imageId, productId) {
+    $.ajax({
+        url: "/admin/product/deleteImage",
+        method: 'post',
+        data: {
+            imageName: imageId,
+            productId: productId,
+        },
+        success: function(response) {
+            if (response.success) {
+                window.location.reload();
+            }
+        }
+    });
 }
 
 function viewImage1(event) {
@@ -303,17 +244,15 @@ function viewImage4(event) {
     document.getElementById('imgView4').src = URL.createObjectURL(event.target.files[0]);
 }
 
-// Corrected function name and image references
 function viewImage(event, index) {
     let input = event.target;
     let reader = new FileReader();
     
-    reader.onload = function () {
+    reader.onload = function() {
         let dataURL = reader.result;
         let image = document.getElementById('imgView' + index);
         image.src = dataURL;
 
-        // Initialize Cropper.js
         let cropper = new Cropper(image, {
             aspectRatio: 1,
             viewMode: 1,
@@ -323,31 +262,25 @@ function viewImage(event, index) {
             zoomable: true
         });
 
-        // Display the cropper container
         let cropperContainer = document.querySelector("#croppedImg" + index).parentNode;
         cropperContainer.style.display = "block";
 
-        // Handle Save button click
         let saveButton = document.querySelector("#saveButton" + index);
-        saveButton.addEventListener('click', async function () {
+        saveButton.addEventListener('click', async function() {
             let croppedCanvas = cropper.getCroppedCanvas();
             let croppedImage = document.getElementById("croppedImg" + index);
-            croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0); // Set cropped image source
+            croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
             let timestamp = new Date().getTime();
             let fileName = `cropped-img-${timestamp}-${index}.png`;
 
-            // Create a Blob from cropped canvas
             croppedCanvas.toBlob(async (blob) => {
-                // Create a new File object from the Blob
                 let croppedFile = new File([blob], fileName, { type: 'image/png' });
 
-                // Create a DataTransfer object to replace the original input file with the cropped file
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(croppedFile);
-                document.getElementById('input' + index).files = dataTransfer.files; // Replace input files
+                document.getElementById('input' + index).files = dataTransfer.files;
 
-                // Hide cropper and destroy instance
                 cropperContainer.style.display = "none";
                 cropper.destroy();
             }, 'image/png');
@@ -356,7 +289,6 @@ function viewImage(event, index) {
     reader.readAsDataURL(input.files[0]);
 }
 
-// Handle file selection for multiple images and thumbnails
 let selectedImage = [];
 document.getElementById('input1').addEventListener('change', handleFileSelect);
 
@@ -380,8 +312,8 @@ function handleFileSelect(event) {
 
         const removeIcon = document.createElement("span");
         removeIcon.classList.add("remove-icon");
-        removeIcon.innerHTML = "&times;";
-        removeIcon.addEventListener('click', function () {
+        removeIcon.innerHTML = "×";
+        removeIcon.addEventListener('click', function() {
             const index = selectedImage.indexOf(file);
             if (index !== -1) {
                 selectedImage.splice(index, 1);
@@ -395,86 +327,139 @@ function handleFileSelect(event) {
     }
 }
 
+function validateForm() {
+    clearErrorMessages();
+    const name = document.getElementsByName('productName')[0].value;
+    const description = document.getElementById('descriptionid').value;
+    const price = document.getElementsByName('regularPrice')[0].value;
+    const saleprice = document.getElementsByName('salePrice')[0].value;
+    const category = document.getElementsByName('category')[0].value;
+    const sizeS = document.getElementById('size_s').value.trim();
+    const sizeM = document.getElementById('size_m').value.trim();
+    const sizeL = document.getElementById('size_l').value.trim();
+    const sizeXL = document.getElementById('size_xl').value.trim();
+    let isValid = true;
 
+    if (name.trim() === "") {
+        displayErrorMessage('productName-error', 'Please enter a product name.');
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+        displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+        isValid = false;
+    }
 
-        function validateForm() {
-            clearErrorMessages();
-            const name = document.getElementsByName('productName')[0].value;
-            const description = document.getElementById('descriptionid').value;
-            const price = document.getElementsByName('regularPrice')[0].value;
-            const saleprice = document.getElementsByName('salePrice')[0].value;
-            const category = document.getElementsByName('category')[0].value;
-            const sizeS = document.getElementById('size_s').value.trim();
-            const sizeM = document.getElementById('size_m').value.trim();
-            const sizeL = document.getElementById('size_l').value.trim();
-            const sizeXL = document.getElementById('size_xl').value.trim();
-            let isValid = true
-            if (name.trim() === "") {
-                displayErrorMessage('productName-error', 'Please enter a product name.');
-                isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-                displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
-                isValid = false;
-            }
+    if (description.trim() === "") {
+        displayErrorMessage('description-error', 'Please enter a product description.');
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
+        displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
+        isValid = false;
+    }
 
-            if (description.trim() === "") {
-                displayErrorMessage('description-error', 'Please enter a product description.');
-                isValid = false;
-            } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
-                displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
-                isValid = false;
+    if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+        displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+        isValid = false;
+    }
+
+    if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+        displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+        isValid = false;
+    }
+
+    if (parseFloat(price) <= parseFloat(saleprice)) {
+        displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
+        isValid = false;
+    }
+
+    if (!sizeS || isNaN(sizeS) || sizeS < 1 || sizeS > 100) {
+        displayErrorMessage('sizeS-error', 'Size S must be a number between 0 and 100.');
+        isValid = false;
+    }
+
+    if (!sizeM || isNaN(sizeM) || sizeM < 1 || sizeM > 100) {
+        displayErrorMessage('sizeM-error', 'Size M must be a number between 0 and 100.');
+        isValid = false;
+    }
+
+    if (!sizeL || isNaN(sizeL) || sizeL < 1 || sizeL > 100) {
+        displayErrorMessage('sizeL-error', 'Size L must be a number between 0 and 100.');
+        isValid = false;
+    }
+
+    if (!sizeXL || isNaN(sizeXL) || sizeXL < 1 || sizeXL > 100) {
+        displayErrorMessage('sizeXL-error', 'Size XL must be a number between 0 and 100.');
+        isValid = false;
+    }
+
+    if (!category) {
+        displayErrorMessage('category-error', 'Please select a category.');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function displayErrorMessage(elementId, message) {
+    var errorElement = document.getElementById(elementId);
+    errorElement.innerText = message;
+    errorElement.style.display = "block";
+}
+
+function clearErrorMessages() {
+    const errorElements = document.getElementsByClassName('error-message');
+    Array.from(errorElements).forEach(element => {
+        element.innerText = '';
+    });
+    const generalError = document.getElementById('general-error');
+    generalError.innerText = '';
+    generalError.style.display = 'none';
+}
+
+// Handle form submission via AJAX
+document.getElementById('editProductForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    if (!validateForm()) {
+        return; // Stop if client-side validation fails
+    }
+
+    const form = this;
+    const formData = new FormData(form);
+
+    $.ajax({
+        url: form.action,
+        method: form.method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                window.location.href = '/admin/product'; // Redirect on success
+            } else {
+                // Display backend error
+                displayErrorMessage('general-error', response.message || 'An error occurred while updating the product.');
             }
-            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-                displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
+        },
+        error: function(xhr) {
+            let errorMessage = 'An unexpected error occurred.';
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (response.message) {
+                    if (response.field) {
+                        // Field-specific error
+                        displayErrorMessage(`${response.field}-error`, response.message);
+                    } else {
+                        // General error
+                        displayErrorMessage('general-error', response.message);
+                    }
+                } else {
+                    displayErrorMessage('general-error', errorMessage);
+                }
+            } catch (e) {
+                displayErrorMessage('general-error', errorMessage);
             }
-            if (price.trim() === "") {
-                displayErrorMessage('regularPrice-error', 'Please enter a color.');
-                isValid = false;
-            }
-            if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
-            }
-            if (parseFloat(price) <= parseFloat(saleprice)) {
-                displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
-                isValid = false;
-            }
-            if (!sizeS || isNaN(sizeS) || sizeS < 1 || sizeS > 100) {
-                displayErrorMessage('sizeS-error', 'Size S must be a number between 0 and 100.');
-                isValid = false;
-            }
-            if (!sizeM || isNaN(sizeM) || sizeM < 1 || sizeM > 100) {
-                displayErrorMessage('sizeM-error', 'Size M must be a number between 0 and 100.');
-                isValid = false;
-            }
-            if (!sizeL || isNaN(sizeL) || sizeL < 1 || sizeL > 100) {
-                displayErrorMessage('sizeL-error', 'Size L must be a number between 0 and 100.');
-                isValid = false;
-            }
-            if (!sizeXL || isNaN(sizeXL) || sizeXL < 1 || sizeXL > 100) {
-                displayErrorMessage('sizeXL-error', 'Size XL must be a number between 0 and 100.');
-                isValid = false;
-            }
-            return isValid;
         }
-
-
-        function displayErrorMessage(elementId, message) {
-            var errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
-
-
-        function clearErrorMessages() {
-            const errorElements = document.getElementsByClassName('error-message');
-            Array.from(errorElements).forEach(element => {
-                element.innerText = '';
-            });
-            const errorMessage = document.getElementById('errorMessage');
-        }
-
-
+    });
+});
     </script>
  <%-include('../../views/partials/admin/footer')%>

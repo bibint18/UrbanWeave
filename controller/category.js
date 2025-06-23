@@ -2,8 +2,17 @@ const { response } = require("express");
 const Category = require("../model/admin/categoryModel");
 
 exports.listCategory = async (req, res) => {
-  const categories = await Category.find({ isDeleted: false });
-  return res.render("admin/category", { categories });
+  const searchQuery = req.query.search || '';
+  const page = parseInt(req.query.page) || 1;
+  const limit =4
+  const skip = (page-1)* limit;
+  const categories = await Category.find({ isDeleted: false,categoryName:{$regex:searchQuery,$options:'i'}}).skip(skip).limit(limit)
+  const totalCategory= await Category.countDocuments({isDeleted: false,categoryName:{$regex:searchQuery,$options:'i'}})
+  const totalPages = Math.ceil(totalCategory/limit)
+      if (page < 1 || (page > totalPages && totalPages > 0)) {
+      return res.status(400).send("Invalid page number");
+    }
+  return res.render("admin/category", { categories,search:searchQuery,currentPage:page,totalPages });
 };
 
 exports.AddCategory = async (req, res) => {
@@ -56,8 +65,13 @@ exports.editcategory = async (req, res) => {
     const category = await Category.findById(id);
     console.log('category from id',category)
     const CatName = category.categoryName;
+    const CatDescription = category.description
     if(CatName === categoryName){
-      return res.status(400).json({ success: false, message: "Same Category"})
+      if(CatDescription !== description){
+        await Category.findByIdAndUpdate(id,{description})
+        return res.status(200).json({success:true,message:"Category updated Succesfully"})
+      }
+      return res.status(400).json({success:false,message:"Category name unchanged"})
     }
     if (CatName != categoryName) {
       const PreCategory = await Category.findOne({

@@ -197,7 +197,7 @@ exports.editProducts = async (req, res) => {
     const updatedData = {
       ProductName: data.productName,
       description: data.descriptionData,
-      category: category,
+      category: data.category,
       regularPrice: data.regularPrice,
       salePrice: data.salePrice,
       quantity: data.quantity,
@@ -208,10 +208,11 @@ exports.editProducts = async (req, res) => {
       updatedData.$push = { productImage: { $each: images } };
     }
     await Product.findByIdAndUpdate(id, updatedData, { new: true });
-    res.redirect("/admin/product");
+    // res.redirect("/admin/product");
+    return res.status(200).json({success:true,message:"product edited succesfully"})
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ success: false, message: err });
+    return res.status(500).json({ success: false, message: err ,field:'general'});
   }
 };
 

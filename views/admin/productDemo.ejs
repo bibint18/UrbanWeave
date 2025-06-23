@@ -129,6 +129,7 @@
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label">Category</label>
                                     <select class="form-select border" style="width: 150px;" name="category">
+                                        <option>select a Category</option>
                                         <% categories.forEach(category=> { %>
                                             <option value="<%= category._id %>">
                                                 <%= category.categoryName %>
@@ -274,32 +275,20 @@
                     autoCropArea: 1,
                     zoomable: true
                 });
-
-                // Display the cropper container
                 let cropperContainer = document.querySelector("#croppedImg" + index).parentNode;
                 cropperContainer.style.display = "block";
-
-                // Handle Save button click
                 let saveButton = document.querySelector("#saveButton" + index);
                 saveButton.addEventListener('click', async function () {
                     let croppedCanvas = cropper.getCroppedCanvas();
                     let croppedImage = document.getElementById("croppedImg" + index);
-                    croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0); // Set cropped image source
-
+                    croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0); 
                     let timestamp = new Date().getTime();
                     let fileName = `cropped-img-${timestamp}-${index}.png`;
-
-                    // Create a Blob from cropped canvas
                     croppedCanvas.toBlob(async (blob) => {
-                        // Create a new File object from the Blob
                         let croppedFile = new File([blob], fileName, { type: 'image/png' });
-
-                        // Create a DataTransfer object to replace the original input file with the cropped file
                         const dataTransfer = new DataTransfer();
                         dataTransfer.items.add(croppedFile);
-                        document.getElementById('input' + index).files = dataTransfer.files; // Replace input files
-
-                        // Hide cropper and destroy instance
+                        document.getElementById('input' + index).files = dataTransfer.files; 
                         cropperContainer.style.display = "none";
                         cropper.destroy();
                     }, 'image/png');
@@ -307,8 +296,6 @@
             };
             reader.readAsDataURL(input.files[0]);
         }
-
-        // Handle file selection for multiple images and thumbnails
         let selectedImage = [];
         document.getElementById('input1').addEventListener('change', handleFileSelect);
 
@@ -401,13 +388,6 @@
                 displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
                 isValid = false;
             }
-
-
-            // if (color.trim() === "") {
-            //     displayErrorMessage('color-error', 'Please enter a color.');
-            //     isValid = false;
-            // }
-
 
             if (images.files.length === 0) {
                 displayErrorMessage("images-error", 'Please select an image.');

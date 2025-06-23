@@ -3,8 +3,19 @@ const Coupon = require("../model/admin/CouponModel");
 exports.getCoupons = async (req, res) => {
   try {
     const searchQuery = req.query.search || "";
-    const coupons = await Coupon.find({ isDeleted: false,code:{$regex:searchQuery} });
-    return res.render("admin/coupons", { coupons, coupon: null,search:searchQuery });
+    const page = parseInt(req.query.page) || 1; 
+    const limit = 4; 
+    const skip = (page - 1) * limit;
+    const coupons = await Coupon.find({ isDeleted: false,code:{$regex:searchQuery,$options:'i'} }).skip(skip).limit(limit)
+    const totalCoupons = await Coupon.countDocuments({
+      isDeleted: false,
+      code: { $regex: searchQuery, $options: 'i' }
+    });
+      const totalPages = Math.ceil(totalCoupons / limit);
+    if (page < 1 || (page > totalPages && totalPages > 0)) {
+      return res.status(400).send("Invalid page number");
+    }
+    return res.render("admin/coupons", { coupons, coupon: null,search:searchQuery,currentPage:page,totalPages });
   } catch (error) {
     console.log(error);
     return res.send(error);

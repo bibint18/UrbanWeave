@@ -4,7 +4,6 @@ const app =express();
 const redis = require('redis')
 const mongoose = require('mongoose')
 const passport = require('./config/passport')
-// const passport = require('passport-google-oauth20').Strategy
 const methodOverride = require('method-override');
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
