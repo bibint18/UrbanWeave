@@ -11,63 +11,137 @@ exports.getAddProduct = async (req, res) => {
   res.render("admin/productDemo", { categories });
 };
 
+// exports.AddProduct = async (req, res) => {
+//   try {
+//     const uploadDir = path.join(__dirname, "../public/uploads/product-images");
+//     if (!fs.existsSync(uploadDir)) {
+//       fs.mkdirSync(uploadDir, { recursive: true }); // Recursive creates parent directories if necessary
+//     }
+//     const product = req.body;
+//     console.log(product);
+//     const existingProduct = await Product.findOne({
+//       ProductName: product.ProductName,
+//     });
+//     if (!existingProduct) {
+//       const uploadDir = path.normalize(
+//         path.join(__dirname, "../public/uploads/product-images")
+//       );
+//       if (!fs.existsSync(uploadDir)) {
+//         console.log("Directory does not exist, creating...");
+//         fs.mkdirSync(uploadDir, { recursive: true });
+//       }
+//       const sizes = Object.entries(product.sizes).map(([size, stock]) => ({
+//         size: size.toUpperCase(),
+//         stock: parseInt(stock, 10),
+//       }));
+//       const images = [];
+//       if (req.files && req.files.length > 0) {
+//         for (let i = 0; i < req.files.length; i++) {
+//           const originalImagePath = req.files[i].path;
+//           const resizedImagePath = path.join(
+//             "public",
+//             "uploads",
+//             "product-images",
+//             req.files[i].filename
+//           );
+//           await sharp(originalImagePath)
+//             .resize({ width: 440, height: 440 })
+//             .toFile(resizedImagePath);
+//           images.push(req.files[i].filename);
+//         }
+//       }
+//       const newProducts = new Product({
+//         ProductName: product.productName,
+//         description: product.description,
+//         category: product.category,
+//         regularPrice: product.regularPrice,
+//         salePrice: product.salePrice,
+//         quantity: product.quantity,
+//         color: product.color,
+//         productImage: images,
+//         sizes: sizes,
+//       });
+//       await newProducts.save();
+//       return res.redirect("/admin/getAddProduct");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return res.json({"error":err});
+//   }
+// };
+
 exports.AddProduct = async (req, res) => {
-  try {
-    const uploadDir = path.join(__dirname, "../public/uploads/product-images");
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true }); // Recursive creates parent directories if necessary
-    }
-    const product = req.body;
-    console.log(product);
-    const existingProduct = await Product.findOne({
-      ProductName: product.ProductName,
-    });
-    if (!existingProduct) {
-      const uploadDir = path.normalize(
-        path.join(__dirname, "../public/uploads/product-images")
-      );
-      if (!fs.existsSync(uploadDir)) {
-        console.log("Directory does not exist, creating...");
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-      const sizes = Object.entries(product.sizes).map(([size, stock]) => ({
-        size: size.toUpperCase(),
-        stock: parseInt(stock, 10),
-      }));
-      const images = [];
-      if (req.files && req.files.length > 0) {
-        for (let i = 0; i < req.files.length; i++) {
-          const originalImagePath = req.files[i].path;
-          const resizedImagePath = path.join(
-            "public",
-            "uploads",
-            "product-images",
-            req.files[i].filename
-          );
-          await sharp(originalImagePath)
-            .resize({ width: 440, height: 440 })
-            .toFile(resizedImagePath);
-          images.push(req.files[i].filename);
+    try {
+        const uploadDir = path.join(__dirname, '../public/uploads/product-images');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
         }
-      }
-      const newProducts = new Product({
-        ProductName: product.productName,
-        description: product.description,
-        category: product.category,
-        regularPrice: product.regularPrice,
-        salePrice: product.salePrice,
-        quantity: product.quantity,
-        color: product.color,
-        productImage: images,
-        sizes: sizes,
-      });
-      await newProducts.save();
-      return res.redirect("/admin/getAddProduct");
+
+        const { productName, description, regularPrice, salePrice, category, sizes } = req.body;
+
+        // Validate required fields
+        if (!productName || !description || !regularPrice || !salePrice || !category || !sizes) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+
+        // Validate category
+        const categoryExists = await Category.findById(category);
+        if (!categoryExists) {
+            return res.status(400).json({ success: false, message: 'Invalid category selected' });
+        }
+
+        // Check for duplicate product
+        const existingProduct = await Product.findOne({ productName });
+        if (existingProduct) {
+            return res.status(400).json({ success: false, message: 'Product name already exists' });
+        }
+
+        // Validate images
+        if (!req.files || req.files.length !== 4) {
+            return res.status(400).json({ success: false, message: 'Exactly four images are required' });
+        }
+
+        // Validate sizes
+        const sizeEntries = Object.entries(sizes);
+        const sizesArray = sizeEntries.map(([size, stock]) => ({
+            size: size.toUpperCase(),
+            stock: parseInt(stock, 10)
+        }));
+
+        for (const size of sizesArray) {
+            if (isNaN(size.stock) || size.stock < 0 || size.stock > 100) {
+                return res.status(400).json({ success: false, message: `Invalid stock for size ${size.size}. Must be between 0 and 100.` });
+            }
+        }
+
+        // Process images
+        const images = [];
+        for (let i = 0; i < req.files.length; i++) {
+            const originalImagePath = req.files[i].path;
+            const resizedImagePath = path.join(uploadDir, req.files[i].filename);
+            await sharp(originalImagePath)
+                .resize({ width: 440, height: 440 })
+                .toFile(resizedImagePath);
+            images.push(req.files[i].filename);
+        }
+
+        // Create new product
+        const newProduct = new Product({
+            ProductName: productName,
+            description,
+            regularPrice: parseFloat(regularPrice),
+            salePrice: parseFloat(salePrice),
+            category,
+            sizes: sizesArray,
+            productImage: images
+        });
+
+        await newProduct.save();
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        console.error('Error adding product:', err);
+        return res.status(500).json({ success: false, message: 'Server error occurred' });
     }
-  } catch (err) {
-    console.log(err);
-    return res.json({"error":err});
-  }
 };
 
 exports.ListProducts = async (req, res) => {

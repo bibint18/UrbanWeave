@@ -3,25 +3,22 @@ const app = express();
 const router = express.Router();
 const User=require('../model/user/userModel')
 const userRouter = require('../controller/userController')
+const userRemainRoute = require('../controller/userRemainController')
 const authMiddleware= require('../middleware/authMiddleware')
-// const homePageRoute = require("../controller/homepage")
 const HomeRoute = require('../controller/homeController')
 const CartRoute = require('../controller/cartController')
+const CartRemainROute = require('../controller/cartRemainController')
 const OrderRoute = require('../controller/orderController')
 const WishRoute = require('../controller/wishlistController')
 const CouponRoute = require('../controller/UserCouponController')
 const WalletRoute = require('../controller/walletController')
-// const paymentController = require('../controller/paymentController')
 const jwt = require("jsonwebtoken")
 const passport = require('passport')
 
 
 const {protect} = require('../middleware/authMiddleware')
-//RAZORPAY
 
-
-//
-router.get('/payment',userRouter.getPayment)
+router.get('/payment',userRemainRoute.getPayment)
 router.get('/userLogin',authMiddleware.isLoggedIn,userRouter.getUserLogin)
 router.get('/home',userRouter.getHome)
 router.get('/userSignup',userRouter.getUserSignup)
@@ -32,9 +29,11 @@ router.post('/resendOtp',userRouter.resend)
 router.post('/userLogin',userRouter.userLogin);
 router.post('/logout',userRouter.logout)
 router.get('/forgot-password',userRouter.getForgotpassword)
-router.get('/reset-password/:token',userRouter.getResetpassword)
+// router.get('/reset-password/:token',userRouter.getResetpassword)
+router.get('/reset-password/:token',userRemainRoute.getResetpassword)
 router.post('/forgot-password',userRouter.forgot)
-router.post('/reset-password/:token',userRouter.Reset)
+// router.post('/reset-password/:token',userRouter.Reset)
+router.post('/reset-password/:token',userRemainRoute.Reset)
 // router.get('/auth/google',passport.authenticate('google',{scope:['profile','email'],prompt:"select_account"}))
 router.get('/auth/google', (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -63,13 +62,13 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
     res.status(500).send('An error occurred during login.');
   }
 })
-router.get("/products/details/:id",userRouter.getProductDetails)
+// router.get("/products/details/:id",userRouter.getProductDetails)
+router.get("/products/details/:id",userRemainRoute.getProductDetails)
 
 //inside home
 router.get('/shop',HomeRoute.ShopPage)
 
 //userProfile
-
 router.get('/userProfile',authMiddleware.protect,HomeRoute.userProfile)
 router.post('/userProfile',authMiddleware.protect,HomeRoute.EditUserProfile)
 router.get('/address',authMiddleware.protect,HomeRoute.userAddress)
@@ -80,7 +79,6 @@ router.post('/address/edit',authMiddleware.protect,HomeRoute.editAddress)
 router.post('/address/delete',authMiddleware.protect,HomeRoute.deleteAddress)
 
 //cart
-
 router.get('/cart',authMiddleware.protect,CartRoute.getCart)
 router.post('/cart/add',authMiddleware.protect,CartRoute.AddCart)
 router.delete('/cart/delete/:id',authMiddleware.protect,CartRoute.deleteCart)
@@ -91,8 +89,10 @@ router.get('/checkout/address',authMiddleware.protect,CartRoute.getAddAddress)
 router.post('/checkout/address',authMiddleware.protect,CartRoute.checkoutAddAddress)
 router.get('/checkout/address/edit',authMiddleware.protect,CartRoute.getEditAddress)
 router.post('/checkout/address/edit',authMiddleware.protect,CartRoute.editAddress)
-router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
-router.post('/placeOrderCOD',authMiddleware.protect,CartRoute.placeOrderCOD)
+// router.post('/placeOrder',authMiddleware.protect,CartRoute.placeOrder)
+// router.post('/placeOrderCOD',authMiddleware.protect,CartRoute.placeOrderCOD)
+router.post('/placeOrder',authMiddleware.protect,CartRemainROute.placeOrder)
+router.post('/placeOrderCOD',authMiddleware.protect,CartRemainROute.placeOrderCOD)
 //orders
 router.get('/orders',authMiddleware.protect,OrderRoute.getOrdersPage)
 router.post('/order/cancel/:id/:ProId',authMiddleware.protect,OrderRoute.cancelOrder)
