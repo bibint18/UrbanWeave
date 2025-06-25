@@ -8,7 +8,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Products = require("../model/admin/prodectModel");
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
-const Wallet = require('../model/user/WalletModel')
+const Wallet = require('../model/user/WalletModel');
+const { default: mongoose } = require("mongoose");
 exports.getResetpassword = async (req, res) => {
   try {
     console.log("inside rset");
@@ -66,6 +67,12 @@ exports.Reset = async (req, res) => {
 exports.getProductDetails = async (req, res) => {
   const id = req.params.id;
   console.log(id);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).render('404', {
+        message: 'Invalid Product ID',
+        url: req.originalUrl
+      });
+    }
   const user = req.cookies.jwt;
   const products = await Products.findById(id);
   let OfferPrice=0

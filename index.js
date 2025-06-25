@@ -52,8 +52,12 @@ app.use('/api/payment', paymentRoutes);
 app.use('/admin',adminRoute);
 app.use('/',userRoute);
 app.set('view engine','ejs');
+app.use((req, res, next) => {
+  res.status(404).render('404', {
+    message: 'Page Not Found',
+    url: req.originalUrl
+  });
+});
+
 // app.use('/uploads',express.static(path.join(__dirname,"uploads")))
-app.get('/',(req,res) => {
-  res.send("helo")
-})
 app.listen(port,() => console.log(`server is running on port ${port}`)) 
