@@ -216,9 +216,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let selectedImages = [];
-        let croppedImages = [false, false, false, false]; // Track if images are cropped
-
-        // Attach change event to all file inputs
+        let croppedImages = [false, false, false, false]; 
         document.querySelectorAll('input[type="file"]').forEach(input => {
             input.addEventListener('change', handleFileSelect);
         });
@@ -230,20 +228,16 @@
             const file = event.target.files[0];
 
             if (file) {
-                // Remove existing thumbnail for this input
                 const existingThumbnail = document.querySelector(`.thumbnail[data-input="input${index + 1}"]`);
                 if (existingThumbnail) {
                     selectedImages = selectedImages.filter(img => img.inputId !== inputId);
                     existingThumbnail.remove();
                 }
 
-                // Reset cropped status
                 croppedImages[index] = false;
 
-                // Add new file to selectedImages
                 selectedImages.push({ inputId, file });
 
-                // Create thumbnail
                 const thumbnail = document.createElement('div');
                 thumbnail.classList.add('thumbnail');
                 thumbnail.setAttribute('data-input', `input${index + 1}`);
@@ -269,7 +263,6 @@
                 thumbnail.appendChild(removeIcon);
                 addedImagesContainer.appendChild(thumbnail);
 
-                // Trigger cropper
                 viewImage(event, index + 1);
             }
         }
@@ -285,13 +278,12 @@
 
                 image.onload = function() {
                     try {
-                        // Destroy existing cropper if any
                         if (image.cropper) {
                             image.cropper.destroy();
                             image.cropper = null;
                         }
 
-                        // Initialize Cropper.js
+                        
                         const cropper = new Cropper(image, {
                             aspectRatio: 1,
                             viewMode: 1,
@@ -325,7 +317,7 @@
                                 dataTransfer.items.add(croppedFile);
                                 input.files = dataTransfer.files;
 
-                                // Update selectedImages and thumbnail
+                                
                                 const inputId = `input${index}`;
                                 selectedImages = selectedImages.filter(img => img.inputId !== inputId);
                                 selectedImages.push({ inputId, file: croppedFile });
@@ -488,7 +480,7 @@
             }
         }
 
-        // AJAX form submission
+        
         document.getElementById('addProductForm').addEventListener('submit', function(event) {
             event.preventDefault();
 

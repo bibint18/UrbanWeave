@@ -70,7 +70,6 @@
             color: #007bff;
         }
 
-        /* Main content area styling */
         .main-content {
             flex: 1;
             background-color: #fff;
@@ -143,7 +142,7 @@
             margin-top: 20px;
         }
 
-        /* Responsive Design */
+        
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -169,17 +168,42 @@
             background-color: #f0f0f0;
             padding: 15px;
             margin-bottom: 10px;
-            /* Adds spacing between transactions */
             border-radius: 5px;
-            /* Optional: makes corners rounded */
             border: 1px solid #333;
-            /* Optional: adds a border for clearer separation */
         }
+        .pagination {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pagination-link {
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+.pagination-link:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.pagination-link.active {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border-color: #007bff;
+}
     </style>
     <div class="container">
-        
-
-        <!-- Main Content -->
+      
         <div class="main-content">
             <div class="balance-section">
                 <div class="balance-card available-balance">
@@ -208,20 +232,35 @@
             <!-- Payment History -->
             <div class="payment-history">
                 <h4>Payment History</h4>
-                <% wallet.transactions.sort((a, b)=> new Date(b.date) - new Date(a.date)).forEach((history) => { %>
+                <% transactions.forEach((history) => { %>
                     <div class="transaction-item">
                         <p>Transaction Type: <%= history.type %>
                         </p>
                         <p>Transaction Amount: <%= history.amount %>
                         </p>
-                        <p>Transaction Date: <%= history.date %>
+                        <p>Transaction Date:<%= new Date(history.date).toLocaleString() %>
                         </p>
                         <p>Description: <%= history.description %>
                         </p>
                     </div>
                     <% }) %>
             </div>
+            <div class="pagination">
+            <% if(currentPage > 1) { %> 
+                <a href="?page=<%= currentPage - 1%>" class="pagination-link">Previous</a>
+            <% } %>
+
+            <% for(let i=1;i<=totalPages;i++) { %>
+                <a href="?page=<%=i%>" class="pagination-link <%=i === currentPage ? 'active' :'' %>"><%=i%></a>
+            <% } %>
+
+            <% if(currentPage < totalPages){ %> 
+                <a href="?page=<%=currentPage+1%>" class="pagination-link">Next</a>
+            <% } %>
+
         </div>
+        </div>
+        
     </div>
 
     <%-include('../../views/partials/user/footer')%>
