@@ -298,20 +298,15 @@ body {
 </head>
 <body>
   <div class="container">
-    <!-- Breadcrumb navigation -->
     <div class="breadcrumb">
       <a href="/home">Home</a> &gt; 
       <a href="/userProfile">My Account</a> &gt; 
       <span>My Orders</span>
     </div>
 
-    <!-- Filters and Orders section -->
     <div class="content-wrapper">
-      <!-- Filters -->
       <aside class="filters">
         <h3>Filters</h3>
-
-        <!-- Order Status Filter -->
         <div class="col-sm-6 col-xs-12 short_by_area">
           <div class="short_by_inner">
             <label>Sort by:</label>
@@ -330,9 +325,7 @@ body {
         </div>
       </aside>
 
-      <!-- Orders Section -->
       <section class="orders-section">
-        <!-- Search bar -->
         <div class="search-bar">
           <form action="/orders" method="GET" class="SearchForm">
           <input type="text" placeholder="Search your orders here" value="<%=search%>" name="search">
@@ -343,21 +336,20 @@ body {
         </form>
         </div>
 
-        <!-- Orders list -->
         <div class="order-list">
           <% if (orders.length > 0) { %>
             <% orders.forEach(order => { %>
               <% order.products.forEach(ProductItem => { %>  
-              <!-- Order Item -->
               <div class="order-item" id="order-<%= order._id %>">
-                <!-- Product Image (Show first product's image as example) -->
                 <img src="/uploads/re-image/<%= ProductItem.product.productImage[0] %>" alt="Product Image">
 
                 <div class="order-details">
-                  <!-- <h5>Order ID: <%= order._id %></h5> -->
-                  <!-- <p>Total Amount: ₹<%= order.totalAmount %></p> -->
+                  <h5>Order ID: <%= order.oid %></h5>
+                  <p>Total Amount: ₹<%= order.AmountPaid %></p>
                   <p>Order Date: <%= new Date(order.orderDate).toLocaleDateString() %></p>
-
+                  <% if(order.CouponDiscount) { %> 
+                    <p>Used Coupon: <b><%= order.usedCoupons[0] %></b>,<span>Reduced Amount: <b><%= order.CouponDiscount %></b></span></p>
+                  <% } %>
                   <p><strong>Products:</strong></p>
                   <ul style="list-style-type: none;">
                       <li style="list-style-type: none;">
@@ -370,7 +362,7 @@ body {
                     </ol>
 
                   <p><span class="status <%= order.status.toLowerCase() %>">Status: <%= ProductItem.ProductStatus %></span></p>
-                  <p><span >OrderID: <%= order.oid %></span></p>
+                  <!-- <p><span >OrderID: <%= order.oid %></span></p> -->
                   <% if (ProductItem.ProductStatus != 'Cancelled' && (order.paymentStatus === 'Paid' || ProductItem.ProductStatus === 'Delivered')) { %>
                   <button class="invoice-btn"><a href="/order/<%= order._id %>/invoice" class="btn anchor-class">Download Invoice</a></button> 
                   <% } %>
