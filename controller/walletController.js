@@ -2,6 +2,8 @@
 const Wallet = require("../model/user/WalletModel");
 const User = require("../model/user/userModel");
 const mongoose = require("mongoose");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 exports.loadWallet = async (req, res) => {
   try {
     const user = req.user._id;
@@ -26,8 +28,8 @@ exports.loadWallet = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
-      .json({ success: false, message: "Something went wrong!" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 
@@ -35,7 +37,7 @@ exports.AddMoney = async (req, res) => {
   try {
     const { amount } = req.body;
     if (amount <= 0) {
-      return res.status(400).json({
+      return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
         success: false,
         message: "Amount should be atleast greater than 0",
       });
@@ -57,13 +59,13 @@ exports.AddMoney = async (req, res) => {
     });
     await wallet.save();
     return res
-      .status(200)
+      .status(HTTP_STATUS_CODE.OK)
       .json({ success: true, message: "Amount Credited Successfully!" });
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
-      .json({ success: false, message: "Something Went Wrong!" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 

@@ -2,43 +2,29 @@
   <style>
     .size-stock-list {
       list-style-type: none;
-      /* Remove bullet points */
       padding: 0;
-      /* Remove padding */
       margin: 0;
-      /* Remove margin */
     }
 
     .size-stock-item {
       display: inline-flex;
-      /* Use inline-flex for alignment */
       align-items: center;
       margin-right: 15px;
-      /* Space between items */
     }
 
     .stock-box {
       display: inline-block;
-      /* Make it inline-block */
       padding: 3px 5px;
-      /* Smaller padding */
       border: 1px solid #ccc;
-      /* Light border */
       border-radius: 3px;
-      /* Rounded corners */
       background-color: #f9f9f9;
-      /* Light background color */
       margin-left: 5px;
-      /* Space between size and stock box */
     }
 
     .line-break {
       display: block;
-      /* Break line */
       width: 100%;
-      /* Full width for line break */
       margin-top: 5px;
-      /* Space between lines */
     }
 
     .pagination {
@@ -48,7 +34,6 @@
       padding: 1rem;
     }
 
-    /* Pagination link styling */
     .pagination-link {
       text-decoration: none;
       color: #333;
@@ -59,14 +44,11 @@
       transition: background-color 0.3s, color 0.3s;
     }
 
-    /* Hover effect */
     .pagination-link:hover {
       background-color: #007bff;
       color: #fff;
       border-color: #007bff;
     }
-
-    /* Active page styling */
     .pagination-link.active {
       background-color: #007bff;
       color: #fff;
@@ -139,7 +121,6 @@
             <td>
               <%= product.ProductName %>
             </td>
-            <!-- <td></td> -->
             <td>
               <%= product.category.categoryName %>
             </td>
@@ -432,7 +413,7 @@
                 if (row.length) {
                   const button = row.find('td:nth-child(7) button');
                   button.text('Block');
-                  button.attr('class', 'btn btn-danger'); // Update class to btn-danger
+                  button.attr('class', 'btn btn-danger'); 
                   button.attr('onclick', `blockProduct('${productId}')`);
                   Swal.fire({
                     icon: "success",

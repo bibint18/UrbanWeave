@@ -1,6 +1,8 @@
 const Order = require("../model/user/orderModel");
 const Razorpay = require("razorpay");
 require("dotenv").config();
+const HTTP_STATUS_CODE = require('../utils/statusCode')
+const RESPONSE_MESSAGE = require('../utils/Response')
 const razorpay = new Razorpay({
   key_id: process.env.YOUR_KEY_ID,
   key_secret: process.env.YOUR_KEY_SECRET,
@@ -26,8 +28,8 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     console.error("Error creating order:", error);
     res
-      .status(500)
-      .json({ error: "Something went wrong in creating the order" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ error: RESPONSE_MESSAGE.SOMETHING });
   }
 };
 
@@ -47,12 +49,12 @@ exports.verifyPayment = async (req, res) => {
       res.json({ success: true, message: "Payment verified successfully" });
     } else {
       res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Payment verification failed" });
     }
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: "Payment Failed" });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: "Payment Failed" });
   }
 };
 
@@ -61,7 +63,7 @@ exports.retry = async (req, res) => {
     const { orderId } = req.body;
     const order = await Order.findById(orderId);
     if (!order) {
-      return res.status(404).json({ error: "Order not found" });
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ error: "Order not found" });
     }
     console.log("reached till here");
     let razorpayOrderId = order.razorpayOrderId;

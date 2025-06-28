@@ -224,11 +224,15 @@
                 })
               }
             },
-            error: function () {
+            error: function (jqXHR, textStatus, errorThrown) {
+              let message = 'Category already exist';
+          if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+            message = jqXHR.responseJSON.message;
+          }
               Swal.fire({
                 icon: "error",
                 title: 'OOps',
-                text: 'Category already exist',
+                text: message,
                 timer:1500,
                 showConfirmButton:false
               })

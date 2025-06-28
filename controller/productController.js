@@ -1,6 +1,7 @@
 const Products = require("../model/admin/prodectModel")
 const Category = require("../model/admin/categoryModel")
 const {resizeAndSaveImage} = require("../middleware/productmanage")
+const HTTP_STATUS_CODE = require("../utils/statusCode")
 exports.getProducts=async (req,res) => {
   const products = await Products.find({isDeleted:false}).populate("category","categoryName")
   const categories = await Category.find({isDeleted:false})
@@ -19,7 +20,7 @@ exports.addProduct = async (req,res) => {
       }
     }
     if (imagePaths.length < 3) {
-      return res.status(400).json({ error: 'You must upload at least 3 images.' });
+      return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({ error: 'You must upload at least 3 images.' });
     }
   const newProduct = new Products({
     name,
@@ -42,9 +43,9 @@ exports.deleteProduct =async (req,res) => {
   try{
   const id = req.params.id
   await Products.findByIdAndUpdate(id,{isDeleted:true})
-  return res.status(200).json({ success: true, message: "Category deleted successfully" });
+  return res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "Category deleted successfully" });
   }catch(err){
-    return res.status(500).send("failure")
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send("failure")
   }
 }
 

@@ -3,7 +3,8 @@ const Product = require("../model/admin/prodectModel");
 const User = require("../model/user/userModel");
 const bcrypt = require("bcrypt");
 const Category = require("../model/admin/categoryModel");
-
+const HTTP_STATUS_CODE = require("../utils/statusCode")
+const RESPONSE_MESSAGE=require('../utils/Response')
 exports.ShopPage = async (req, res) => {
   try {
     const user = req.cookies.jwt;
@@ -82,7 +83,7 @@ exports.EditUserProfile = async (req, res) => {
   let Lowgender = gender.toLowerCase();
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(404).json({ success: false, message: "user not exist" });
+    return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ success: false, message: "user not exist" });
   }
   if (fullName) {
     user.username = fullName;
@@ -99,7 +100,7 @@ exports.EditUserProfile = async (req, res) => {
     if (isYes) {
       if (!newPsw.length >= 8 && !confirmPsw.length >= 8) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({
             success: false,
             message: "password must be at least 8 charachters",
@@ -108,7 +109,7 @@ exports.EditUserProfile = async (req, res) => {
       const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
       if (!passwordRegex.test(newPsw)) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({
             success: false,
             message:
@@ -121,13 +122,13 @@ exports.EditUserProfile = async (req, res) => {
       }
     } else {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "current password is incorrect" });
     }
   }
   await user.save();
   return res
-    .status(200)
+    .status(HTTP_STATUS_CODE.OK)
     .json({ success: true, message: "User updated  successfully" });
 };
 
@@ -242,11 +243,11 @@ exports.deleteAddress = async (req, res) => {
       { $pull: { address: { _id: id } } },
       { new: true }
     );
-    return res.status(200).json({ success: true, message: "Address deleted" });
+    return res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "Address deleted" });
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
-      .json({ success: false, message: "Something went wrong!" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: RESPONSE_MESSAGE.SOMETHING});
   }
 };

@@ -6,6 +6,8 @@ const Coupon = require("../model/admin/CouponModel");
 const CategoryOffer = require("../model/admin/CategoryOfferModel");
 const Wallet = require("../model/user/WalletModel");
 const { getNextOrderId } = require("../utils/orderUtils");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 
 exports.getCart = async (req, res) => {
   try {
@@ -51,7 +53,7 @@ exports.getCart = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ success: false, message: "error" });
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 
@@ -63,23 +65,23 @@ exports.AddCart = async (req, res) => {
     const product = await Product.findById(productId);
     if (!product) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "product not found" });
     }
     const sizeStock = product.sizes.find((s) => s.size === size);
     if (!sizeStock) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "size not found" });
     }
     if (requestedQuantity > sizeStock.stock) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Not enough stock available" });
     }
     if (requestedQuantity > 5) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Maximum quantity is 5" });
     }
 
@@ -92,7 +94,7 @@ exports.AddCart = async (req, res) => {
       const newQuantity = cartItem.quantity + requestedQuantity;
       if (newQuantity > sizeStock.stock || newQuantity > 5) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({ success: false, message: "Exceeds stock or max limit" });
       }
       cartItem.quantity = newQuantity;
@@ -106,10 +108,10 @@ exports.AddCart = async (req, res) => {
       });
       await cartItem.save();
     }
-    return res.status(200).json({ success: true, message: "added" });
+    return res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "added" });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: "error" });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 
@@ -119,32 +121,32 @@ exports.UpdateQuantity = async (req, res) => {
     const product = await Product.findById(productId);
     if (!product) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Product not found" });
     }
     const sizeStock = product.sizes.find((s) => s.size === size);
     if (!sizeStock || newQuantity > sizeStock.stock) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Not enough stock available" });
     }
     if (newQuantity > 5) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Maximum quantity is 5" });
     }
     let cartItem = await Cart.findById(cartId);
     if (!cartItem) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Cart item not found" });
     }
     cartItem.quantity = newQuantity;
     await cartItem.save();
-    res.status(200).json({ success: true, message: "Quantity updated" });
+    res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "Quantity updated" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -154,13 +156,13 @@ exports.deleteCart = async (req, res) => {
     const deleteItem = await Cart.findByIdAndDelete(id);
     if (!deleteItem) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "item not found" });
     }
-    return res.status(200).json({ success: true, message: "deleted" });
+    return res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "deleted" });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ success: false, message: error });
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -241,7 +243,7 @@ exports.getCheckout = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: error });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -251,7 +253,7 @@ exports.getAddAddress = async (req, res) => {
     res.render("user/checkoutAddaddress", { addresses });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: error });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 

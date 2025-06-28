@@ -8,6 +8,8 @@ const Order = require("../model/user/orderModel");
 const User = require("../model/user/userModel");
 const Coupon = require("../model/admin/CouponModel");
 const Wallet = require("../model/user/WalletModel");
+const HTTP_STATUS_CODE=require('../utils/statusCode')
+const RESPONSE_MESSAGE=require('../utils/Response')
 exports.getOrdersPage = async (req, res) => {
   try {
     const search = req.query.search || "";
@@ -56,7 +58,7 @@ exports.getOrdersPage = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: error });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGE.SOMETHING });
   }
 };
 
@@ -73,7 +75,7 @@ exports.cancelOrder = async (req, res) => {
     const product = orders.products.find((p) => p.product.toString() == ProId);
     if (!product) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Product not found in the order" });
     }
     let quantity = product.quantity;
@@ -132,7 +134,7 @@ exports.cancelOrder = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: error });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGE.SOMETHING });
   }
 };
 
@@ -146,24 +148,24 @@ exports.ReturnProduct = async (req, res) => {
     const product = orders.products.find((p) => p.product.toString() == ProId);
     if (!product) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Product not found in the order" });
     }
     if (product.ProductStatus == "Delivered") {
       product.ProductStatus = "Returned";
       await orders.save();
       return res
-        .status(200)
+        .status(HTTP_STATUS_CODE.OK)
         .json({ success: true, message: "Product Returned" });
     } else {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: " cannot return the Product" });
     }
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
+      .status(HTTP_STATUS_CODE.BAD_REQUEST)
       .json({ success: false, message: "cant return the product" });
   }
 };
@@ -199,11 +201,11 @@ exports.UpdatePayStatus = async (req, res) => {
       { new: true }
     );
     return res
-      .status(200)
+      .status(HTTP_STATUS_CODE.OK)
       .json({ success: true, message: "Payment succcessfull" });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: "error" });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -213,7 +215,7 @@ exports.UpdateRazOrderId = async (req, res) => {
     const { RazorpayOrderId } = req.body;
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(400).json({ success: false, message: "No order" });
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ success: false, message: "No order" });
     }
     await Order.findByIdAndUpdate(
       id,
@@ -221,10 +223,10 @@ exports.UpdateRazOrderId = async (req, res) => {
       { new: true }
     );
     order.razorpayOrderId = RazorpayOrderId;
-    return res.status(200).json({ success: true, message: "changed " });
+    return res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: "changed " });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -235,7 +237,7 @@ exports.Invoice = async (req, res) => {
       .populate("user")
       .populate("products.product");
     if (!order) {
-      return res.status(404).send("Order not found");
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).send("Order not found");
     }
     const user = await User.findById(order.user._id);
     const doc = new PDFDocument({ margin: 30 });
@@ -245,7 +247,6 @@ exports.Invoice = async (req, res) => {
     );
     res.setHeader("Content-Type", "application/pdf");
     doc.pipe(res);
-    // Header section
     doc.fontSize(20).text("Invoice", { align: "center" });
     doc.moveDown();
     doc
@@ -256,7 +257,6 @@ exports.Invoice = async (req, res) => {
     });
     doc.text(`Payment Method: ${order.PaymentMethod}`, { align: "left" });
     doc.moveDown();
-    // User Details section
     doc.fontSize(14).text("Customer Details:", { underline: true });
     doc.fontSize(12).text(`Name: ${user.username || ""}`);
     doc.text(`Email: ${user.email}`);
@@ -269,14 +269,12 @@ exports.Invoice = async (req, res) => {
       }, ${order.address.country}`
     );
     doc.moveDown();
-    // Table header with border
     doc.fontSize(14).text("Order Details:", { underline: true });
     doc.moveDown();
     doc.fontSize(12);
     const tableTop = doc.y;
     const startX = 30;
     const columnWidths = [30, 100, 60, 100, 100];
-    // Draw table header
     doc.rect(startX, tableTop, 470, 20).stroke();
     doc.text("No", startX + 5, tableTop + 5);
     doc.text("Product", startX + columnWidths[0] + 5, tableTop + 5);
@@ -300,18 +298,14 @@ exports.Invoice = async (req, res) => {
         5,
       tableTop + 5
     );
-    // Move down for table rows
     doc.moveDown();
-    // Loop through products and draw rows with borders
     let itemNo = 1;
     let subtotal = 0;
     order.products.forEach((item) => {
       if (item.ProductStatus !== "Cancelled") {
         const product = item.product;
         const rowY = doc.y;
-        // Draw table row border
         doc.rect(startX, rowY, 470, 20).stroke();
-        // Insert row data
         doc.text(itemNo++, startX + 5, rowY + 5, {
           width: columnWidths[0] - 10,
           ellipsis: true,
@@ -347,7 +341,6 @@ exports.Invoice = async (req, res) => {
         subtotal += item.price * item.quantity;
       }
     });
-    // Summary section with styled text
     doc.moveDown();
     doc.fontSize(14).text("Summary:", { underline: true });
     doc.fontSize(12).text(`Subtotal: ${subtotal.toFixed(2)}`);
@@ -358,10 +351,9 @@ exports.Invoice = async (req, res) => {
       .fontSize(14)
       .fillColor("red")
       .text(`Total Amount: ${order.AmountPaid.toFixed(2)}`, { bold: true });
-    // Finalize the PDF and end the stream
     doc.end();
   } catch (error) {
     console.error("Error generating invoice:", error);
-    res.status(500).send("Error generating invoice");
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send("Error generating invoice");
   }
 };

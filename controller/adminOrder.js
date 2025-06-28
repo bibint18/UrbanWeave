@@ -1,6 +1,8 @@
 const Order = require("../model/user/orderModel");
 const Product = require("../model/admin/prodectModel");
 const { loginSubmit } = require("./adminController");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 
 exports.getOrderPage = async (req, res) => {
   try {
@@ -55,7 +57,7 @@ exports.ChangeOrder = async (req, res) => {
     const order = await Order.findById(orderId);
     if (!order) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Order not found" });
     }
     const product = order.products.find(
@@ -66,7 +68,7 @@ exports.ChangeOrder = async (req, res) => {
         product.ProductStatus === "Cancelled" ||
         product.ProductStatus === "Returned"
       ) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: "Cant Change status of this product!",
         });
@@ -75,13 +77,13 @@ exports.ChangeOrder = async (req, res) => {
         product.ProductStatus === "Delivered" &&
         (newStatus === "Processing" || newStatus === "Shipped")
       ) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: "Cant Change status of this product",
         });
       }
       if (product.ProductStatus === "Shipped" && newStatus === "Processing") {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: "Cannot change back to processing!",
         });
@@ -102,7 +104,7 @@ exports.ChangeOrder = async (req, res) => {
       return res.json({ success: true, message: "Product status updated" });
     } else {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Product not found in order" });
     }
   } catch (error) {
@@ -117,7 +119,7 @@ exports.CancelProduct = async (req, res) => {
     const order = await Order.findById(OrderID);
     if (!order) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Order not found" });
     }
     const product = order.products.find(
@@ -128,14 +130,14 @@ exports.CancelProduct = async (req, res) => {
         product.ProductStatus == "Delivered" ||
         product.ProductStatus == "Returned"
       ) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: "Product is not allowed to Cancel",
         });
       }
       if (product.ProductStatus == "Cancelled") {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({ success: false, message: "Product already cancelled" });
       }
       if (
@@ -147,10 +149,10 @@ exports.CancelProduct = async (req, res) => {
       }
     }
     let total = Order.find({ "products.Productstatus": "Processing" }).count();
-    res.status(200).json({ success: true, message: " Product cancelled" });
+    res.status(HTTP_STATUS_CODE.OK).json({ success: true, message: " Product cancelled" });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ success: false, message: error });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: error });
   }
 };
 
@@ -162,7 +164,7 @@ exports.ChangePayStatus = async (req, res) => {
     console.log(order);
     if (!order) {
       return res
-        .status(404)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "Order not found" });
     }
 
@@ -170,7 +172,7 @@ exports.ChangePayStatus = async (req, res) => {
       order.paymentStatus === "Paid" &&
       (newPaymentStatus === "Failed" || newPaymentStatus === "Pending")
     ) {
-      return res.status(400).json({
+      return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
         success: false,
         message:
           "Cannot change the status from 'Paid' to 'Failed' or 'Pending'",
@@ -178,18 +180,18 @@ exports.ChangePayStatus = async (req, res) => {
     }
     if (order.paymentStatus === "Refunded") {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Cannot change the status" });
     }
     order.paymentStatus = newPaymentStatus;
     await order.save();
     res
-      .status(200)
+      .status(HTTP_STATUS_CODE.OK)
       .json({ success: true, message: "Payment status updated successfully" });
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
-      .json({ success: false, message: "Something went wrong!" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };

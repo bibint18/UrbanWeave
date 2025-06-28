@@ -229,10 +229,14 @@ function userLogin(event){
       }
     }  ,
     error:function(jqXHR, textStatus, errorThrown){
+      let message = "Something went wrong";
+          if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+            message = jqXHR.responseJSON.message;
+          }
       Swal.fire({
         icon:'error',
         title:'Error',
-        text:textStatus + ':' + errorThrown,
+        text:message,
         timer:1500
       })
     }

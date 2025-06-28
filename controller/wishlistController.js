@@ -1,5 +1,7 @@
 const Product = require('../model/admin/prodectModel')
 const Wishlist = require('../model/user/WishlistModel')
+const RESPONSE_MESSAGES = require('../utils/Response')
+const HTTP_STATUS_CODE = require('../utils/statusCode')
 exports.getWishlist = async (req,res) => {
   try {
     const user = req.user._id
@@ -17,21 +19,21 @@ exports.addWishlist =async (req,res) => {
     const {ProductID,selectedSize,Quantity} = req.body
     const product = await Product.findById(ProductID)
     if(!product){
-      return res.status(400).json({success:false,message:"Product Not found"})
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({success:false,message:"Product Not found"})
     }
     let exist = await Wishlist.findOne({Product:ProductID})
     if(exist){
-      return res.status(400).json({success:false,message:"Product already exist in wishlist"})
+      return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:"Product already exist in wishlist"})
     }
     const wishlist = new Wishlist ({
       user: user,
       Product: ProductID, 
     })
     await wishlist.save()
-    return res.status(200).json({success:true,message:"Product Added To Wishlist"})
+    return res.status(HTTP_STATUS_CODE.OK).json({success:true,message:"Product Added To Wishlist"})
   } catch (error) {
     console.log(error);
-    return res.status(400).json({success:false,message:"Error adding"})
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:"Error adding"})
   }
 }
 
@@ -41,11 +43,11 @@ exports.removeWishlist = async (req,res) => {
     const id = req.params.id
     const p = await Wishlist.findByIdAndDelete(id)
     if(!p){
-      return res.status(400).json({success:false,message:"Product Not found"})
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({success:false,message:"Product Not found"})
     }
-    return res.status(200).json({success:true,message:"deldettde"})
+    return res.status(HTTP_STATUS_CODE.OK).json({success:true,message:"deldettde"})
   } catch (error) {
    console.log(error)
-   return res.status(400).json({success:false,message:"error"}) 
+   return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR}) 
   }
 }

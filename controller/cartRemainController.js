@@ -6,6 +6,8 @@ const Coupon = require("../model/admin/CouponModel");
 const CategoryOffer = require("../model/admin/CategoryOfferModel");
 const Wallet = require("../model/user/WalletModel");
 const { getNextOrderId } = require("../utils/orderUtils");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 
 exports.placeOrder = async (req, res) => {
   try {
@@ -48,12 +50,12 @@ exports.placeOrder = async (req, res) => {
     const selectedAddress = user.address[selectedIndex];
     if (!selectedAddress) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Invalid address selected" });
     }
     if (cartItems.length === 0) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "No items in cart" });
     }
     const products = [];
@@ -75,7 +77,7 @@ exports.placeOrder = async (req, res) => {
       const product = await Product.findById(item.product._id);
       const sizeStock = product.sizes.find((s) => s.size === item.size);
       if (!sizeStock || sizeStock.stock < item.quantity) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: `${product.ProductName} (${
             item.size
@@ -133,7 +135,7 @@ exports.placeOrder = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: "Something went wrong!" });
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 
@@ -176,12 +178,12 @@ exports.placeOrderCOD = async (req, res) => {
     console.log("add: ", selectedAddress);
     if (!selectedAddress) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.BAD_REQUEST)
         .json({ success: false, message: "Invalid address selected" });
     }
     if (cartItems.length === 0) {
       return res
-        .status(400)
+        .status(HTTP_STATUS_CODE.NOT_FOUND)
         .json({ success: false, message: "No items in cart" });
     }
     const products = [];
@@ -203,7 +205,7 @@ exports.placeOrderCOD = async (req, res) => {
       const product = await Product.findById(item.product._id);
       const sizeStock = product.sizes.find((s) => s.size === item.size);
       if (!sizeStock || sizeStock.stock < item.quantity) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
           success: false,
           message: `${product.ProductName} (${
             item.size
@@ -255,7 +257,7 @@ exports.placeOrderCOD = async (req, res) => {
     if (PayMethod == "WALLET") {
       if (wallet.balance < TotalToPay) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({ success: false, message: "Not enough balance in wallet" });
       }
       wallet.balance -= TotalToPay;
@@ -271,7 +273,7 @@ exports.placeOrderCOD = async (req, res) => {
     } else if (PayMethod === "CASH ON DELIVERY") {
       if (TotalToPay > 1000) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({
             success: false,
             message: "Cash on delivery is not available for rs above 1000",
@@ -306,6 +308,6 @@ exports.placeOrderCOD = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: "Something went wrong!" });
+    res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };

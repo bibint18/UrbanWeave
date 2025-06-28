@@ -2,7 +2,8 @@ const Coupon = require("../model/admin/CouponModel");
 const Cart = require("../model/user/cartModel");
 const Order = require("../model/user/orderModel");
 const User = require("../model/user/userModel");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
 
 // let sessionCoupons = {};
 exports.VerifyCoupon = async (req, res) => {
@@ -19,7 +20,7 @@ exports.VerifyCoupon = async (req, res) => {
   const user = await User.findById(userId);
   const AlreadyClaimed = await User.findOne({_id:userId,usedCoupons:{$in:[couponCode]}})
   if(AlreadyClaimed){
-    return res.status(400).json({success:false,message:"Coupon aalready claimed once!"})
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:"Coupon aalready claimed once!"})
   }
   const minimumSpend = coupon.minimum;
   if (minimumSpend > totalAmount) {
@@ -34,7 +35,7 @@ exports.VerifyCoupon = async (req, res) => {
   ).toFixed(2)
   const newTotal = (totalAmount - discountAmount).toFixed(2);
   const AmountSaved = (Saved + parseFloat( discountAmount)).toFixed(2)
-  return res.status(200).json({
+  return res.status(HTTP_STATUS_CODE.OK).json({
     success: true,
     message: "Coupon applied",
     discountAmount,

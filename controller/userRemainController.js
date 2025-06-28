@@ -10,6 +10,8 @@ const Products = require("../model/admin/prodectModel");
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
 const Wallet = require('../model/user/WalletModel');
 const { default: mongoose } = require("mongoose");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 exports.getResetpassword = async (req, res) => {
   try {
     console.log("inside rset");
@@ -21,7 +23,7 @@ exports.getResetpassword = async (req, res) => {
   });
   console.log("backuser: ",user)
   if (!user) {
-    return res.status(400).json({success:false,message:'Invalid or expired token.'});
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:'Invalid or expired token.'});
   }
   res.render('user/resetpass', { token });
   } catch (error) {
@@ -40,26 +42,26 @@ exports.Reset = async (req, res) => {
     passwordResetExpiry: { $gt: Date.now() } 
   });
   if(!newPassword || newPassword.trim()===''){
-    return res.status(400).json({success:false,message:'Password should not be empty'});
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:'Password should not be empty'});
   }
   if(!newPassword.length>=8){
-    return res.status(400).json({success:false,message:'Password should be at least 8'})
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:'Password should be at least 8'})
   }
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
   if(!passwordRegex.test(newPassword)){
-    return res.status(400).json({success:false,message:"Password should contain An uppercase ,a lowercase,a number and special characchter"})
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:"Password should contain An uppercase ,a lowercase,a number and special characchter"})
   }
   if (!user) {
-    return res.status(400).json({success:false,message:'Invalid or expired token.'});
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:'Invalid or expired token.'});
   }
   user.password = newPassword
   user.passwordResetToken = undefined;
   user.passwordResetExpiry = undefined;
   await user.save();
-  return res.status(200).json({success:true});
+  return res.status(HTTP_STATUS_CODE.OK).json({success:true});
 }catch(error){
   console.log(error)
-  return res.status(400).json({success:false,message:"Something went wrong!"})
+  return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:RESPONSE_MESSAGES.SOMETHING})
 }
 }
 
@@ -68,7 +70,7 @@ exports.getProductDetails = async (req, res) => {
   const id = req.params.id;
   console.log(id);
   if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).render('404', {
+      return res.status(HTTP_STATUS_CODE.NOT_FOUND).render('404', {
         message: 'Invalid Product ID',
         url: req.originalUrl
       });

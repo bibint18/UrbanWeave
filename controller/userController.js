@@ -8,7 +8,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Products = require("../model/admin/prodectModel");
 const CategoryOffer = require('../model/admin/CategoryOfferModel')
-const Wallet = require('../model/user/WalletModel')
+const Wallet = require('../model/user/WalletModel');
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 function sendResetEmail(email, resetLink) {
   console.log("triggered")
   const transporter = nodemailer.createTransport({
@@ -56,7 +58,7 @@ exports.getHome = async (req, res) => {
     return res.render("home", { products, user });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ success: false });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -127,7 +129,7 @@ try{
 
         Transporter.sendMail(mailoptions, (err, info) => {
           if (err) {
-            return res.status(500).send(err);
+            return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send(err);
           }
           console.log(`otp sent `, info.response);
           // res.redirect(`/otp?email=${email}`);
@@ -165,7 +167,7 @@ try{
 
       Transporter.sendMail(mailoptions, (err, info) => {
         if (err) {
-          return res.status(500).send(err);
+          return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send(err);
         }
         console.log(`otp sent `, info.response);
         // res.redirect(`/otp?email=${email}`);
@@ -193,17 +195,17 @@ exports.otpSubmit = async (req, res) => {
   console.log("otpexpiry: ", otpExpiry);
   if (!storedOtp) {
     // return res.send("invalid no otp");
-    return res.json({ success: false, messege: "NO Otp" }); //here
+    return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ success: false, message: "NO Otp" }); 
   }
   // const { newOtp, otpExpiry } = storedOtp;
   console.log(storedOtp);
   if (Date.now() > otpExpiry) {
     console.log(Date.now(), otpExpiry);
     // return res.send("expired request new one");
-    return res.json({ success: false, messege: "Expired Request New One" }); //here
+    return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({ success: false, message: "Expired Request New One" }); //here
   }
   if(storedOtp != enteredOtp){
-	return res.json({success:false,messege:"OTP is incorrect"})
+	return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({success:false,message:"OTP is incorrect"})
   }
   if (storedOtp === enteredOtp) {
     // const existingUser = await User.findOne({ email });
@@ -233,7 +235,7 @@ exports.otpSubmit = async (req, res) => {
     return res.json({ success: true, redirectUrl: "/userLogin" });
   } else {
     // return res.send("Enter valid Otp");
-    return res.json({ success: false, messege: "Please try again!" });
+    return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message:RESPONSE_MESSAGES.TRY_AGAIN });
   }
 };
 
@@ -263,7 +265,7 @@ exports.resend = (req, res) => {
     };
     Transporter.sendMail(mailoptions, (err, info) => {
       if (err) {
-        return res.status(500).send(err);
+        return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send(err);
       }
       console.log("send", info.response,newOtp);
       return res.render("user/otp", { email });
@@ -279,12 +281,12 @@ exports.userLogin = async (req, res) => {
   const user = await User.findOne({ email });
   console.log("user", user);
   if (!user) {
-    return res.json({ success: false, message: "user not existed" });
+    return res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ success: false, message: "user not existed" });
   }
   if (!email || email.trim() === "" || !password || password.trim() === "") {
     // return res.render('user/login', { error: "Input cannot be empty or spaces only!" });
     return res
-      .status(400)
+      .status(HTTP_STATUS_CODE.BAD_REQUEST)
       .json({
         success: false,
         message: "Input cannot be empty or spaces only!",
@@ -293,7 +295,7 @@ exports.userLogin = async (req, res) => {
 
   if (user.isBlocked) {
     console.log(user.isBlocked);
-    return res.status(200).json({ success: false, message: "User is Blocked" });
+    return res.status(HTTP_STATUS_CODE.FORBIDDEN).json({ success: false, message: "User is Blocked" });
     // return res.render("user/login",{error:"User is Blocked"})
   }
   if (user && (await user.comparePassword(password))) {
@@ -303,7 +305,7 @@ exports.userLogin = async (req, res) => {
   } else {
     // res.render('user/login',{error:"invalid Username or password"})
     return res
-      .status(200)
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: "Invalid username or password" });
   }
 };
@@ -333,7 +335,7 @@ exports.forgot = async (req, res) => {
   console.log(email)
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(404).send('No user found with that email address.');
+    return res.status(HTTP_STATUS_CODE.NOT_FOUND).send('No user found with that email address.');
   }
   const token = crypto.randomBytes(32).toString('hex');
   user.passwordResetToken = token;
@@ -341,10 +343,10 @@ exports.forgot = async (req, res) => {
   await user.save();
   const resetLink = `${req.protocol}://${req.get('host')}/reset-password/${token}`;
   sendResetEmail(email, resetLink);
-  return res.status(200).json({success:true,message:'Password reset link has been sent to your email.'})
+  return res.status(HTTP_STATUS_CODE.OK).json({success:true,message:'Password reset link has been sent to your email.'})
 }catch(error){
   console.log(error)
-  return res.status(400).json({success:false,message:"Something went wrong!"})
+  return res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({success:false,message:RESPONSE_MESSAGES.SOMETHING})
 }
 }
 

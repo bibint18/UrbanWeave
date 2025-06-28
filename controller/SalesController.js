@@ -1,6 +1,8 @@
 const Order = require("../model/user/orderModel");
 const User =require('../model/user/userModel')
 const moment = require("moment");
+const HTTP_STATUS_CODE = require("../utils/statusCode");
+const RESPONSE_MESSAGES = require("../utils/Response");
 
 exports.fetchReport = async (req, res) => {
   try {
@@ -20,7 +22,7 @@ exports.fetchReport = async (req, res) => {
     } else if (type == "custom") {
       if (!startDate || !endDate) {
         return res
-          .status(400)
+          .status(HTTP_STATUS_CODE.BAD_REQUEST)
           .json({
             success: false,
             message: "Start Date and End dates are required",
@@ -61,8 +63,8 @@ exports.fetchReport = async (req, res) => {
       if (!salesData.labels.includes(period)) {
         salesData.labels.push(period);
         salesData.sales.push(order.AmountPaid);
-        salesData.couponDeductions.push(order.CouponDiscount || 0); // Add coupon deduction
-        salesData.offerAmounts.push(order.CategoryOffer || 0); // Add offer amount
+        salesData.couponDeductions.push(order.CouponDiscount || 0); 
+        salesData.offerAmounts.push(order.CategoryOffer || 0); 
       } else {
         const index = salesData.labels.indexOf(period);
         salesData.sales[index] += order.AmountPaid;
@@ -70,7 +72,7 @@ exports.fetchReport = async (req, res) => {
         salesData.offerAmounts[index] += order.CategoryOffer || 0;
       }
     });
-    return res.status(200).json({
+    return res.status(HTTP_STATUS_CODE.OK).json({
       success: true,
       report: {
         totalRevenue,
@@ -84,8 +86,8 @@ exports.fetchReport = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(400)
-      .json({ success: false, message: "something went wrong!" });
+      .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: RESPONSE_MESSAGES.SOMETHING });
   }
 };
 
