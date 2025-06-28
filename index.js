@@ -59,5 +59,5 @@ app.use((req, res, next) => {
   });
 });
 
-// app.use('/uploads',express.static(path.join(__dirname,"uploads")))
+app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.listen(port,() => console.log(`server is running on port ${port}`)) 
