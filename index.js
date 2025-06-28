@@ -22,6 +22,7 @@ const port =2001;
 
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname,"public")))
+app.use('/uploads',express.static(path.join(__dirname,"uploads")))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(methodOverride('method'));
@@ -59,5 +60,5 @@ app.use((req, res, next) => {
   });
 });
 
-app.use('/uploads',express.static(path.join(__dirname,"uploads")))
+
 app.listen(port,() => console.log(`server is running on port ${port}`)) 
